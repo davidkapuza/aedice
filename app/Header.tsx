@@ -9,7 +9,7 @@ function Header() {
     <header className="sticky top-0 z-40">
       {session ? (
         <>
-          <div>
+          {/* <div>
             <Image
               className="rounded-full object-contain"
               height={10}
@@ -19,8 +19,8 @@ function Header() {
             />
             <p>Logged in as:</p>
             <p className="font-bold">Jhon Doe</p>
-          </div>
-          <Link href="/auth/signout" className="font-bold">
+          </div> */}
+          <Link href="/" className="font-bold">
             Sign out
           </Link>
         </>
