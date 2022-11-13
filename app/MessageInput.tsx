@@ -2,10 +2,13 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../typings";
+import useSWR from "swr";
+import fetcher from "../lib/fetchMessages";
 
 function MessageInput() {
   const [input, setInput] = useState("");
-  const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+  const { data: messages, error, mutate } = useSWR("/api/getMessages", fetcher);
+  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input) return;
 
@@ -23,20 +26,25 @@ function MessageInput() {
     };
 
     const uploadMsgToUpstash = async () => {
-      const res = await fetch("/api/sendMessage", {
+      const data = await fetch("/api/sendMessage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ message }),
-      });
-      const data = await res.json();
-      console.log("MESSAGE ADDED >>> ", data);
+      }).then((res) => res.json());
+      return [data.message, ...messages!];
     };
-    uploadMsgToUpstash()
+    await mutate(uploadMsgToUpstash, {
+      optimisticData: [message, ...messages!],
+      rollbackOnError: true,
+    });
   };
   return (
-    <form onSubmit={(e) => sendMessage(e)} className="flex px-10 fixed bottom-10">
+    <form
+      onSubmit={(e) => sendMessage(e)}
+      className="flex px-10 fixed bottom-10"
+    >
       <input
         value={input}
         placeholder="Enter message..."
