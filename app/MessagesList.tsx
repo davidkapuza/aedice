@@ -6,7 +6,11 @@ import fetcher from "../lib/fetchMessages";
 import { clientPusher } from "../pusher";
 import { Message } from "../typings";
 
-function MessagesList() {
+type Props = {
+  initialMessages: Message[]
+}
+
+function MessagesList({initialMessages}: Props) {
   const { data: messages, error, mutate } = useSWR("/api/getMessages", fetcher);
 
   useEffect(() => {
@@ -14,7 +18,7 @@ function MessagesList() {
     channel.bind("new-message", async (data: Message) => {
       // * if sender is a client - no need to update cache
       if (messages?.find((message) => message.id === data.id)) return;
-      
+
       if (!messages) {
         mutate(fetcher);
       } else {
@@ -24,11 +28,15 @@ function MessagesList() {
         });
       }
     });
+    return () => {
+      channel.unbind_all()
+      channel.unsubscribe()
+    }
   }, [messages, mutate, clientPusher]);
 
   return (
     <div>
-      {messages?.map((message) => {
+      {(messages || initialMessages)?.map((message) => {
         let isUser = true;
         return (
           <div key={message.id} className={`flex w-fit ${isUser && "ml-auto"}`}>
