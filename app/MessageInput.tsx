@@ -4,13 +4,19 @@ import { v4 as uuid } from "uuid";
 import { Message } from "../typings";
 import useSWR from "swr";
 import fetcher from "../lib/fetchMessages";
+import { unstable_getServerSession } from "next-auth";
 
-function MessageInput() {
+
+type Props = {
+  session: Awaited<ReturnType<typeof unstable_getServerSession>>
+}
+
+function MessageInput({session}: Props) {
   const [input, setInput] = useState("");
   const { data: messages, error, mutate } = useSWR("/api/getMessages", fetcher);
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!input) return;
+    if (!input || !session) return;
 
     const msgToSend = input;
 
@@ -20,9 +26,9 @@ function MessageInput() {
       id,
       message: msgToSend,
       created_at: Date.now(),
-      username: "Jhon Doe",
-      profilePic: "https://avatars.dicebear.com/api/avataaars/JhonDoe.svg",
-      email: "doe@domain.com",
+      username: session?.user?.name!,
+      profilePic: session?.user?.image!,
+      email: session?.user?.email!,
     };
 
     const uploadMsgToUpstash = async () => {
@@ -47,6 +53,7 @@ function MessageInput() {
     >
       <input
         value={input}
+        disabled={!session}
         placeholder="Enter message..."
         type="text"
         className="rounded border-gray-300"

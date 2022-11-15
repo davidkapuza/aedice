@@ -11,9 +11,10 @@ function SignIn({ providers }: Props) {
       {Object.values(providers!).map((provider) => (
         <div key={provider.name}>
           <button
+            className="bg-blue-500 text-white px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() =>
               signIn(provider.id, {
-                callbackUrl: "http://localhost:3000/api/auth/callback/google",
+                callbackUrl: process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000",
               })
             }
           >

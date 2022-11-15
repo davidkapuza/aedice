@@ -1,28 +1,20 @@
+import { unstable_getServerSession } from "next-auth";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import SignOutBtn from "../components/SignOutBtn";
 
-function Header() {
-  const session = true;
+async function Header() {
+  const session = await unstable_getServerSession()
 
   return (
     <header className="sticky top-0 z-40">
       {session ? (
         <>
-          {/* <div>
-            <Image
-              className="rounded-full object-contain"
-              height={10}
-              width={50}
-              src="https://avatars.dicebear.com/api/avataaars/JhonDoe.svg"
-              alt="Profile Picture"
-            />
-            <p>Logged in as:</p>
-            <p className="font-bold">Jhon Doe</p>
-          </div> */}
-          <Link href="/" className="font-bold">
-            Sign out
-          </Link>
+          <p>Logged in as:</p>
+          <p>{session.user?.email}</p>
+        <SignOutBtn />
         </>
       ) : (
         <Link href="/auth/signin" className="font-bold">

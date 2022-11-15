@@ -1,13 +1,12 @@
 import { getProviders, signIn } from "next-auth/react";
 import SignIn from "./SignIn"
 
-async function Auth() {
+async function SignInPage() {
   const providers = await getProviders()
 
   return <>
-    <div>SignIn</div>
     <SignIn providers={providers}/>
   </>;
 }
 
-export default Auth;
+export default SignInPage;
