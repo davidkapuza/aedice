@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import useSWR from "swr";
-import fetcher from "../lib/fetchMessages";
-import { clientPusher } from "../pusher";
+import fetcher from "../common/services/fetchMessages";
+import { clientPusher } from "../common/lib/pusher";
 import { Message } from "../typings";
 import TimeAgo from "react-timeago";
 
@@ -38,7 +38,7 @@ function MessagesList({ initialMessages }: Props) {
   }, [messages, mutate, clientPusher]);
 
   return (
-    <div>
+    <div className="mb-20">
       {(messages || initialMessages)?.map((message) => {
         const isUser = session?.user?.email === message.email;
         return (

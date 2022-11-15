@@ -7,7 +7,7 @@ import Providers from "./providers";
 
 async function Home() {
   const data = await fetch(
-    `${process.env.VERCEL_URL || "http://localhost:3000/"}/api/getMessages`
+    `${process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000/"}/api/getMessages`
   ).then((res) => res.json());
   const session = await unstable_getServerSession();
   const messages: Message[] = data.messages;

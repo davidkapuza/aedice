@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { serverPusher } from "../../pusher";
-import redis from "../../redis";
+import { serverPusher } from "../../common/lib/pusher";
+import redis from "../../common/lib/redis";
 import { Message } from "../../typings";
 
 type Data = {

@@ -3,7 +3,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import SignOutBtn from "../components/SignOutBtn";
+import SignOutBtn from "./SignOutBtn";
 
 async function Header() {
   const session = await unstable_getServerSession()

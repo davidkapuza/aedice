@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "../typings";
 import useSWR from "swr";
-import fetcher from "../lib/fetchMessages";
+import fetcher from "../common/services/fetchMessages";
 import { unstable_getServerSession } from "next-auth";
 
 
@@ -39,10 +39,10 @@ function MessageInput({session}: Props) {
         },
         body: JSON.stringify({ message }),
       }).then((res) => res.json());
-      return [data.message, ...messages!];
+      return [...messages!, data.message];
     };
     await mutate(uploadMsgToUpstash, {
-      optimisticData: [message, ...messages!],
+      optimisticData: [...messages!, message],
       rollbackOnError: true,
     });
   };

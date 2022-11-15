@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import redis from "../../redis";
+import redis from "../../common/lib/redis";
 import { Message } from "../../typings";
 
 type Data = {
@@ -21,7 +21,7 @@ export default async function handler(
   const messagesRes = await redis.hvals("messages");
   const messages: Message[] = messagesRes
     .map((message) => JSON.parse(message))
-    .sort((a, b) => b.created_at - a.created_at);
+    .sort((a, b) => a.created_at - b.created_at);
 
   res.status(200).json({ messages });
 }
