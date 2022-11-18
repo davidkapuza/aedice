@@ -1,15 +1,14 @@
 "use client";
-
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import useSWR from "swr";
-import fetcher from "../common/services/fetchMessages";
-import { clientPusher } from "../common/lib/pusher";
-import { Message } from "../typings";
-import TimeAgo from "react-timeago";
+import fetcher from "../../../common/services/fetchMessages";
+import { clientPusher } from "../../../common/lib/pusher";
+import { MessageType } from "../../../typings";
+import Message from "./Message";
 
 type Props = {
-  initialMessages: Message[];
+  initialMessages: MessageType[];
 };
 
 function MessagesList({ initialMessages }: Props) {
@@ -18,7 +17,7 @@ function MessagesList({ initialMessages }: Props) {
 
   useEffect(() => {
     const channel = clientPusher.subscribe("messages");
-    channel.bind("new-message", async (data: Message) => {
+    channel.bind("new-message", async (data: MessageType) => {
       // * if sender is a client - no need to update cache
       if (messages?.find((message) => message.id === data.id)) return;
 
@@ -38,17 +37,10 @@ function MessagesList({ initialMessages }: Props) {
   }, [messages, mutate, clientPusher]);
 
   return (
-    <div className="mb-20">
+    <div className="messages-list">
       {(messages || initialMessages)?.map((message) => {
-        const isUser = session?.user?.email === message.email;
-        return (
-          <div key={message.id} className={`flex w-fit ${isUser && "ml-auto"}`}>
-            <div className="flex flex-col">
-              <p>{message.message}</p>
-              <TimeAgo className="text-sm text-gray-400" date={new Date(message.created_at)} />
-            </div>
-          </div>
-        );
+        const isOwner = session?.user?.email === message.email;
+        return <Message key={message.id} message={message} isOwner={isOwner} />;
       })}
     </div>
   );

@@ -1,17 +1,20 @@
-import "../styles/globals.css";
-import Header from "../common/components/Header";
+import "../common/styles/globals.css"
+import { unstable_getServerSession } from "next-auth";
+import Providers from "./providers";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await unstable_getServerSession();
   return (
     <html>
       <head />
       <body>
-        <Header />
-        {children}
+        <Providers session={session}>
+          <div>{children}</div>
+        </Providers>
       </body>
     </html>
   );

@@ -1,8 +1,6 @@
-import React from "react";
-
 function Loading() {
   return (
-    <div className="text-center pt-8">
+    <div className="text-center pt-8 w-screen">
       <p>Loading chat</p>
       <div role="status">
         <svg

@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
-import { Message } from "../typings";
+import { MessageType } from "../../../typings";
 import useSWR from "swr";
-import fetcher from "../common/services/fetchMessages";
+import fetcher from "../../../common/services/fetchMessages";
 import { unstable_getServerSession } from "next-auth";
 
 
@@ -22,7 +22,7 @@ function MessageInput({session}: Props) {
 
     setInput("");
     const id = uuid();
-    const message: Message = {
+    const message: MessageType = {
       id,
       message: msgToSend,
       created_at: Date.now(),
@@ -49,14 +49,14 @@ function MessageInput({session}: Props) {
   return (
     <form
       onSubmit={(e) => sendMessage(e)}
-      className="flex px-10 fixed bottom-10"
+      className="bottom-bar"
     >
       <input
         value={input}
         disabled={!session}
         placeholder="Enter message..."
         type="text"
-        className="rounded border-gray-300"
+        className="bottom-bar-input"
         onChange={(e) => setInput(e.target.value)}
       ></input>
       <button

@@ -2,10 +2,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { serverPusher } from "../../common/lib/pusher";
 import redis from "../../common/lib/redis";
-import { Message } from "../../typings";
+import { MessageType } from "../../typings";
 
 type Data = {
-  message: Message;
+  message: MessageType;
 };
 type Error = {
   body: string;
