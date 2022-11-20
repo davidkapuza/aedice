@@ -10,44 +10,49 @@
 }
 
 @layer components {
-  .sidebar-item {
-    @apply relative flex items-center justify-center mt-2 mb-2 mx-auto;
-  }
-  .sidebar-icon {
-    @apply h-12 w-12 
-    bg-white hover:bg-gray-200 dark:bg-gray-800 
-  text-gray-900 hover:text-white
-    hover:rounded-xl rounded-3xl
-    transition-all duration-300 ease-linear
-    cursor-pointer;
+
+  .icon-container {
+    @apply flex items-center justify-center aspect-square mx-auto;
   }
 
-  .sidebar-tooltip {
+  /* * Icon-button */
+  .icon-button {
+    @apply icon-container h-12 mx-auto bg-white hover:bg-gray-200 dark:bg-gray-800 
+    text-gray-900 hover:text-white hover:rounded-xl rounded-3xl
+      transition-all duration-300 ease-linear cursor-pointer 
+      
+  }
+
+  .navigation {
+    @apply fixed top-0 left-0 h-screen w-16 flex flex-col
+    bg-white dark:bg-gray-900 border-r;
+  }
+
+  .tooltip {
     @apply absolute w-auto p-2 m-2 min-w-max left-14 rounded-md shadow-md
     text-white bg-gray-900 
     text-xs font-bold 
     transition-all duration-100 scale-0 origin-left;
   }
 
-  .sidebar-menu {
+  .navigation-dropdown {
     @apply group-hover:scale-100 top-6 left-3 absolute border rounded-md text-sm w-52 shadow-md space-y-0 mt-0 z-50;
   }
 
-  .sidebar-hr {
+  .navigation-hr {
     @apply bg-gray-200 dark:bg-gray-800 
     border border-gray-200 dark:border-gray-800 rounded-full
     mx-2;
   }
 
-  .top-navigation {
+  .header {
     @apply flex flex-row items-center justify-evenly 
-    bg-gray-300 dark:bg-gray-700 bg-opacity-90 
-    w-full h-16 
-    m-0 
-    shadow-lg;
+    bg-white dark:bg-gray-700 border-b
+    w-full h-20 
+    m-0;
   }
 
-  .top-navigation-icon {
+  .header-icon {
     @apply text-gray-500
     mr-3 ml-4
     transition duration-300 ease-in-out 
@@ -55,7 +60,7 @@
     cursor-pointer;
   }
 
-  .top-navigation-icon:first {
+  .header-icon:first {
     @apply ml-auto mr-4;
   }
 
@@ -87,24 +92,20 @@
   }
 
   .chat-container {
-    @apply flex flex-col 
-    bg-gray-300 dark:bg-gray-700
-    m-0 
-    h-full w-full 
-    overflow-hidden;
+    @apply relative flex flex-col 
+    bg-white dark:bg-gray-700
+    m-0 h-screen w-full 
   }
 
   .messages-list {
-    @apply flex flex-col items-center 
+    @apply flex flex-col overflow-y-scroll items-center 
     h-full w-full 
-    mt-0 ml-0 mx-auto px-0 pb-12 
-    overflow-y-scroll;
+    ml-0 mx-auto px-0 pb-12;
   }
 
   .message {
-    @apply w-full
-    flex flex-row items-center justify-evenly
-    py-4 px-8 m-0
+    @apply flex flex-row 
+    px-8 m-0
     cursor-pointer;
   }
 
@@ -114,113 +115,70 @@
   }
 
   .message-content {
-    @apply w-4/5 
-    flex flex-col justify-start 
-    ml-auto;
+    @apply max-w-md p-3;
   }
 
-  .message-text {
-    @apply text-lg text-gray-800 dark:text-white 
-    whitespace-normal;
+  .message-text-left {
+    @apply w-fit text-sm text-white dark:text-white 
+    whitespace-normal border rounded-r-xl rounded-bl-xl  bg-gray-900 py-2 px-3;
+  }
+  .message-text-right {
+    @apply ml-auto w-fit text-sm text-gray-800 dark:text-white 
+    whitespace-normal border rounded-l-xl rounded-br-xl py-2 px-3;
   }
 
   .message-owner {
-    @apply text-left font-semibold text-gray-800 dark:text-white mr-2 cursor-pointer;
+    @apply mb-1.5 block whitespace-nowrap font-semibold text-xs text-ellipsis overflow-hidden text-gray-400 dark:text-white;
   }
 
   .avatar-wrapper {
     @apply flex flex-col items-center
-    w-12 
-    m-0 ml-auto mb-auto;
+    w-12 mx-auto;
   }
 
   .avatar {
     @apply flex-none
-    w-10 h-full 
-    rounded-full
+    w-10 rounded-full
     object-cover bg-gray-100 
     mb-auto mt-0 mx-0 
     cursor-pointer;
   }
 
-  .timestamp {
-    @apply text-xs text-left font-semibold text-gray-500 dark:text-gray-600 ml-2;
-  }
-
   .bottom-bar {
-    @apply flex flex-row items-center justify-between 
-    fixed left-88 right-8 bottom-2 
-    rounded-lg shadow-lg 
-    bg-gray-400 dark:bg-gray-600 px-2
-    h-12;
+    @apply flex flex-row items-center gap-4 mx-4 my-4;
   }
 
   .bottom-bar-input {
-    @apply font-semibold w-full
-    bg-transparent outline-none 
-    ml-0 mr-auto
-    text-gray-500  dark:text-gray-400 placeholder-gray-500
+    @apply text-sm
+    rounded-full border
+    bg-black dark:bg-gray-600
+    h-12 flex-1 pl-6
+    outline-none text-white  dark:text-gray-400
+  placeholder-gray-500
     cursor-text;
   }
 
-  .profiles-bar {
-    @apply w-80 h-auto m-0 ml-16 bg-gray-200 dark:bg-gray-800
-     overflow-hidden;
+  .sidebar-bar {
+    @apply w-80 h-auto m-0 ml-16 bg-white dark:bg-gray-800
+     overflow-hidden border-r;
   }
 
-  .profiles-container {
+  .sidebar-container {
     @apply flex flex-col items-center justify-start 
     p-1 m-0;
   }
 
-  .profiles-block {
+  .sidebar-block {
     @apply flex items-center justify-center 
     h-16 
     m-0 p-0;
   }
 
-  .profiles-block-text {
+  .sidebar-block-text {
     @apply text-lg tracking-wider font-bold 
     text-gray-600 dark:text-gray-400 
     mr-auto ml-4 my-auto align-middle;
   }
-
-  .dropdown {
-    @apply m-0 w-full px-2 pb-2
-    transition duration-300 ease-in-out;
-  }
-
-  .dropdown-header {
-    @apply flex flex-row items-center justify-evenly
-    mx-0 text-gray-500
-    cursor-pointer;
-  }
-
-  .dropdown-header-text {
-    @apply text-gray-500  text-opacity-90 
-    text-lg font-semibold
-    cursor-default;
-  }
-
-  .dropdown-header-text-selected {
-    @apply text-blue-500 text-opacity-90 text-lg font-bold;
-  }
-
-  .dropdown-selection {
-    @apply flex flex-row items-center justify-evenly
-    mt-1 mr-auto ml-2
-    transition duration-300 ease-in-out
-    cursor-pointer;
-  }
-
-  .dropdown-selection-text {
-    @apply text-gray-500 font-semibold tracking-wide
-    mr-auto 
-    transition duration-300 ease-in-out 
-    hover:text-pink-500 dark:hover:text-gray-500
-    cursor-pointer;
-  }
 }
 
 @tailwind utilities;
-

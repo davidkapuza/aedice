@@ -5,13 +5,14 @@ import { MessageType } from "../../../typings";
 import useSWR from "swr";
 import fetcher from "../../../common/services/fetchMessages";
 import { unstable_getServerSession } from "next-auth";
-
+import IconButton from "../../../common/components/IconButton";
+import Airplane from "../../../common/components/icons/AirplaneIcon";
 
 type Props = {
-  session: Awaited<ReturnType<typeof unstable_getServerSession>>
-}
+  session: Awaited<ReturnType<typeof unstable_getServerSession>>;
+};
 
-function MessageInput({session}: Props) {
+function MessageInput({ session }: Props) {
   const [input, setInput] = useState("");
   const { data: messages, error, mutate } = useSWR("/api/getMessages", fetcher);
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,10 +48,7 @@ function MessageInput({session}: Props) {
     });
   };
   return (
-    <form
-      onSubmit={(e) => sendMessage(e)}
-      className="bottom-bar"
-    >
+    <form className="bottom-bar" onSubmit={(e) => sendMessage(e)}>
       <input
         value={input}
         disabled={!session}
@@ -59,13 +57,12 @@ function MessageInput({session}: Props) {
         className="bottom-bar-input"
         onChange={(e) => setInput(e.target.value)}
       ></input>
-      <button
+      <IconButton
         type="submit"
         disabled={!input}
-        className="bg-blue-500 text-white px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        Send
-      </button>
+        styles="disabled:hidden disabled:cursor-not-allowed active:flex"
+        icon={<Airplane />}
+      ></IconButton>
     </form>
   );
 }

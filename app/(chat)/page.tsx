@@ -1,5 +1,6 @@
 import { unstable_getServerSession } from "next-auth";
 import React from "react";
+import Header from "../../common/components/Header";
 import { MessageType } from "../../typings";
 import MessageInput from "./components/MessageInput";
 import MessagesList from "./components/MessagesList";
@@ -13,11 +14,11 @@ async function ChatPage() {
   const messages: MessageType[] = data.messages;
   const session = await unstable_getServerSession();
   return (
-      <>
-        <MessagesList initialMessages={messages} />
-        <MessageInput session={session} />
-      </>
-
+    <div className="chat-container">
+      <Header />
+      <MessagesList initialMessages={messages} />
+      <MessageInput session={session} />
+    </div>
   );
 }
 

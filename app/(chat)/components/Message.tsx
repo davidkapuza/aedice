@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { MessageType } from "../../../typings";
 import TimeAgo from "react-timeago";
+import { memo } from "react";
 
-export default function Message({
+function Message({
   isOwner,
   message,
 }: {
@@ -10,7 +11,7 @@ export default function Message({
   isOwner: boolean;
 }) {
   return (
-    <div className="message">
+    <div className={`message ${isOwner ? "ml-auto" : "mr-auto"}`}>
       <div className={`avatar-wrapper ${isOwner ? "order-1" : ""}`}>
         <Image
           height={30}
@@ -20,20 +21,25 @@ export default function Message({
           className="avatar"
         />
       </div>
-
       <div className="message-content">
-        <p className={`message-owner ${isOwner ? "text-right" : ""}`}>
-          {message.username}
-          <small className="timestamp">
-            {" "}
-            <TimeAgo
-              className="text-sm text-gray-400"
-              date={new Date(message.created_at)}
-            />
-          </small>
+        <small
+          className={`message-owner ${isOwner ? "text-right" : "text-left"}`}
+        >
+          {!isOwner && message.username + " \u2022 "}
+
+          <TimeAgo
+            className="font-medium"
+            date={new Date(message.created_at)}
+          />
+
+          {isOwner && " \u2022 " + message.username}
+        </small>
+
+        <p className={`${isOwner ? "message-text-right" : "message-text-left"} `}>
+          {message.message}
         </p>
-        <p className={`message-text ${isOwner ? "text-right" : ""}`}>{message.message}</p>
       </div>
     </div>
   );
 }
+export default memo(Message);

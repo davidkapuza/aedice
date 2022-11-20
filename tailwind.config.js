@@ -6,12 +6,12 @@ module.exports = {
     './common/**/*.{js,ts,jsx,tsx}',
     './app/**/*.{js,ts,jsx,tsx}',
   ],
-  darkMode: 'class', // class, 'media' or boolean
+  darkMode: "class", // class, 'media' or boolean
   theme: {
     extend: {
       colors: {
         gray: {
-          900: '#202225',
+          900: '#111111',
           800: '#2f3136',
           700: '#36393f',
           600: '#4f545c',

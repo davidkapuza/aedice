@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function ProfileDropDown({ img, content }: any) {
   return (
-    <div className="sidebar-item group">
+    <div className="group">
       <div className="avatar-wrapper">
         <Image
           width={30}
@@ -12,7 +12,7 @@ export default function ProfileDropDown({ img, content }: any) {
           className="avatar"
         />
       </div>
-      <div className="sidebar-tooltip sidebar-menu">{content}</div>
+      <div className="tooltip navigation-dropdown">{content}</div>
     </div>
   );
 }

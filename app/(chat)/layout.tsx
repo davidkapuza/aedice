@@ -1,5 +1,5 @@
-import Sidebar from "../../common/components/Sidebar";
-import ProfilesBar from "../../common/components/ProfilesBar";
+import Sidebar from "../../common/components/Navigation";
+import ProfilesBar from "../../common/components/Sidebar";
 
 export default async function RootLayout({
   children,
@@ -10,7 +10,7 @@ export default async function RootLayout({
     <div className="flex">
       <Sidebar />
       <ProfilesBar />
-      <main className="chat-container">{children}</main>
+      <main className="w-full">{children}</main>
     </div>
   );
 }
