@@ -1,6 +1,6 @@
 export default function Sidebar () {
   return (
-    <aside className='sidebar-bar'>
+    <aside className='Sidebar'>
 
       <div className='sidebar-container'>
         container

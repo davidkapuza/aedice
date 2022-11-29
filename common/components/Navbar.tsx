@@ -5,16 +5,17 @@ import SignOutBtn from "./SignOutBtn";
 import Link from "next/link";
 import IconLink from "./IconLink";
 import ChatIcon from "./icons/ChatIcon";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
 
-async function Sidebar() {
-  const session = await unstable_getServerSession();
+async function Navbar() {
+  const session = await unstable_getServerSession(authOptions);
 
   const navigation = [
     { title: "Profile", path: "/profile" },
     { title: "Settings", path: "/settings" },
   ];
   return (
-    <nav className="navigation">
+    <nav className="Navbar">
       <ProfileDropDown
         img={session?.user?.image}
         content={
@@ -42,4 +43,4 @@ async function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default Navbar;

@@ -1,5 +1,5 @@
-import Sidebar from "../../common/components/Navigation";
-import ProfilesBar from "../../common/components/Sidebar";
+import Navbar from "../../common/components/Navbar";
+import Sidebar from "../../common/components/Sidebar";
 
 export default async function RootLayout({
   children,
@@ -8,8 +8,8 @@ export default async function RootLayout({
 }) {
   return (
     <div className="flex">
+      <Navbar />
       <Sidebar />
-      <ProfilesBar />
       <main className="w-full">{children}</main>
     </div>
   );
