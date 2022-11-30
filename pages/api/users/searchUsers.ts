@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import redis from "../../../common/lib/redis";
+import client from "../../../common/lib/redis";
 
 type Data =
   | {
@@ -18,17 +18,16 @@ export default async function handler(
   const q = Array.isArray(req.query.q)
     ? req.query.q.join("").toUpperCase()
     : req.query.q?.toUpperCase();
-
   if (!q) {
     res.status(400).send("Add query params");
     return;
   }
 
   const users = [];
-  const idx = await redis.zrank("users", q);
+  const idx = await client.zrank("users", q);
   if (idx != null) {
-    const usersRange = await redis.zrange("users", idx, idx + 100);
-    for (const el of usersRange) {
+    const range = await client.zrange("users", idx, idx + 100);
+    for (const el of range) {
       if (!el.startsWith(q)) {
         break;
       }
@@ -37,6 +36,6 @@ export default async function handler(
       }
     }
   }
-
+  
   res.status(200).json({ users });
 }

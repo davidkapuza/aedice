@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import { Redis } from "@upstash/redis";
+import client from "../../../common/lib/redis";
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_URL!,
@@ -19,6 +20,17 @@ export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(redis),
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
+      let term = user.email!.toUpperCase();
+      let terms = [];
+  
+      for (let i = 1; i < term.length; i++) {
+          terms.push(0);
+          terms.push(term.substring(0, i));
+      }
+      terms.push(0);
+      terms.push(term + "*");
+
+          await client.zadd("users", ...terms)
 
       return true
     },
