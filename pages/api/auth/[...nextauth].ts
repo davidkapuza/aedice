@@ -1,11 +1,11 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
-import { Redis } from "@upstash/redis";
-import client from "../../../common/lib/redis";
+import { Redis as UpstashRedis } from "@upstash/redis";
 import https from "https";
+import Redis from "ioredis";
 
-const redis = Redis.fromEnv({
+const redis = UpstashRedis.fromEnv({
   agent: new https.Agent({ keepAlive: true }),
 });
 
@@ -15,15 +15,22 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-
   ],
   adapter: UpstashRedisAdapter(redis),
   callbacks: {
     async signIn({ user }) {
-      const email = user.email!.toUpperCase();
-      const exists = await client.get("user:email:" + email)
-      if (exists) return true
+      const client = new Redis(process.env.REDIS_URL!);
 
+      const email = user.email!.toUpperCase();
+      // * Checking if user already exists
+      const exists = await client.get("user:email:" + email);
+      if (exists) {
+        await client.quit();
+        return true;
+      }
+
+      // * Storing user email substrings in Redis sorted set for
+      // * search by email autocomplete
       const emails = [];
 
       for (let i = 1; i < email.length; i++) {
@@ -31,10 +38,22 @@ export const authOptions: NextAuthOptions = {
         emails.push(email.substring(0, i));
       }
       emails.push(0);
+
+      // * Stored in format:
+      /*
+      * "KAPUZADAVID@GMAIL.COM*
+      * {\"name\":\"David Kapuza\",
+      * \"email\":\"kapuzadavid@gmail.com\",
+      * \"image\":\"https://lh3.googleusercontent.com/a/ALm5wu0rhyTEoyk_EGFliI0638hehkG-6vC0usHQLiBS=s96-c\",
+      * \"emailVerified\":null,
+      * \"id\":\"4dfacb8d-c352-4ba9-ade9-f434eb087b3d\"}*"
+      * */
+
       emails.push(email + "*" + JSON.stringify(user) + "*");
 
       await client.zadd("users", ...emails);
 
+      await client.quit();
       return true;
     },
   },
