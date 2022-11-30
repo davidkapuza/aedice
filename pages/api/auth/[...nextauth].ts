@@ -3,10 +3,10 @@ import GoogleProvider from "next-auth/providers/google";
 import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import { Redis } from "@upstash/redis";
 import client from "../../../common/lib/redis";
+import https from "https";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_URL!,
-  token: process.env.UPSTASH_REDIS_TOKEN!,
+const redis = Redis.fromEnv({
+  agent: new https.Agent({ keepAlive: true }),
 });
 
 export const authOptions: NextAuthOptions = {
@@ -15,24 +15,27 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    // ...add more providers here
+
   ],
   adapter: UpstashRedisAdapter(redis),
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      let term = user.email!.toUpperCase();
-      let terms = [];
-  
-      for (let i = 1; i < term.length; i++) {
-          terms.push(0);
-          terms.push(term.substring(0, i));
+    async signIn({ user }) {
+      const email = user.email!.toUpperCase();
+      const exists = await client.get("user:email:" + email)
+      if (exists) return true
+
+      const emails = [];
+
+      for (let i = 1; i < email.length; i++) {
+        emails.push(0);
+        emails.push(email.substring(0, i));
       }
-      terms.push(0);
-      terms.push(term + "*");
+      emails.push(0);
+      emails.push(email + "*" + JSON.stringify(user) + "*");
 
-          await client.zadd("users", ...terms)
+      await client.zadd("users", ...emails);
 
-      return true
+      return true;
     },
   },
   secret: process.env.NEXTAUTH_SECRET!,

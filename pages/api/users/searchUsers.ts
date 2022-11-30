@@ -2,11 +2,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../common/lib/redis";
 
-type Data =
-  | {
-      users: any;
-    }
-  | string;
+type Data = {
+  users: string[];
+};
 type Error = {
   body: string;
 };
@@ -19,7 +17,7 @@ export default async function handler(
     ? req.query.q.join("").toUpperCase()
     : req.query.q?.toUpperCase();
   if (!q) {
-    res.status(400).send("Add query params");
+    res.status(400).send({users: ["No users"]});
     return;
   }
 
@@ -32,10 +30,10 @@ export default async function handler(
         break;
       }
       if (el.endsWith("*")) {
-        users.push(el.substring(0, el.length - 1));
+        users.push(el.split("*")[1]);
       }
     }
   }
-  
+
   res.status(200).json({ users });
 }
