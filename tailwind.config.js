@@ -2,9 +2,9 @@
 module.exports = {
   mode: "jit",
   content: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './common/**/*.{js,ts,jsx,tsx}',
-    './app/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
+    // './common/**/*.{js,ts,jsx,tsx}',
+    // './app/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: "class", // class, 'media' or boolean
   theme: {

@@ -1,0 +1,4 @@
+.Sidebar {
+  @apply w-80 h-auto m-0 ml-16 bg-white dark:bg-gray-800
+   overflow-hidden border-r;
+}

@@ -5,6 +5,7 @@
     "build": "next build",
     "start": "next start"
   },
+  "proxy": "http://localhost:3000",
   "dependencies": {
     "@headlessui/react": "^1.7.4",
     "@next-auth/upstash-redis-adapter": "^3.0.3",

@@ -1,0 +1,6 @@
+.Header {
+  @apply flex flex-row items-center justify-evenly 
+  bg-white dark:bg-gray-700 border-b
+  w-full h-20 
+  m-0;
+}
