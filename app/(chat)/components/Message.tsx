@@ -12,13 +12,13 @@ function Message({
 }) {
   return (
     <div className={`message ${isOwner ? "ml-auto" : "mr-auto"}`}>
-      <div className={`avatar-wrapper ${isOwner ? "order-1" : ""}`}>
+      <div className={`Avatar-wrapper ${isOwner ? "order-1" : ""}`}>
         <Image
           height={30}
           width={30}
           src={message.profilePic}
-          alt="avatar"
-          className="avatar"
+          alt="Avatar"
+          className="Avatar"
         />
       </div>
       <div className="message-content">

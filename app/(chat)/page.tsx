@@ -1,6 +1,6 @@
 import { unstable_getServerSession } from "next-auth";
 import React from "react";
-import Header from "../../common/components/Header";
+import Header from "../../common/components/layout/Header/Header";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { MessageType } from "../../typings";
 import MessageInput from "./components/MessageInput";

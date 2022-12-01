@@ -5,8 +5,9 @@ import { MessageType } from "../../../typings";
 import useSWR from "swr";
 import fetcher from "../../../common/services/fetchMessages";
 import { unstable_getServerSession } from "next-auth";
-import IconButton from "../../../common/components/IconButton";
+// import IconButton from "../../../common/components/IconBtn";
 import Airplane from "../../../common/components/icons/AirplaneIcon";
+import IconButton from "../../../common/components/elements/buttons/IconButton/IconButton";
 
 type Props = {
   session: Awaited<ReturnType<typeof unstable_getServerSession>>;
@@ -62,7 +63,7 @@ function MessageInput({ session }: Props) {
         disabled={!input}
         styles="disabled:hidden disabled:cursor-not-allowed active:flex"
         icon={<Airplane />}
-      ></IconButton>
+      />
     </form>
   );
 }

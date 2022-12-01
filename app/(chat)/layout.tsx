@@ -1,5 +1,5 @@
-import Navbar from "../../common/components/Navbar";
-import Sidebar from "../../common/components/Sidebar";
+import Navbar from "../../common/components/layout/Navbar/Navbar";
+import Sidebar from "../../common/components/layout/Sidebar/Sidebar";
 
 export default async function RootLayout({
   children,
