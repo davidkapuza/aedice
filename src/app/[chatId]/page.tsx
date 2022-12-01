@@ -1,15 +1,27 @@
 import { unstable_getServerSession } from "next-auth";
-import React from "react";
 import { authOptions } from "@api/auth/[...nextauth]";
-import { Message } from "@core/types";
 import MessageInput from "@components/chat/MessageInput";
 import MessagesList from "@components/chat/MessagesList";
 import Header from "@components/layouts/Header/Header";
-import getMessages from "@lib/chat/services/getMessages";
+
+async function prerenderMessages() {
+  const res = await fetch(
+    `${
+      process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000/"
+    }api/getMessages`
+  );
+  return res.json();
+}
 
 async function ChatPage() {
-  const messages = await getMessages()
-  const session = await unstable_getServerSession(authOptions);
+  const messagesData = prerenderMessages();
+  const sessionData = unstable_getServerSession(authOptions);
+
+  const [{ messages }, session] = await Promise.all([
+    messagesData,
+    sessionData,
+  ]);
+
   return (
     <div className="chat-container">
       <Header />

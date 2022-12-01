@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Message } from "@core/types";
 import useSWR from "swr";
-import fetcher from "@lib/chat/services/getMessages";
+import getMessages from "@lib/chat/services/getMessages";
 import { unstable_getServerSession } from "next-auth";
 import Airplane from "@core/icons/AirplaneIcon";
 import IconButton from "@ui/IconButton/IconButton";
@@ -14,8 +14,8 @@ type Props = {
 
 function MessageInput({ session }: Props) {
   const [input, setInput] = useState("");
-  const { data: messages, error, mutate } = useSWR("/api/getMessages", fetcher);
-  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+/*   const { data: messages, error, mutate } = useSWR(session ? "/api/getMessages" : null, getMessages);
+ *//*   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input || !session) return;
 
@@ -47,8 +47,8 @@ function MessageInput({ session }: Props) {
       rollbackOnError: true,
     });
   };
-  return (
-    <form className="bottom-bar" onSubmit={(e) => sendMessage(e)}>
+ */  return (
+    <form className="bottom-bar" onSubmit={(e) => /* sendMessage(e) */console.log("...")}>
       <input
         value={input}
         disabled={!session}

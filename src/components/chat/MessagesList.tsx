@@ -8,12 +8,16 @@ import Message from "./Message";
 import { Message as MessageType } from "@core/types";
 
 type Props = {
-  initialMessages: MessageType[];
+  initialMessages?: MessageType[];
 };
 
 function MessagesList({ initialMessages }: Props) {
   const { data: session } = useSession();
-  const { data: messages, error, mutate } = useSWR("/api/getMessages", getMessages);
+  const {
+    data: messages,
+    error,
+    mutate,
+  } = useSWR("/api/getMessages", getMessages);
 
   useEffect(() => {
     const channel = clientPusher.subscribe("messages");

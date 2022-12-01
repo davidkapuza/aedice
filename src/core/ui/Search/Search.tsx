@@ -1,7 +1,7 @@
 "use client";
 import "./Search.styles.css"
 import debounce from "lodash.debounce";
-import React, { useMemo, useState } from "react";
+import React, { startTransition, useMemo, useState } from "react";
 import SearchIcon from "../../icons/SearchIcon";
 import SearchItem from "../SearchItem/SearchItem";
 
