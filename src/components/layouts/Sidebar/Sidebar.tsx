@@ -1,12 +1,12 @@
 import "./Sidebar.styles.css"
-import SearchUsers from "@ui/Search/Search";
+import { UsersSearch } from "@ui/index";
 
 export default function Sidebar () {
   return (
     <aside className='Sidebar'>
 
       {/* <div className='sidebar-container'> */}
-        <SearchUsers/>
+        <UsersSearch/>
       {/* </div> */}
     </aside>
   );

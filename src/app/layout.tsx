@@ -1,7 +1,7 @@
-import "styles/globals.css"
+import { authOptions } from "@api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth";
+import "styles/globals.css";
 import Providers from "./providers";
-import { authOptions } from "src/pages/api/auth/[...nextauth]";
 
 export default async function RootLayout({
   children,
@@ -13,9 +13,7 @@ export default async function RootLayout({
     <html>
       <head />
       <body>
-        <Providers session={session}>
-          <div>{children}</div>
-        </Providers>
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );

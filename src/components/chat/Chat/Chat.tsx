@@ -2,16 +2,17 @@
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import useSWR from "swr";
-import getMessages from "@lib/chat/services/getMessages";
+import getMessages from "@lib/services/messages/getMessages";
 import { clientPusher } from "@core/pusher/index";
-import Message from "./Message";
+import { Message } from "@ui/index";
 import { Message as MessageType } from "@core/types";
+import "./Chat.styles.css"
 
 type Props = {
   initialMessages?: MessageType[];
 };
 
-function MessagesList({ initialMessages }: Props) {
+function Chat({ initialMessages }: Props) {
   const { data: session } = useSession();
   const {
     data: messages,
@@ -41,7 +42,7 @@ function MessagesList({ initialMessages }: Props) {
   }, [messages, mutate, clientPusher]);
 
   return (
-    <div className="messages-list">
+    <div className="Chat">
       {(messages || initialMessages)?.map((message) => {
         const isOwner = session?.user?.email === message.email;
         return <Message key={message.id} message={message} isOwner={isOwner} />;
@@ -50,4 +51,4 @@ function MessagesList({ initialMessages }: Props) {
   );
 }
 
-export default MessagesList;
+export default Chat;

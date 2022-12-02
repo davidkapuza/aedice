@@ -1,0 +1,4 @@
+.Chat {
+  @apply flex flex-col items-center 
+    h-full w-full px-8 py-14
+}

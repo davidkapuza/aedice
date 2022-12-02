@@ -1,0 +1,7 @@
+.Chat-form {
+  @apply sticky flex flex-row items-center justify-between h-12 mx-4 bg-transparent gap-x-4 bottom-4 dark:bg-gray-600;
+}
+
+.Chat-input {
+  @apply w-full h-full px-6 ml-0 mr-auto text-sm text-white placeholder-gray-500 bg-gray-900 border rounded-full cursor-text;
+}

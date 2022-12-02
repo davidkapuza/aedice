@@ -1,0 +1,14 @@
+.Message {
+  @apply flex flex-row max-w-md my-3 gap-x-3;
+}
+
+.Message-text {
+  @apply p-3 mt-1 text-sm w-fit;
+}
+
+.Message-text-left {
+  @apply text-white Message-text bg-gradient-to-br from-gray-900 to-gray-700 rounded-r-xl rounded-bl-xl;
+}
+.Message-text-right {
+  @apply ml-auto border Message-text rounded-l-xl rounded-br-xl;
+}

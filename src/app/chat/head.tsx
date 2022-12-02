@@ -3,7 +3,7 @@ export default function Head() {
     <>
       <title>Chat</title>
       <meta content="width=device-width, initial-scale=1" name="viewport" />
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" href="/static/favicon.ico" />
     </>
   )
 }

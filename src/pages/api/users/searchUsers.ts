@@ -18,10 +18,7 @@ export default async function handler(
   const q = Array.isArray(req.query.q)
     ? req.query.q.join("").toUpperCase()
     : req.query.q?.toUpperCase();
-  if (!q) {
-    res.status(400).send({users: ["No users"]});
-    return;
-  }
+  if (!q) return;
 
   const users = [];
   const idx = await client.zrank("users", q);
@@ -32,7 +29,7 @@ export default async function handler(
         break;
       }
       if (el.endsWith("*")) {
-        users.push(el.split("*")[1]);
+        users.push(JSON.parse(el.split("*")[1]));
       }
     }
   }

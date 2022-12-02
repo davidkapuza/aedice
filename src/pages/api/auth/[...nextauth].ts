@@ -4,6 +4,7 @@ import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import { Redis as UpstashRedis } from "@upstash/redis";
 import https from "https";
 import Redis from "ioredis";
+import { v4 as uuid } from "uuid";
 
 const redis = UpstashRedis.fromEnv({
   agent: new https.Agent({ keepAlive: true }),
@@ -23,7 +24,7 @@ export const authOptions: NextAuthOptions = {
 
       const email = user.email!.toUpperCase();
       // * Checking if user already exists
-      const exists = await client.get("user:email:" + email);
+      const exists = await client.get("user:email:" + user.email);
       if (exists) {
         await client.quit();
         return true;
@@ -31,27 +32,36 @@ export const authOptions: NextAuthOptions = {
 
       // * Storing user email substrings in Redis sorted set for
       // * search by email autocomplete
-      const emails = [];
+      const results = [];
 
       for (let i = 1; i < email.length; i++) {
-        emails.push(0);
-        emails.push(email.substring(0, i));
+        results.push(0);
+        results.push(email.substring(0, i));
       }
-      emails.push(0);
+      results.push(0);
 
       // * Stored in format:
       /*
-      * "KAPUZADAVID@GMAIL.COM*
-      * {\"name\":\"David Kapuza\",
-      * \"email\":\"kapuzadavid@gmail.com\",
-      * \"image\":\"https://lh3.googleusercontent.com/a/ALm5wu0rhyTEoyk_EGFliI0638hehkG-6vC0usHQLiBS=s96-c\",
+      * "EMAIL@DOMAIN.COM*
+      * {\"name\":\"Jhon Doe\",
+      * \"email\":\"jhondoe@domain.com\",
+      * \"image\":\"https://example.com\",
       * \"emailVerified\":null,
-      * \"id\":\"4dfacb8d-c352-4ba9-ade9-f434eb087b3d\"}*"
+      * \"id\":\"id\"}"
+      * \"chatId\":\"chatId\"}*"
       * */
+      
+      const chatId = uuid()
+      const userJson = JSON.stringify({chatId, ...user})
 
-      emails.push(email + "*" + JSON.stringify(user) + "*");
+      results.push(email + "*" + userJson + "*");
 
-      await client.zadd("users", ...emails);
+      await client.zadd("users", ...results);
+
+      // * Initialize chat for a new user
+
+      await client.zadd("chat:members:" + chatId, 0, userJson);
+
 
       await client.quit();
       return true;

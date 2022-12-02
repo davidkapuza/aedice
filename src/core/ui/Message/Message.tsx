@@ -1,3 +1,4 @@
+import "./Message.styles.css"
 import Image from "next/image";
 import TimeAgo from "react-timeago";
 import { memo } from "react";
@@ -11,19 +12,17 @@ function Message({
   isOwner: boolean;
 }) {
   return (
-    <div className={`message ${isOwner ? "ml-auto" : "mr-auto"}`}>
-      <div className={`Avatar-wrapper ${isOwner ? "order-1" : ""}`}>
+    <div className={`Message ${isOwner ? "ml-auto" : "mr-auto"}`}>
         <Image
           height={30}
           width={30}
           src={message.profilePic}
           alt="Avatar"
-          className="Avatar"
+          className={`Avatar ${isOwner ? "order-1" : ""}`}
         />
-      </div>
-      <div className="message-content">
+      <div>
         <small
-          className={`message-owner ${isOwner ? "text-right" : "text-left"}`}
+          className={`text-xs ${isOwner ? "text-right" : "text-left"}`}
         >
           {!isOwner && message.username + " \u2022 "}
 
@@ -35,7 +34,7 @@ function Message({
           {isOwner && " \u2022 " + message.username}
         </small>
 
-        <p className={`${isOwner ? "message-text-right" : "message-text-left"} `}>
+        <p className={`${isOwner ? "Message-text-right" : "Message-text-left"} `}>
           {message.message}
         </p>
       </div>

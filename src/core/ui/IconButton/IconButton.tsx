@@ -1,3 +1,4 @@
+import "./IconButton.styles.css"
 import Link from "next/link";
 
 type IconButtonProps = {
@@ -20,14 +21,14 @@ export default function IconButton({
   return (
     <>
       {link ? (
-        <Link href={link} className={`icon-button group ${styles}`}>
+        <Link href={link} className={`Icon-button group ${styles}`}>
           {icon}
-          {tooltip && <span className="tooltip group-hover:scale-100">{tooltip}</span>}
+          {tooltip && <span className="Tooltip group-hover:scale-100">{tooltip}</span>}
         </Link>
       ) : (
-        <button {...props} className={`icon-button group ${styles}`}>
+        <button {...props} className={`Icon-button group ${styles}`}>
           {icon}
-          {tooltip && <span className="tooltip group-hover:scale-100">{tooltip}</span>}
+          {tooltip && <span className="Tooltip group-hover:scale-100">{tooltip}</span>}
         </button>
       )}
     </>
