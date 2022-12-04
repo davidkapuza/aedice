@@ -1,8 +1,8 @@
-export type Message = {
+export type TMessage = {
   id: string,
   message: string,
   created_at: number,
   username: string,
-  profilePic: string,
+  image: string,
   email: string,
 }

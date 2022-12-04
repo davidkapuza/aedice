@@ -2,10 +2,10 @@
 import Redis from "ioredis";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { serverPusher } from "@core/pusher";
-import { Message } from "@core/types";
+import { TMessage } from "@core/types/entities";
 
 type Data = {
-  message: Message;
+  message: TMessage;
 };
 type Error = {
   body: string;
@@ -21,7 +21,7 @@ export default async function handler(
   }
   const client = new Redis(process.env.REDIS_URL!);
 
-  const { message } = req.body;
+  const { message, chatId } = req.body;
 
   const newMessage = {
     ...message,
@@ -29,8 +29,12 @@ export default async function handler(
     created_at: Date.now(),
   };
   // * Push to upstash redis db
-  await client.hset("messages", message.id, JSON.stringify(newMessage));
-  serverPusher.trigger("messages", "new-message", newMessage);
+  await client.hset(
+    "chat:messages:" + chatId,
+    message.id,
+    JSON.stringify(newMessage)
+  );
+  serverPusher.trigger("chat-messages-" + chatId, "new-message", newMessage);
 
   res.status(200).json({ message: newMessage });
   await client.quit();

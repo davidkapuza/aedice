@@ -1,10 +1,9 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import initializeUser from "@lib/services/users/initializeUser";
 import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import { Redis as UpstashRedis } from "@upstash/redis";
 import https from "https";
-import Redis from "ioredis";
-import { v4 as uuid } from "uuid";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 
 const redis = UpstashRedis.fromEnv({
   agent: new https.Agent({ keepAlive: true }),
@@ -20,51 +19,11 @@ export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(redis),
   callbacks: {
     async signIn({ user }) {
-      const client = new Redis(process.env.REDIS_URL!);
-
-      const email = user.email!.toUpperCase();
-      // * Checking if user already exists
-      const exists = await client.get("user:email:" + user.email);
-      if (exists) {
-        await client.quit();
-        return true;
-      }
-
-      // * Storing user email substrings in Redis sorted set for
-      // * search by email autocomplete
-      const results = [];
-
-      for (let i = 1; i < email.length; i++) {
-        results.push(0);
-        results.push(email.substring(0, i));
-      }
-      results.push(0);
-
-      // * Stored in format:
-      /*
-      * "EMAIL@DOMAIN.COM*
-      * {\"name\":\"Jhon Doe\",
-      * \"email\":\"jhondoe@domain.com\",
-      * \"image\":\"https://example.com\",
-      * \"emailVerified\":null,
-      * \"id\":\"id\"}"
-      * \"chatId\":\"chatId\"}*"
-      * */
-      
-      const chatId = uuid()
-      const userJson = JSON.stringify({chatId, ...user})
-
-      results.push(email + "*" + userJson + "*");
-
-      await client.zadd("users", ...results);
-
-      // * Initialize chat for a new user
-
-      await client.zadd("chat:members:" + chatId, 0, userJson);
-
-
-      await client.quit();
-      return true;
+      return await initializeUser(user);
+    },
+    async session({ session, user }) {
+      session.user.uid = user.uid;
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET!,

@@ -1,9 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import Redis from "ioredis";
 import type { NextApiRequest, NextApiResponse } from "next";
-import Redis from "ioredis"
+
 
 type Data = {
-  chatId: string;
+  chats: string[];
 };
 type Error = {
   body: string;
@@ -13,13 +14,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | Error>
 ) {
-  const { chatId, user } = req.body
-
+  if (req.method !== "GET") {
+    res.status(405).json({ body: "Method Not Allowed" });
+    return;
+  }
   const client = new Redis(process.env.REDIS_URL!);
-  
-  await client.hset("chat:members:" + chatId, user.uid, JSON.stringify(user));
-  await client.sadd("user:chats:" + user.uid, chatId);
 
-  res.status(200).json({ chatId });
+  const chats = await client.zrange("user:chats:" + req.query.q, 0 , 100)
+
+  res.status(200).json({ chats });
   await client.quit();
 }

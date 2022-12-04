@@ -2,35 +2,39 @@
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import useSWR from "swr";
-import getMessages from "@lib/services/messages/getMessages";
+import getMessages from "@lib/services/chat/getMessages";
 import { clientPusher } from "@core/pusher/index";
 import { Message } from "@ui/index";
-import { Message as MessageType } from "@core/types";
+
 import "./Chat.styles.css"
+import { TMessage } from "@core/types/entities";
+
 
 type Props = {
-  initialMessages?: MessageType[];
+  initialMessages?: TMessage[];
+  chatId: string;
 };
 
-function Chat({ initialMessages }: Props) {
+function Chat({ initialMessages, chatId }: Props) {
   const { data: session } = useSession();
   const {
     data: messages,
     error,
     mutate,
-  } = useSWR("/api/getMessages", getMessages);
+  } = useSWR("/api/getMessages", () => getMessages(chatId));
 
   useEffect(() => {
-    const channel = clientPusher.subscribe("messages");
-    channel.bind("new-message", async (data: MessageType) => {
+    const channel = clientPusher.subscribe("chat-messages-" + chatId);
+    channel.bind("new-message", async (message: TMessage) => {
+
       // * if sender is a client - no need to update cache
-      if (messages?.find((message) => message.id === data.id)) return;
+      if (messages?.find((message) => message.id === message.id)) return;
 
       if (!messages) {
-        mutate(getMessages);
+        mutate(() => getMessages(chatId));
       } else {
-        mutate(getMessages, {
-          optimisticData: [data, ...messages!],
+        mutate(() => getMessages(chatId), {
+          optimisticData: [...messages!, message],
           rollbackOnError: true,
         });
       }

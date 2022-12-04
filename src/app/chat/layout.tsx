@@ -7,6 +7,7 @@ export default function ChatLayout({
 }) {
   return (
     <div className="flex h-screen">
+      {/* @ts-ignore */}
       <Navbar />
       <Sidebar />
       <main className="Chat-layout">{children}</main>

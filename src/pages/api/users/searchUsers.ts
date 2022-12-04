@@ -21,9 +21,9 @@ export default async function handler(
   if (!q) return;
 
   const users = [];
-  const idx = await client.zrank("users", q);
+  const idx = await client.zrank("users:all", q);
   if (idx != null) {
-    const range = await client.zrange("users", idx, idx + 100);
+    const range = await client.zrange("users:all", idx, idx + 100);
     for (const el of range) {
       if (!el.startsWith(q)) {
         break;

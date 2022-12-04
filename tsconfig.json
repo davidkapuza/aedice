@@ -28,8 +28,10 @@
       "@components/*": ["src/components/*"],
       "@core/*": ["src/core/*"],
       "@lib/*": ["src/lib/*"],
+      "@services/*": ["src/lib/services/*"],
       "@api/*": ["src/pages/api/*"],
       "@ui/*": ["src/core/ui/*"],
+      "@types/*": ["src/core/types/*"],
     },
   },
   "include": [

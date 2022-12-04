@@ -2,13 +2,13 @@ import "./Message.styles.css"
 import Image from "next/image";
 import TimeAgo from "react-timeago";
 import { memo } from "react";
-import { Message } from "@core/types";
+import { TMessage } from "@core/types/entities";
 
 function Message({
   isOwner,
   message,
 }: {
-  message: Message;
+  message: TMessage;
   isOwner: boolean;
 }) {
   return (
@@ -16,7 +16,7 @@ function Message({
         <Image
           height={30}
           width={30}
-          src={message.profilePic}
+          src={message.image}
           alt="Avatar"
           className={`Avatar ${isOwner ? "order-1" : ""}`}
         />
