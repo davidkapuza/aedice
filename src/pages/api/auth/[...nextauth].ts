@@ -1,4 +1,4 @@
-import initializeUser from "@lib/services/users/initializeUser";
+import { initializeUserInDb } from "@lib/services/server/initializeUserInDb";
 import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import { Redis as UpstashRedis } from "@upstash/redis";
 import https from "https";
@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(redis),
   callbacks: {
     async signIn({ user }) {
-      return await initializeUser(user);
+      return await initializeUserInDb(user);
     },
     async session({ session, user }) {
       session.user.uid = user.uid;

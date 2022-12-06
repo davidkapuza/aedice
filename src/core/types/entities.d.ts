@@ -1,3 +1,5 @@
+import { User } from "next-auth"
+
 export type TMessage = {
   id: string,
   message: string,

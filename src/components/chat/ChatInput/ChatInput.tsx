@@ -1,27 +1,30 @@
 "use client";
 import Airplane from "@core/icons/AirplaneIcon";
 import { TMessage } from "@core/types/entities";
-import getMessages from "@lib/services/chat/getMessages";
+import { getMessagesById } from "@lib/services/client/messages";
 import IconButton from "@ui/IconButton/IconButton";
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import useSWR from "swr";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
-import { usePathname } from "next/navigation";
 
-function ChatInput() {
+type Props = {
+  session: Session | null;
+};
+
+function ChatInput({ session }: Props) {
   const pathname = usePathname();
   // * Get chat id from url
-  const chatId = pathname?.substring(pathname.lastIndexOf("/") + 1) || "";
+  const chat_id = pathname?.substring(pathname.lastIndexOf("/") + 1) || "";
 
-  const { data: session } = useSession();
   const [input, setInput] = useState("");
   const {
     data: messages,
     error,
     mutate,
-  } = useSWR("/api/getMessages", () => getMessages(chatId));
+  } = useSWR(`/api/messages/getMessagesById?q=${chat_id}`, getMessagesById);
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input || !session) return;
@@ -45,7 +48,7 @@ function ChatInput() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message, chatId }),
+        body: JSON.stringify({ message, chat_id }),
       }).then((res) => res.json());
       return [...messages!, data.message];
     };

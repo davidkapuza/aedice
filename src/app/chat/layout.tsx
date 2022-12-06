@@ -7,8 +7,9 @@ export default function ChatLayout({
 }) {
   return (
     <div className="flex h-screen">
-      {/* @ts-ignore */}
+      {/* @ts-expect-error Server Component */}
       <Navbar />
+      {/* @ts-expect-error Server Component */}
       <Sidebar />
       <main className="Chat-layout">{children}</main>
     </div>

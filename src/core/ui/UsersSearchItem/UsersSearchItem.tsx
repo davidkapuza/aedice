@@ -1,29 +1,27 @@
 "use client"
-import "./SearchItem.styles.css";
+import "./UsersSearchItem.styles.css";
 import React from "react";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
-import { useSession } from "next-auth/react";
 
 function SearchItem({ user }: any) {
-  const { data: session } = useSession()
 
   const router = useRouter();
-
-  const enterChat = async (chatId: string) => {
+  // TODO create chat roles to be able to have more then two members
+  const enterChat = async (user: any) => {
     await fetch("/api/chat/enterChat", {
       method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user: session?.user, chatId }),
+        body: JSON.stringify({ chatOwner: user  }),
     })
-    router.push("chat/" + chatId)
+    router.push("chat/" + user.chat_id)
   }
 
   return (
     <li >
-      <button className="Search-item" onClick={() => enterChat(user.chatId)}>
+      <button className="Search-item" onClick={() => enterChat(user)}>
         <Image
           className="mr-2 Avatar"
           width={40}

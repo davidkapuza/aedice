@@ -1,39 +1,32 @@
 "use client";
-import { useSession } from "next-auth/react";
-import React, { useEffect } from "react";
-import useSWR from "swr";
-import getMessages from "@lib/services/chat/getMessages";
 import { clientPusher } from "@core/pusher/index";
-import { Message } from "@ui/index";
-
-import "./Chat.styles.css"
 import { TMessage } from "@core/types/entities";
-
+import { getMessagesById } from "@lib/services/client/messages";
+import { Message } from "@ui/index";
+import { Session } from "next-auth";
+import { useEffect } from "react";
+import useSWR from "swr";
+import "./Chat.styles.css";
 
 type Props = {
+  session: Session | null;
   initialMessages?: TMessage[];
-  chatId: string;
+  chat_id: string;
 };
 
-function Chat({ initialMessages, chatId }: Props) {
-  const { data: session } = useSession();
-  const {
-    data: messages,
-    error,
-    mutate,
-  } = useSWR("/api/getMessages", () => getMessages(chatId));
+function Chat({ initialMessages, chat_id, session }: Props) {
+  const query = `/api/messages/getMessagesById?q=${chat_id}`;
+  const { data: messages, error, mutate } = useSWR(query, getMessagesById);
 
   useEffect(() => {
-    const channel = clientPusher.subscribe("chat-messages-" + chatId);
+    const channel = clientPusher.subscribe("chat-messages-" + chat_id);
     channel.bind("new-message", async (message: TMessage) => {
-
-      // * if sender is a client - no need to update cache
       if (messages?.find((message) => message.id === message.id)) return;
 
       if (!messages) {
-        mutate(() => getMessages(chatId));
+        mutate(() => getMessagesById(query));
       } else {
-        mutate(() => getMessages(chatId), {
+        mutate(() => getMessagesById(query), {
           optimisticData: [...messages!, message],
           rollbackOnError: true,
         });

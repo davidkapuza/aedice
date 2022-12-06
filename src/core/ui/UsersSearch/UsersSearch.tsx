@@ -1,27 +1,22 @@
 "use client";
-import debounce from "lodash.debounce";
-import React, { useMemo, useState } from "react";
-import SearchIcon from "../../icons/SearchIcon";
-import SearchItem from "../SearchItem/SearchItem";
+import useDebounce from "@lib/hooks/useDebounce";
+import { searchUserByEmail } from "@services/client/users";
+import { useState } from "react";
+import useSWR from "swr";
+import SearchIcon from "@core/icons/SearchIcon";
+import UsersSearchItem from "../UsersSearchItem/UsersSearchItem";
 import "./UsersSearch.styles.css";
 
 function UsersSearch() {
-  const [users, setUsers] = useState([]);
-
-  const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const q = e.target.value;
-    if (q.length > 2) {
-      const params = new URLSearchParams({ q });
-      const res = await fetch("/api/users/searchUsers?" + params);
-      const { users } = await res.json();
-      setUsers(users);
-    } else {
-      setUsers([]);
-    }
-  };
-
-  const debouncedSearch = useMemo(() => debounce(search, 300), []);
-
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 1000);
+  const { data: users, error } = useSWR(
+    () =>
+      debouncedSearch
+        ? `/api/users/searchUserByEmail?q=${debouncedSearch}`
+        : null,
+    searchUserByEmail
+  );
   return (
     <>
       <div className="Search">
@@ -30,17 +25,19 @@ function UsersSearch() {
         </div>
         <input
           type="text"
-          onChange={debouncedSearch}
+          onChange={(e) => setSearch(e.target.value)}
+          value={search}
           id="users-search-input"
           className="Search-input"
           placeholder="Search..."
         />
       </div>
-
       <ul>
-        {users?.map((user: any) => {
-          return <SearchItem key={user.id} user={user} />;
-        })}
+        {search &&
+          (users?.map((user: any) => (
+            <UsersSearchItem key={user.id} user={user} />
+          )) ||
+            "Loading...")}
       </ul>
     </>
   );

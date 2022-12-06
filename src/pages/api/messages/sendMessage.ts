@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import Redis from "ioredis";
+import client from "@core/redis";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { serverPusher } from "@core/pusher";
 import { TMessage } from "@core/types/entities";
@@ -19,9 +19,7 @@ export default async function handler(
     res.status(405).json({ body: "Method Not Allowed" });
     return;
   }
-  const client = new Redis(process.env.REDIS_URL!);
-
-  const { message, chatId } = req.body;
+  const { message, chat_id } = req.body;
 
   const newMessage = {
     ...message,
@@ -30,11 +28,11 @@ export default async function handler(
   };
   // * Push to upstash redis db
   await client.hset(
-    "chat:messages:" + chatId,
+    "chat:messages:" + chat_id,
     message.id,
     JSON.stringify(newMessage)
   );
-  serverPusher.trigger("chat-messages-" + chatId, "new-message", newMessage);
+  serverPusher.trigger("chat-messages-" + chat_id, "new-message", newMessage);
 
   res.status(200).json({ message: newMessage });
   await client.quit();
