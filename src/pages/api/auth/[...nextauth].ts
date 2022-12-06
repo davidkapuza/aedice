@@ -23,6 +23,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, user }) {
       session.user.uid = user.uid;
+      session.user.chat_id = user.chat_id;
       return session;
     },
   },

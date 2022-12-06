@@ -1,21 +1,24 @@
-import client from "@core/redis";
+import Redis from "ioredis";
 import { User } from "next-auth";
 import { v4 as uuid } from "uuid";
 
 export async function initializeUserInDb(user: User) {
+  const client = new Redis(process.env.REDIS_URL!, {
+    enableAutoPipelining: true,
+  });
   // * Checking if user already exists
   const exists = await client.get("user:email:" + user.email);
   if (exists) {
-    await client.quit();
     return true;
   }
 
   const chat_id = uuid();
-  const userId = uuid();
-  const userJson = JSON.stringify({ uid: userId, chat_id, ...user });
+  const user_id = uuid();
+  const userJson = JSON.stringify({ uid: user_id, chat_id, ...user });
 
-  // * Adding custom id for user
-  user.uid = userId;
+  // * Adding custom uid and chat id for user
+  user.uid = user_id;
+  user.chat_id = chat_id;
 
   // * Storing user email substrings in Redis sorted set for search by email autocomplete
 
@@ -29,14 +32,6 @@ export async function initializeUserInDb(user: User) {
   sortedSet.push(email + "*" + userJson + "*");
   await client.zadd("users:all", ...sortedSet);
 
-  // * Initialize initial chat for a new user
-  await client.hset("chat:members:" + chat_id, userId, userJson);
-
-  // * Initialize set of chats user exists in
-  await client.hset("user:chats:" + userId, chat_id, userJson);
-
   await client.quit();
   return true;
 }
-
-

@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import client from "@core/redis";
+import Redis from "ioredis";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 
@@ -18,6 +18,10 @@ export default async function handler(
     res.status(405).json({ body: "Method Not Allowed" });
     return;
   }
+  console.log("REDIS URL IN GETUSERCHATS API >> ", process.env.REDIS_URL)
+  const client = new Redis(process.env.REDIS_URL!, {
+    enableAutoPipelining: true,
+  });
   const chatsJson: string[] = await client.hvals("user:chats:" + req.query.q);
   const chats: string[] = chatsJson
     .map((chat) => JSON.parse(chat))

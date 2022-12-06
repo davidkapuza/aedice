@@ -4,6 +4,7 @@ import { TMessage } from "@core/types/entities";
 import { getMessagesById } from "@lib/services/client/messages";
 import { Message } from "@ui/index";
 import { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 import "./Chat.styles.css";
@@ -16,15 +17,16 @@ type Props = {
 
 function Chat({ initialMessages, chat_id, session }: Props) {
   const query = `/api/messages/getMessagesById?q=${chat_id}`;
-  const { data: messages, error, mutate } = useSWR(query, getMessagesById);
 
+  const { data: messages, error, mutate } = useSWR(query, getMessagesById);
   useEffect(() => {
+
     const channel = clientPusher.subscribe("chat-messages-" + chat_id);
     channel.bind("new-message", async (message: TMessage) => {
       if (messages?.find((message) => message.id === message.id)) return;
 
       if (!messages) {
-        mutate(() => getMessagesById(query));
+        mutate(() => getMessagesById(query))
       } else {
         mutate(() => getMessagesById(query), {
           optimisticData: [...messages!, message],

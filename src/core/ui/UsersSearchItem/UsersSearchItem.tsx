@@ -9,7 +9,7 @@ function SearchItem({ user }: any) {
   const router = useRouter();
   // TODO create chat roles to be able to have more then two members
   const enterChat = async (user: any) => {
-    await fetch("/api/chat/enterChat", {
+    await fetch("/api/chats/enterChat", {
       method: "POST",
         headers: {
           "Content-Type": "application/json",

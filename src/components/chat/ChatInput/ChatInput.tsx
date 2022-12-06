@@ -43,7 +43,7 @@ function ChatInput({ session }: Props) {
     };
 
     const uploadMsgToUpstash = async () => {
-      const data = await fetch("/api/chat/sendMessage", {
+      const data = await fetch("/api/messages/sendMessage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
