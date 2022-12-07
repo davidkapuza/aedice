@@ -3,10 +3,8 @@ module.exports = {
   mode: "jit",
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
-    // './common/**/*.{js,ts,jsx,tsx}',
-    // './app/**/*.{js,ts,jsx,tsx}',
   ],
-  darkMode: "class", // class, 'media' or boolean
+  darkMode: "class",
   theme: {
     extend: {
       colors: {

@@ -1,4 +1,5 @@
-import { Navbar, Sidebar } from "@components/index";
+import { Header, Sidebar } from "@components/index";
+import Footer from "@components/layouts/Footer/Footer";
 
 export default function ChatLayout({
   children,
@@ -7,11 +8,12 @@ export default function ChatLayout({
 }) {
   return (
     <div className="flex h-screen">
-      {/* @ts-expect-error Server Component */}
-      <Navbar />
+      <Header />
+      {/* <Navbar /> */}
       {/* @ts-expect-error Server Component */}
       <Sidebar />
       <main className="Chat-layout">{children}</main>
+      <Footer />
     </div>
   );
 }

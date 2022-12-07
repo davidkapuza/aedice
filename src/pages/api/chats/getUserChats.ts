@@ -18,13 +18,12 @@ export default async function handler(
     res.status(405).json({ body: "Method Not Allowed" });
     return;
   }
-  console.log("REDIS URL IN GETUSERCHATS API >> ", process.env.REDIS_URL)
   const client = new Redis(process.env.REDIS_URL!, {
     enableAutoPipelining: true,
   });
+  
   const chatsJson: string[] = await client.hvals("user:chats:" + req.query.q);
-  const chats: string[] = chatsJson
-    .map((chat) => JSON.parse(chat))
+  const chats: string[] = chatsJson.map((chat) => JSON.parse(chat));
 
   res.status(200).json({ chats });
   await client.quit();

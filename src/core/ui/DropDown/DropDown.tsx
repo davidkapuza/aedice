@@ -19,9 +19,9 @@ interface Props {
 
 export default function DropDown({ button, content }: Props) {
   return (
-    <Menu as="div" className="relative flex justify-center  text-left">
-      <div>
-        <Menu.Button className="inline-flex justify-center rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+    <Menu as="div" className="relative flex justify-center flex-1 text-left">
+      <div className="ml-auto">
+        <Menu.Button className="inline-flex justify-center text-sm font-medium focus:outline-none">
           {button}
         </Menu.Button>
       </div>
@@ -35,7 +35,7 @@ export default function DropDown({ button, content }: Props) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-5 z-50 mt-10 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute z-50 w-56 mt-10 origin-top-right bg-white rounded-md shadow-lg right-5 ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
             {content.map(({ link, text, styles = ""}) => (
               <Menu.Item key={text}>
