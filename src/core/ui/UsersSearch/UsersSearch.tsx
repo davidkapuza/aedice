@@ -1,21 +1,27 @@
 "use client";
-import useDebounce from "@lib/hooks/useDebounce";
-import { searchUserByEmail } from "@services/client/users";
+
 import { useState } from "react";
 import useSWR from "swr";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import UsersSearchItem from "../UsersSearchItem/UsersSearchItem";
 import "./UsersSearch.styles.css";
 
+async function searchUsers(query: string) {
+  const response = await fetch(query);
+  if (!response?.ok) {
+    console.log("Err..");
+    return;
+  }
+  const { users } = await response.json();
+  return users;
+}
+
 function UsersSearch() {
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 1000);
+
   const { data: users, error } = useSWR(
-    () =>
-      debouncedSearch
-        ? `/api/users/searchUserByEmail?q=${debouncedSearch}`
-        : null,
-    searchUserByEmail
+    () => (search ? `/api/users/searchUserByEmail?q=${search}` : null),
+    searchUsers
   );
   return (
     <>

@@ -1,5 +1,6 @@
 
-import DropDown from "@core/ui/DropDown/DropDown";
+
+import DropDown from "@/core/ui/DropDown/DropDown";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import "./Header.styles.css";
 

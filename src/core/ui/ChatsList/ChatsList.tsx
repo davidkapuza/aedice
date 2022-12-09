@@ -1,9 +1,5 @@
 "use client"
-import { clientPusher } from "@core/pusher";
-import { getUserChats } from "@lib/services/client/chats";
 import { Session } from "next-auth";
-import React, { useEffect } from "react";
-import useSWR from "swr";
 import ChatsListItem from "../ChatsListItem/ChatsListItem";
 
 type Props = {

@@ -1,4 +1,5 @@
-import { authOptions } from '@api/auth/[...nextauth]'
+
+import { authOptions } from '@/lib/auth'
 import { unstable_getServerSession } from 'next-auth'
 import React from 'react'
 

@@ -1,19 +1,18 @@
-import "./Message.styles.css";
+import { TypeMessage } from "@/lib/validations/message";
 import Image from "next/image";
-import TimeAgo from "react-timeago";
 import { memo } from "react";
-import { TMessage } from "@core/types/entities";
+import "./Message.styles.css";
 
 function Message({
   isOwner,
   message,
 }: {
-  message: TMessage;
+  message: TypeMessage;
   isOwner: boolean;
 }) {
   return (
     <div className={`Message ${isOwner ? "Message-left" : "Message-right"}`}>
-      <p className="text-black leading-[1.1rem]">{message.message}</p>
+      <p className="text-black leading-[1.1rem]">{message.text}</p>
       {!isOwner && (
         <Image
           src={message.image}
