@@ -1,19 +1,46 @@
+"use client"
+import { clientPusher } from "@core/pusher";
+import { getUserChats } from "@lib/services/client/chats";
 import { Session } from "next-auth";
-import React from "react";
+import React, { useEffect } from "react";
+import useSWR from "swr";
 import ChatsListItem from "../ChatsListItem/ChatsListItem";
 
 type Props = {
-  chats: any;
-  // session: Session | null;
+  prerenderedChats: string[];
+  session: Session | null;
 };
 
-function ChatsList({ chats, /* session */ }: Props) {
+function ChatsList({ prerenderedChats, session }: Props) {
+  // const query = "/api/chats/getUserChats?=" + session?.user.uid
+
+  // const { data: chats, error, mutate } = useSWR(query, getUserChats);
+  // useEffect(() => {
+  //   const channel = clientPusher.subscribe("user-chats-" + session?.user.uid);
+  //   channel.bind("new-chat", async (members: any) => {
+  //     if (!members) {
+  //       mutate(() => getUserChats(query));
+  //     } else {
+  //       mutate(() => getUserChats(query), {
+  //         optimisticData: [...chats!, members],
+  //         rollbackOnError: true,
+  //       });
+  //     }
+  //   });
+  //   return () => {
+  //     channel.unbind_all();
+  //     channel.unsubscribe();
+  //   };
+  // }, [chats, mutate, clientPusher]);
+
+
   return (
     <ul>
       <h1 className="py-3 dark:text-white">Chats.</h1>
-      {chats.map(({ members, chat_id }: any) => {
+      {(prerenderedChats /* || chats */)?.map(({ members, chat_id }: any) => {
+
         const chatOwner = members.filter(
-          (member: any) => member.uid !== /* session?.user.uid */"64a90ce6-7017-4a45-9dd2-d17c6168495d"
+          (member: any) => member.uid !== session?.user.uid
         )[0];
         return (
           <ChatsListItem

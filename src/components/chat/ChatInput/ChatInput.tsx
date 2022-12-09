@@ -10,23 +10,22 @@ import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
 
 type Props = {
-  // session: Session | null;
+  session: Session | null;
   chat_id: string;
 };
 
-function ChatInput({ /* session ,*/ chat_id }: Props) {
+function ChatInput({ session, chat_id }: Props) {
+
   const [input, setInput] = useState("");
   const {
     data: messages,
     error,
     mutate,
   } = useSWR(`/api/messages/getMessagesById?q=${chat_id}`, getMessagesById);
-  /*   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input || !session) return;
-
     const msgToSend = input;
-
     setInput("");
     const id = uuid();
     const message: TMessage = {
@@ -52,15 +51,13 @@ function ChatInput({ /* session ,*/ chat_id }: Props) {
       optimisticData: [...messages!, message],
       rollbackOnError: true,
     });
-  }; */
+  };
   return (
-    <form
-      className="Chat-form"
-      onSubmit={(e) => /* sendMessage(e) */ console.log("")}
-    >
+    <form className="Chat-form" onSubmit={(e) => sendMessage(e)}>
       <Image
         src={
-          /* session?.user.image || */ "https://avatars.dicebear.com/api/open-peeps/random-seed.svg"
+          session?.user.image ||
+          "https://avatars.dicebear.com/api/open-peeps/random-seed.svg"
         }
         height={20}
         width={20}
@@ -70,7 +67,6 @@ function ChatInput({ /* session ,*/ chat_id }: Props) {
       <AutosizeInput
         type="text"
         autoComplete="off"
-        name="chat-input"
         placeholder="Type..."
         value={input}
         className="Chat-input"

@@ -8,3 +8,8 @@ export type TMessage = {
   image: string,
   email: string,
 }
+
+export type TChat = {
+  chat_id: string,
+  memberes: User[]
+}

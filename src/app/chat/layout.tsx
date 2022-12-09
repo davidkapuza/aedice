@@ -9,7 +9,6 @@ export default function ChatLayout({
   return (
     <div className="flex h-screen">
       <Header />
-      {/* <Navbar /> */}
       {/* @ts-expect-error Server Component */}
       <Sidebar />
       <main className="Chat-layout">{children}</main>

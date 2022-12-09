@@ -10,9 +10,8 @@ function AvatarsGroup({ avatars }: Props) {
     <ul className="Avatars-group">
       <p className="ml-3 mr-auto text-xs text-gray-500">{avatars.length} members</p>
       {avatars.map((avatar) => (
-        <span className="Avatar-wrapper">
+        <span key={avatar} className="Avatar-wrapper">
           <Image
-            key={avatar}
             src={avatar}
             height={25}
             width={25}

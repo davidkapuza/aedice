@@ -19,17 +19,13 @@ export default async function handler(
     res.status(405).json({ body: "Method Not Allowed" });
     return;
   }
-  const client = new Redis(process.env.REDIS_URL!, {
-    enableAutoPipelining: true,
-  });
+  const client = new Redis(process.env.REDIS_URL!);
   const { message, chat_id } = req.body;
 
   const newMessage = {
     ...message,
-    // * Replace client timestamp with server timestamp
     created_at: Date.now(),
   };
-  // * Push to upstash redis db
   await client.hset(
     "chat:messages:" + chat_id,
     message.id,
@@ -38,5 +34,5 @@ export default async function handler(
   serverPusher.trigger("chat-messages-" + chat_id, "new-message", newMessage);
 
   res.status(200).json({ message: newMessage });
-  client.quit()
+  client.quit();
 }

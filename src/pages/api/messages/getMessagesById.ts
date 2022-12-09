@@ -14,10 +14,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | Error>
 ) {
-  if (req.method !== "GET") {
-    res.status(405).json({ body: "Method Not Allowed" });
-    return;
-  }
+
   const client = new Redis(process.env.REDIS_URL!, {
     enableAutoPipelining: true,
   });

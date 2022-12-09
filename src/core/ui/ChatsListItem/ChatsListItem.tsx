@@ -1,11 +1,13 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import AvatarsGroup from "../AvatarsGroup/AvatarsGroup";
 import "./ChatsListItem.styles.css";
 
 function ChatsListItem({ members, chatOwner, chat_id }: any) {
   const router = useRouter();
+
   return (
     <li>
       <button

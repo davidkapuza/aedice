@@ -1,13 +1,7 @@
+// import { initializeUserInDb } from "@lib/services/server/initializeUserInDb";
 import { initializeUserInDb } from "@lib/services/server/initializeUserInDb";
-import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
-import { Redis as UpstashRedis } from "@upstash/redis";
-import https from "https";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-
-const redis = UpstashRedis.fromEnv({
-  agent: new https.Agent({ keepAlive: true }),
-});
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,25 +10,33 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  adapter: UpstashRedisAdapter(redis),
   callbacks: {
-    async signIn({ user }) {
-      return await initializeUserInDb(user);
+    async signIn({ user, account, profile, email, credentials }) {
+      await initializeUserInDb(user);
+      return true;
     },
-    async session({ session, user }) {
-      session.user.uid = user.uid;
-      session.user.chat_id = user.chat_id;
+    async jwt({ token, user, account, profile, isNewUser }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.uid = user?.uid;
+        token.chat_id = user?.chat_id;
+      }
+      return token;
+    },
+    async session({ session, token, user }) {
+      session.user.uid = token.uid as string;
+      session.user.chat_id = token.chat_id as string;
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET!,
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   theme: {
-    colorScheme: "dark", // "auto" | "dark" | "light"
-    brandColor: "#0000", // Hex color code
-    logo: "https://next-auth.js.org/img/logo/logo-sm.png", // Absolute URL to image
+    colorScheme: "dark",
+    brandColor: "#0000",
+    logo: "https://next-auth.js.org/img/logo/logo-sm.png",
   },
   debug: true,
 };

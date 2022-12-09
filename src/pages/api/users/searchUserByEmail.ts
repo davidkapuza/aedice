@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
 import Redis from "ioredis";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
   users: string[];
@@ -16,7 +16,6 @@ export default async function handler(
   const q = Array.isArray(req.query.q)
     ? req.query.q.join("").toUpperCase()
     : req.query.q?.toUpperCase();
-
   if (!q) {
     res.status(400).json({
       error: "Search can not be empty...",
@@ -25,11 +24,11 @@ export default async function handler(
     const client = new Redis(process.env.REDIS_URL!, {
       enableAutoPipelining: true,
     });
-  
+
     const users = [];
-    const idx = await client.zrank("users:all", q);
+    const idx = await client.zrank("users:search", q);
     if (idx != null) {
-      const range = await client.zrange("users:all", idx, idx + 100);
+      const range = await client.zrange("users:search", idx, idx + 100);
       for (const el of range) {
         if (!el.startsWith(q)) {
           break;
@@ -40,7 +39,7 @@ export default async function handler(
       }
     }
     res.status(200).json({ users });
-    await client.quit()
+    await client.quit();
   } else {
     res.status(400).json({
       error: "Max 50 characters please.",

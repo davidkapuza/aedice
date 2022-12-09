@@ -2,9 +2,8 @@
 import Redis from "ioredis";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-
 type Data = {
-  chats: string[];
+  chats: any;
 };
 type Error = {
   body: string;
@@ -14,17 +13,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | Error>
 ) {
-  if (req.method !== "GET") {
-    res.status(405).json({ body: "Method Not Allowed" });
-    return;
-  }
   const client = new Redis(process.env.REDIS_URL!, {
     enableAutoPipelining: true,
   });
-  
-  const chatsJson: string[] = await client.hvals("user:chats:" + req.query.q);
-  const chats: string[] = chatsJson.map((chat) => JSON.parse(chat));
 
+  const chatsHset = Object.entries(
+    await client.hgetall("user:chats:" + req.query.q)
+  );
+  const chats = chatsHset.map(([chat_id, membersJson]) => ({
+    chat_id,
+    members: JSON.parse(membersJson),
+  }));
   res.status(200).json({ chats });
   await client.quit();
 }

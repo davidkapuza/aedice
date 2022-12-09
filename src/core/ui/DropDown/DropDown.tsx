@@ -9,7 +9,6 @@ function classNames(...classes: any) {
 interface ContentProps {
   link: string;
   text: string;
-  // icon: React.ReactNode;
   styles?: string;
 }
 interface Props {
