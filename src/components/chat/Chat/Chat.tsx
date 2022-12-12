@@ -1,9 +1,7 @@
 "use client";
-
 import { clientPusher } from "@/core/pusher";
 import Message from "@/core/ui/Message/Message";
 import { TypeMessage } from "@/lib/validations/message";
-import { Session } from "next-auth";
 import { useEffect } from "react";
 import useSWR from "swr";
 import ChatInput from "../ChatInput/ChatInput";
@@ -29,7 +27,11 @@ async function getMessages(query: string) {
 function Chat({ prerenderedMessages, chat_id, user }: Props) {
   const query = `/api/chats/${chat_id}`;
 
-  const { data: messages, error, mutate } = useSWR<TypeMessage[]>(query, getMessages);
+  const {
+    data: messages,
+    error,
+    mutate,
+  } = useSWR<TypeMessage[]>(query, getMessages);
   useEffect(() => {
     const channel = clientPusher.subscribe("chat-messages-" + chat_id);
     channel.bind("new-message", async (message: TypeMessage) => {
@@ -50,11 +52,15 @@ function Chat({ prerenderedMessages, chat_id, user }: Props) {
   }, [messages, mutate, clientPusher]);
 
   return (
-    <div className="Chat">
-      {(messages || prerenderedMessages)?.map((message: TypeMessage) => {
-        const isOwner = user?.email === message.email;
-        return <Message key={message.id} message={message} isOwner={isOwner} />;
-      })}
+    <div>
+      <ul className="Chat">
+        {(messages || prerenderedMessages)?.map((message: TypeMessage) => {
+          const isOwner = user?.email === message.email;
+          return (
+            <Message key={message.id} message={message} isOwner={isOwner} />
+          );
+        })}
+      </ul>
       <ChatInput user={user} chat_id={chat_id} />
     </div>
   );

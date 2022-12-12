@@ -1,14 +1,14 @@
 .Message {
-  @apply flex flex-row gap-[0.6rem] max-w-md my-0.5 mx-6 pr-0.5 items-center;
+  @apply flex min-h-[28px] flex-row gap-[0.6rem] max-w-md my-0.5 pr-0.5 items-center;
 }
 
 .Message-text {
-  @apply flex-1 py-0.5  text-xs w-fit rounded-2xl;
+  @apply py-0.5 text-xs w-fit rounded-2xl;
 }
 
 .Message-right {
-  @apply pl-3 ml-auto bg-orange-300 Message-text;
+  @apply self-end pl-3 bg-orange-300 Message-text;
 }
 .Message-left {
-  @apply px-3 mr-auto bg-teal-600 Message-text;
+  @apply self-start px-3 bg-teal-600 Message-text;
 }

@@ -28,9 +28,18 @@ export const authOptions: NextAuthOptions = {
       const userJson = JSON.stringify(user);
       await redis.hset(`user:email:${user.email}`, user);
 
+      const created_at = Date.now();
+
       // ? Initialize chat for a new user
+      await redis.hset(`chat:${chat_id}`, {
+        id: chat_id,
+        created_at,
+        private: false,
+        last_message: null,
+        last_message_time: null,
+      });
       await redis.sadd(`chat:members:${chat_id}`, userJson);
-      await redis.zadd(`user:chats:${user_id}`, Date.now(), chat_id);
+      await redis.zadd(`user:chats:${user_id}`, created_at, chat_id);
       // ? Make chat pubic by default
       await redis.sadd("chats:public", chat_id);
 
@@ -43,7 +52,7 @@ export const authOptions: NextAuthOptions = {
         sortedSet.push(email.substring(0, i));
       }
       sortedSet.push(0);
-      sortedSet.push(email + "*" + userJson + "*");
+      sortedSet.push(email + "*" + JSON.stringify(user) + "*");
       await redis.zadd("users:search", ...sortedSet);
       return true;
     },

@@ -11,7 +11,7 @@ function Message({
   isOwner: boolean;
 }) {
   return (
-    <div className={`Message ${isOwner ? "Message-left" : "Message-right"}`}>
+    <li className={`Message ${isOwner ? "Message-left" : "Message-right"}`}>
       <p className="text-black leading-[1.1rem]">{message.text}</p>
       {!isOwner && (
         <Image
@@ -37,7 +37,7 @@ function Message({
         </small>
 
       </div> */}
-    </div>
+    </li>
   );
 }
 export default memo(Message);

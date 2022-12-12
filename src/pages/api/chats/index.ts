@@ -16,8 +16,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const chats = await Promise.all(
         userChats.map(async (chat_id) => {
           const members = await redis.smembers(`chat:members:${chat_id}`);
+          const chat = await redis.hgetall(`chat:${chat_id}`)
           return {
-            chat_id,
+            ...chat,
             members: members.map((member) => JSON.parse(member)),
           };
         })

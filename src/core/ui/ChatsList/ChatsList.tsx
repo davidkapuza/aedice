@@ -33,9 +33,9 @@ function ChatsList({ prerenderedChats, user }: Props) {
   return (
     <ul>
       <h1 className="py-3 dark:text-white">Chats.</h1>
-      {(chats || prerenderedChats)?.map(({ members, chat_id }: any) => {
+      {(chats || prerenderedChats)?.map((chat: any) => {
         return (
-          <ChatsListItem key={chat_id} members={members} chat_id={chat_id} />
+          <ChatsListItem key={chat.id} chat={chat} />
         );
       })}
     </ul>
