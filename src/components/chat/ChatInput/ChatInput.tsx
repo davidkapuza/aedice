@@ -10,22 +10,17 @@ import "./ChatInput.styles.css";
 import Image from "next/image";
 
 type Props = {
-  session: Session | null;
+  user: any;
   chat_id: string;
 };
 
 async function getMessages(query: string) {
   const response = await fetch(query);
-  if (!response?.ok) {
-    // TODO add err handling in ui
-    console.log("Err...");
-    return;
-  }
   const { messages } = await response.json();
   return messages;
 }
 
-function ChatInput({ session, chat_id }: Props) {
+function ChatInput({ user, chat_id }: Props) {
   const [input, setInput] = useState("");
   const {
     data: messages,
@@ -33,21 +28,21 @@ function ChatInput({ session, chat_id }: Props) {
     mutate,
   } = useSWR(`/api/chats/${chat_id}`, getMessages);
 
-  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+  const send = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!input || !session) return;
+    if (!input || !user) return;
     const id = uuid();
     const message: TypeMessage = {
       id,
       text: input,
       created_at: Date.now(),
-      username: session?.user?.name!,
-      image: session?.user?.image!,
-      email: session?.user?.email!,
+      username: user?.name!,
+      image: user?.image!,
+      email: user?.email!,
     };
     setInput("");
     
-    const uploadMsgToUpstash = async () => {
+    const sendMessage = async () => {
       const data = await fetch(`/api/chats/${chat_id}`, {
         method: "POST",
         headers: {
@@ -57,16 +52,16 @@ function ChatInput({ session, chat_id }: Props) {
       }).then((res) => res.json());
       return [...messages!, data.message];
     };
-    await mutate(uploadMsgToUpstash, {
+    await mutate(sendMessage, {
       optimisticData: [...messages!, message],
       rollbackOnError: true,
     });
   };
   return (
-    <form className="Chat-form" onSubmit={(e) => sendMessage(e)}>
+    <form className="Chat-form" onSubmit={(e) => send(e)}>
       <Image
         src={
-          session?.user.image ||
+          user.image ||
           "https://avatars.dicebear.com/api/open-peeps/random-seed.svg"
         }
         height={20}

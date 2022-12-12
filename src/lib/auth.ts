@@ -13,25 +13,26 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile, credentials }) {
       // ? Checking if user already exists
-      const exists = await redis.hexists("user:email:" + user.email, "uid");
+      const exists = await redis.hexists("user:email:" + user.email, "id");
       if (exists) {
         return true;
       }
 
-      // ? Adding custom uid and chat id for user
+      // ? Adding custom user and chat id for user
 
-      const uid = uuid();
+      const user_id = uuid();
       const chat_id = uuid();
 
-      user.uid = uid;
+      user.id = user_id;
       user.chat_id = chat_id;
-
-      const userJson = JSON.stringify({ uid, chat_id, ...user });
-
-      await redis.hset("user:email:" + user.email, user);
+      const userJson = JSON.stringify(user);
+      await redis.hset(`user:email:${user.email}`, user);
 
       // ? Initialize chat for a new user
-      await redis.sadd("chat:members:" + chat_id, userJson);
+      await redis.sadd(`chat:members:${chat_id}`, userJson);
+      await redis.zadd(`user:chats:${user_id}`, Date.now(), chat_id);
+      // ? Make chat pubic by default
+      await redis.sadd("chats:public", chat_id);
 
       // ? Storing user email substrings in Redis sorted set for email autocomplete
 
@@ -47,16 +48,27 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.uid = user?.uid;
-        token.chat_id = user?.chat_id;
+      const dbUser = await redis.hgetall(`user:email:${token.email}`);
+      if (!dbUser) {
+        token.id = user?.id;
+        return token;
       }
-      return token;
+      return {
+        id: dbUser.id,
+        name: dbUser.name,
+        email: dbUser.email,
+        image: dbUser.image,
+        chat_id: dbUser.chat_id,
+      };
     },
     async session({ session, token, user }) {
-      session.user.uid = token.uid as string;
-      session.user.chat_id = token.chat_id as string;
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
+        session.user.chat_id = token.chat_id as string;
+      }
       return session;
     },
   },

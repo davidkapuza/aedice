@@ -1,21 +1,20 @@
 "use client";
-import "./UsersSearchItem.styles.css";
-import React from "react";
+import { joinChat } from "@/lib/services/client/chats";
+import { TypeUser } from "@/lib/validations/user";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import "./UsersSearchItem.styles.css";
 
-function SearchItem({ user }: any) {
+type Props = {
+  owner: TypeUser;
+  user: TypeUser;
+};
+
+function SearchItem({ owner: { name, email, image, chat_id }, user }: Props) {
   const router = useRouter();
-  // TODO create chat roles to be able to have more then two members
-  const enterChat = async (user: any) => {
-    await fetch("/api/chats/enterChat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ chatOwner: user }),
-    });
-    router.push("chat/" + user.chat_id);
+  const join = async (chat_id: string) => {
+    router.push(`chat/${chat_id}`);
+    await joinChat(chat_id, user);
   };
 
   return (
@@ -26,19 +25,19 @@ function SearchItem({ user }: any) {
             className="mr-2 Avatar"
             width={25}
             height={25}
-            src={user.image}
+            src={image}
             alt="Avatar"
           ></Image>
           <button
-            onClick={() => enterChat(user)}
+            onClick={() => join(chat_id)}
             className="px-2 text-xs rounded-full dark:bg-white dark:text-black"
           >
             Add
           </button>
         </div>
         <div className="flex-1 w-full mt-3 text-left">
-          <h1 className="text-sm leading-3">{user.name}</h1>
-          <small className="text-xs text-gray-500">{user.email}</small>
+          <h1 className="text-sm leading-3">{name}</h1>
+          <small className="text-xs text-gray-500">{email}</small>
         </div>
       </div>
     </li>

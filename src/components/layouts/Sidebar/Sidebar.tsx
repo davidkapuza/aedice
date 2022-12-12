@@ -1,30 +1,18 @@
 import ChatsList from "@/core/ui/ChatsList/ChatsList";
 import UsersSearch from "@/core/ui/UsersSearch/UsersSearch";
-import { authOptions } from "@/lib/auth";
-import { unstable_getServerSession } from "next-auth";
+import { getChats } from "@/lib/services/server/chats";
+import { getCurrentUser } from "@/lib/session";
 import "./Sidebar.styles.css";
 
-async function getChats() {
-  const responce = await fetch(
-    `${process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000/"}api/chats`
-  );
-  if (!responce?.ok) {
-    // TODO handle errors with ui
-    console.log("Err...");
-    return;
-  }
-  const { chats } = await responce.json();
-  return chats;
-}
-
 export default async function Sidebar() {
-  const session = await unstable_getServerSession(authOptions);
+  const user = await getCurrentUser();
   const prerenderedChats = await getChats();
-
+  if (!user) return <p className="text-white">No User</p>;
+  // ! Bug with getting session on prerender
   return (
     <aside className="Sidebar">
-      <UsersSearch />
-      <ChatsList prerenderedChats={prerenderedChats} session={session} />
+      <UsersSearch user={user} />
+      <ChatsList prerenderedChats={prerenderedChats} user={user} />
     </aside>
   );
 }

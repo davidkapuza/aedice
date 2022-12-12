@@ -65,9 +65,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Messages | Mess
   }
   if (req.method === "PATCH") {
     try {
+
       const user = UserSchema.parse(req.body.user);
+      const members = await redis.smembers(`chat:members:${chat_id}`)
+
+      serverPusher.trigger(
+        `user-chats-${user.id}`,
+        "new-chat",
+        { chat_id, members: [user, ...members.map(member => JSON.parse(member))] }
+      );
+      serverPusher.trigger(
+        `chat-members-${chat_id}`,
+        "new-member",
+        user
+      )
+
+
       await redis.sadd(`chat:members:${chat_id}`, JSON.stringify(user));
-      // TODO Add pusher?
+      await redis.zadd(`user:chats:${user.id}`, Date.now(), chat_id)
+      
+
       return res.end();
     } catch (error) {
       if (error instanceof z.ZodError) {

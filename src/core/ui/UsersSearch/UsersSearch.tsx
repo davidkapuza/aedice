@@ -16,7 +16,7 @@ async function searchUsers(query: string) {
   return users;
 }
 
-function UsersSearch() {
+function UsersSearch({user}: any) {
   const [search, setSearch] = useState("");
 
   const { data: users, error } = useSWR(
@@ -42,8 +42,8 @@ function UsersSearch() {
 
       <ul>
         {search &&
-          (users?.map((user: any) => (
-            <UsersSearchItem key={user.id} user={user} />
+          (users?.map((owner: any) => (
+            <UsersSearchItem key={owner.id} owner={owner} user={user} />
           )) || <p className="text-white">"Loading..."</p>)}
       </ul>
     </>

@@ -17,10 +17,10 @@ export function withChat(handler: NextApiHandler) {
       const isPublic = await redis.sismember("chats:public", query.chat_id);
       if (isPublic) return handler(req, res);
       // TODO add support for private chats
-      // ? Check if the user has access to this chat.
+      // ? Check if user has access to this chat.
       const session = await unstable_getServerSession(req, res, authOptions);
       const exists = await redis.hexists(
-        `user:chats:${session?.user.uid}`,
+        `user:chats:${session?.user.id}`,
         query.chat_id
       );
 

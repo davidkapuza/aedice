@@ -10,7 +10,7 @@ import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
 type Props = {
-  session: Session | null;
+  user: any;
   prerenderedMessages?: TypeMessage[];
   chat_id: string;
 };
@@ -26,9 +26,8 @@ async function getMessages(query: string) {
   return messages;
 }
 
-function Chat({ prerenderedMessages, chat_id, session }: Props) {
+function Chat({ prerenderedMessages, chat_id, user }: Props) {
   const query = `/api/chats/${chat_id}`;
-
 
   const { data: messages, error, mutate } = useSWR<TypeMessage[]>(query, getMessages);
   useEffect(() => {
@@ -53,10 +52,10 @@ function Chat({ prerenderedMessages, chat_id, session }: Props) {
   return (
     <div className="Chat">
       {(messages || prerenderedMessages)?.map((message: TypeMessage) => {
-        const isOwner = session?.user?.email === message.email;
+        const isOwner = user?.email === message.email;
         return <Message key={message.id} message={message} isOwner={isOwner} />;
       })}
-      <ChatInput session={session} chat_id={chat_id} />
+      <ChatInput user={user} chat_id={chat_id} />
     </div>
   );
 }
