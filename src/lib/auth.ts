@@ -1,7 +1,11 @@
+import chats from "@/api/chats";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { v4 as uuid } from "uuid";
-import redis from "./redis";
+import * as z from "zod";
+import client, { connect } from "./redis";
+import { chatSchema, ChatZodSchema } from "./schemas/chat";
+import { userSchema, UserZodSchema } from "./schemas/user";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,62 +16,88 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile, credentials }) {
-      // ? Checking if user already exists
-      const exists = await redis.hexists("user:email:" + user.email, "id");
-      if (exists) {
-        return true;
-      }
-
-      // ? Adding custom user and chat id for user
-
-      const user_id = uuid();
-      const chat_id = uuid();
-
-      user.id = user_id;
-      user.chat_id = chat_id;
-      const userJson = JSON.stringify(user);
-      await redis.hset(`user:email:${user.email}`, user);
-
       const created_at = Date.now();
 
-      // ? Initialize chat for a new user
-      await redis.hset(`chat:${chat_id}`, {
-        id: chat_id,
-        created_at,
-        private: false,
-        last_message: null,
-        last_message_time: null,
-      });
-      await redis.sadd(`chat:members:${chat_id}`, userJson);
-      await redis.zadd(`user:chats:${user_id}`, created_at, chat_id);
-      // ? Make chat pubic by default
-      await redis.sadd("chats:public", chat_id);
+      try {
+        await connect();
+        const usersRepository = client.fetchRepository(userSchema);
+        await usersRepository.createIndex();
+        const chatsRepository = client.fetchRepository(chatSchema);
+        await chatsRepository.createIndex();
 
-      // ? Storing user email substrings in Redis sorted set for email autocomplete
+        // * Checking if user already exists
+        const exists = await usersRepository
+          .search()
+          .where("email")
+          .eq(user.email!)
+          .return.first();
+        if (exists) {
+          return true;
+        }
 
-      const sortedSet = [];
-      const email = user.email!.toUpperCase();
-      for (let i = 1; i < email.length; i++) {
-        sortedSet.push(0);
-        sortedSet.push(email.substring(0, i));
+        // * Create User
+        const newUser = UserZodSchema.parse({ ...user, chat_id: null });
+        const userEntity = usersRepository.createEntity(newUser);
+
+        // * Create chat for a new User
+        const newChat = ChatZodSchema.parse({
+          id: "",
+          created_at,
+          private: false,
+          last_message: null,
+          last_message_time: null,
+          members: [],
+          members_id: [userEntity.entityId],
+          messages: [],
+          chat_owner: userEntity.entityId,
+        });
+
+        const chatEntity = chatsRepository.createEntity(newChat);
+
+        userEntity.id = userEntity.entityId;
+        userEntity.chat_id = chatEntity.entityId;
+        chatEntity.id = chatEntity.entityId;
+        chatEntity.members.push(JSON.stringify(userEntity))
+
+        await chatsRepository.save(chatEntity);
+        await usersRepository.save(userEntity);
+
+        // * Augument User
+        user.id = userEntity.entityId;
+        user.chat_id = chatEntity.entityId;
+
+        return true;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.log(error.issues);
+        }
+        console.log(error);
+        return false;
       }
-      sortedSet.push(0);
-      sortedSet.push(email + "*" + JSON.stringify(user) + "*");
-      await redis.zadd("users:search", ...sortedSet);
-      return true;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      const dbUser = await redis.hgetall(`user:email:${token.email}`);
+      await connect();
+      const usersRepository = client.fetchRepository(userSchema);
+
+      const dbUser =
+        token?.email &&
+        (await usersRepository
+          .search()
+          .where("email")
+          .eq(token.email)
+          .return.first());
+
       if (!dbUser) {
         token.id = user?.id;
         return token;
       }
+
       return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        image: dbUser.image,
-        chat_id: dbUser.chat_id,
+        id: dbUser?.entityId,
+        name: dbUser?.name,
+        email: dbUser?.email,
+        image: dbUser?.image,
+        chat_id: dbUser?.chat_id,
       };
     },
     async session({ session, token, user }) {

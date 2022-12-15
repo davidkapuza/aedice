@@ -1,9 +1,9 @@
-import React from 'react'
+import { getCurrentUser } from "@/lib/session";
 
-function HomePage() {
-  return (
-    <div>HomePage</div>
-  )
+async function HomePage() {
+  const user = await getCurrentUser();
+
+  return <div className="text-white">Welcome {user?.name}</div>;
 }
 
-export default HomePage
+export default HomePage;

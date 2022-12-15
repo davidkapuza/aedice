@@ -20,7 +20,7 @@ function UsersSearch({user}: any) {
   const [search, setSearch] = useState("");
 
   const { data: users, error } = useSWR(
-    () => (search ? `/api/users/searchUserByEmail?q=${search}` : null),
+    () => (search ? `/api/users/search?q=${search}` : null),
     searchUsers
   );
   return (

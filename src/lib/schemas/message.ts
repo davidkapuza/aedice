@@ -1,12 +1,12 @@
 import * as z from "zod"
 
-export const MessageSchema = z.object({
+export const MessageZodSchema = z.object({
   id: z.string(),
   created_at: z.number(),
   text: z.string().min(1),
-  username: z.string().min(3).max(128),
+  username: z.string(),
   image: z.string().url(),
   email: z.string().email(),
 })
 
-export type TypeMessage = z.infer<typeof MessageSchema>
+export type TypeMessage = z.infer<typeof MessageZodSchema>

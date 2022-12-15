@@ -1,6 +1,8 @@
 "use client";
 import { clientPusher } from "@/core/pusher";
-import { TypeUser } from "@/lib/validations/user";
+import { TypeChat } from "@/lib/schemas/chat";
+import { TypeUser } from "@/lib/schemas/user";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReactTimeago from "react-timeago";
@@ -12,12 +14,11 @@ type Props = {
 };
 
 function ChatsListItem({
-  chat: { members, id, last_message, last_message_time },
+  chat: { members, id, last_message, last_message_time, chat_owner },
 }: Props) {
   const router = useRouter();
   const [chatMembers, setChatMembers] = useState<TypeUser[]>(members!);
-  const owner = members?.filter((member: any) => member.chat_id === id)[0];
-
+  const chatOwner = members?.filter((member: any) => member.id === chat_owner)[0];
   useEffect(() => {
     const channel = clientPusher.subscribe(`chat-members-${id}`);
     channel.bind("new-member", async (member: TypeUser) => {
@@ -38,7 +39,7 @@ function ChatsListItem({
               avatars={chatMembers.map((member: any) => member.image)}
             />
             <div className="flex-1 w-full mt-3 text-left">
-              <h1 className="text-sm leading-3">{owner?.name}</h1>
+              <h1 className="text-sm leading-3">{chatOwner?.name}</h1>
               <span className="inline-flex justify-between w-full">
                 <small className="text-xs text-gray-500">{last_message}</small>
                 {last_message_time && (

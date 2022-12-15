@@ -1,6 +1,6 @@
 "use client";
+import { TypeUser } from "@/lib/schemas/user";
 import { joinChat } from "@/lib/services/client/chats";
-import { TypeUser } from "@/lib/validations/user";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import "./UsersSearchItem.styles.css";
@@ -29,7 +29,7 @@ function SearchItem({ owner: { name, email, image, chat_id }, user }: Props) {
             alt="Avatar"
           ></Image>
           <button
-            onClick={() => join(chat_id)}
+            onClick={() => join(chat_id!)}
             className="px-2 text-xs rounded-full dark:bg-white dark:text-black"
           >
             Add

@@ -1,5 +1,13 @@
-import Redis from 'ioredis';
+import { Client } from "redis-om";
 
-const redis = new Redis(process.env.REDIS_URL!);
+const client = new Client();
+const url = process.env.REDIS_URL;
 
-export default redis;
+export async function connect() {
+  console.log("CONNECTION IS OPEN >> ", client.isOpen());
+  if (!client.isOpen()) {
+    await client.open(url);
+  }
+}
+
+export default client;

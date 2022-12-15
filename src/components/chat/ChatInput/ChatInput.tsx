@@ -1,6 +1,5 @@
 "use client";
 
-import { TypeMessage } from "@/lib/validations/message";
 import { Session } from "next-auth";
 import { useState } from "react";
 import AutosizeInput from "react-input-autosize";
@@ -8,6 +7,7 @@ import useSWR from "swr";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
 import Image from "next/image";
+import { TypeMessage } from "@/lib/schemas/message";
 
 type Props = {
   user: any;
@@ -15,7 +15,12 @@ type Props = {
 };
 
 async function getMessages(query: string) {
+  console.log(query)
   const response = await fetch(query);
+  if (!response.ok) {
+    console.log("Err...")
+    return;
+  }
   const { messages } = await response.json();
   return messages;
 }
