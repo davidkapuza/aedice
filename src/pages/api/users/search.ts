@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { withMethods } from "@/lib/api-middlewares/with-methods";
-import client, { connect } from "@/lib/redis";
-import { TypeUser, userSchema } from "@/lib/schemas/user";
+import { withMethods } from "@/core/middlewares/with-methods";
+import db, { usersRepository } from "@/core/redis";
+import { TypeUser, userSchema } from "@/core/schemas/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -23,8 +23,6 @@ async function handler(
         error: "Search can not be empty...",
       });
     } else if (q.length < 50) {
-      await connect();
-      const usersRepository = client.fetchRepository(userSchema);
 
       const users = await usersRepository
         .search()

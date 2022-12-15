@@ -1,5 +1,5 @@
 "use client";
-import { TypeUser } from "@/lib/schemas/user";
+import { TypeUser } from "@/core/schemas/user";
 import { joinChat } from "@/lib/services/client/chats";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

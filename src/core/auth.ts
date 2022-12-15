@@ -1,9 +1,8 @@
-import chats from "@/api/chats";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { v4 as uuid } from "uuid";
 import * as z from "zod";
-import client, { connect } from "./redis";
+import db, { chatsRepository, usersRepository } from "./redis";
+
 import { chatSchema, ChatZodSchema } from "./schemas/chat";
 import { userSchema, UserZodSchema } from "./schemas/user";
 
@@ -16,14 +15,8 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile, credentials }) {
-      const created_at = Date.now();
-
       try {
-        await connect();
-        const usersRepository = client.fetchRepository(userSchema);
-        await usersRepository.createIndex();
-        const chatsRepository = client.fetchRepository(chatSchema);
-        await chatsRepository.createIndex();
+        const created_at = Date.now();
 
         // * Checking if user already exists
         const exists = await usersRepository
@@ -57,7 +50,7 @@ export const authOptions: NextAuthOptions = {
         userEntity.id = userEntity.entityId;
         userEntity.chat_id = chatEntity.entityId;
         chatEntity.id = chatEntity.entityId;
-        chatEntity.members.push(JSON.stringify(userEntity))
+        chatEntity.members.push(JSON.stringify(userEntity));
 
         await chatsRepository.save(chatEntity);
         await usersRepository.save(userEntity);
@@ -76,8 +69,6 @@ export const authOptions: NextAuthOptions = {
       }
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      await connect();
-      const usersRepository = client.fetchRepository(userSchema);
 
       const dbUser =
         token?.email &&

@@ -1,6 +1,6 @@
 import { Entity, Schema } from "redis-om";
 import * as z from "zod";
-import client from "../redis";
+
 
 export const UserZodSchema = z.object({
   id: z.string(),

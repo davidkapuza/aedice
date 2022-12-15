@@ -1,4 +1,5 @@
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentUser } from "@/lib/services/server/session";
+
 
 async function HomePage() {
   const user = await getCurrentUser();
