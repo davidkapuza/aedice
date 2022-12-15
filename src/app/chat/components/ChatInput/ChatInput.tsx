@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
 import Image from "next/image";
-import { TypeMessage } from "@/lib/schemas/message";
+import { TypeMessage } from "@/core/schemas/message";
 
 type Props = {
   user: any;
@@ -15,7 +15,6 @@ type Props = {
 };
 
 async function getMessages(query: string) {
-  console.log(query)
   const response = await fetch(query);
   if (!response.ok) {
     console.log("Err...")

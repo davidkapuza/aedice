@@ -1,7 +1,7 @@
 "use client";
 import { clientPusher } from "@/core/pusher";
-import { TypeChat } from "@/lib/schemas/chat";
-import { TypeUser } from "@/lib/schemas/user";
+import { TypeChat } from "@/core/schemas/chat";
+import { TypeUser } from "@/core/schemas/user";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 "use client";
 import { clientPusher } from "@/core/pusher";
 import Message from "@/core/ui/Message/Message";
-import { TypeMessage } from "@/lib/schemas/message";
+import { TypeMessage } from "@/core/schemas/message";
 
 import { useEffect } from "react";
 import useSWR from "swr";

@@ -1,4 +1,4 @@
-import { TypeUser } from "@/lib/schemas/user";
+import { TypeUser } from "@/core/schemas/user";
 
 
 export async function joinChat(chat_id: string, user: TypeUser) {

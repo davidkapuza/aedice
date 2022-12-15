@@ -25,12 +25,21 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["src/components/*"],
+      // * app
+      "@/layouts/*": ["src/app/layouts/*"],
+      // * core
       "@/core/*": ["src/core/*"],
-      "@/lib/*": ["src/lib/*"],
-      "@/api/*": ["src/pages/api/*"],
-      "@/ui/*": ["src/core/ui/*"],
+      "@/middlewares/*": ["src/core/middlewares/*"],
+      "@/schemas/*": ["src/core/schemas/*"],
       "@/types/*": ["src/core/types/*"],
+      "@/ui/*": ["src/core/ui/*"],
+      // * lib
+      "@/lib/*": ["src/lib/*"],
+      "@/hooks/*": ["src/lib/hooks/*"],
+      "@/services/*": ["src/lib/services/*"],
+      // * api
+      "@/api/*": ["src/pages/api/*"],
+
     },
   },
   "include": [

@@ -1,14 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { serverPusher } from "@/core/pusher";
-import { connect } from "@/lib/redis";
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as z from "zod";
-import { withChat } from "@/lib/api-middlewares/with-chat";
-import { withMethods } from "@/lib/api-middlewares/with-methods";
-import client from "@/lib/redis";
-import { chatSchema } from "@/lib/schemas/chat";
-import { MessageZodSchema, TypeMessage } from "@/lib/schemas/message";
+import { withChat } from "@/middlewares/with-chat";
+import { withMethods } from "@/middlewares/with-methods";
+import { chatSchema } from "@/schemas/chat";
+import { MessageZodSchema, TypeMessage } from "@/schemas/message";
 import { ZodIssue } from "zod";
+import db, { chatsRepository } from "@/core/redis";
 
 type Messages = {
   messages: TypeMessage[];
@@ -26,12 +25,10 @@ async function handler(
 
   if (req.method === "GET") {
     try {
-      await connect();
-      const chatsRepository = client.fetchRepository(chatSchema);
       const { messages: messagesJson } = await chatsRepository.fetch(chat_id);
       const messages: TypeMessage[] = messagesJson
-        .map((message) => JSON.parse(message))
-        .sort((a, b) => a.created_at - b.created_at);
+        .map((message: any) => JSON.parse(message))
+        .sort((a: any, b: any) => a.created_at - b.created_at);
 
       return res.status(200).json({ messages });
     } catch (error) {
@@ -42,8 +39,6 @@ async function handler(
   if (req.method === "POST") {
     try {
       const message = MessageZodSchema.parse(req.body.message);
-      await connect();
-      const chatsRepository = client.fetchRepository(chatSchema);
 
       // * Update to server timestamp
       const created_at = Date.now();
@@ -76,15 +71,13 @@ async function handler(
   if (req.method === "PATCH") {
     try {
       const user = req.body.user;
-      await connect();
-      const chatsRepository = client.fetchRepository(chatSchema);
       const chat = await chatsRepository.fetch(chat_id);
       chat.members.push(JSON.stringify(user));
       chat.members_id.push(user.id);
 
       serverPusher.trigger(`user-chats-${user.id}`, "new-chat", {
         ...chat,
-        members: chat.members.map((member) => JSON.parse(member)),
+        members: chat.members.map((member: any) => JSON.parse(member)),
       });
       serverPusher.trigger(`chat-members-${chat_id}`, "new-member", user);
 

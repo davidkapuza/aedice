@@ -1,6 +1,6 @@
-import Chat from "@/components/chat/Chat/Chat";
-import { getChats } from "@/lib/services/server/chats";
-import { getCurrentUser } from "@/lib/session";
+import Chat from "src/app/chat/components/Chat/Chat";
+import { getCurrentUser } from "@/lib/services/server/session";
+
 
 type ChatPageProps = {
   params: {

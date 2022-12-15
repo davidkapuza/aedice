@@ -1,5 +1,4 @@
-import { ChatInput, Header, Sidebar } from "@/components/index";
-import Footer from "@/components/layouts/Footer/Footer";
+import { Header, Sidebar, Footer } from "@/layouts/exports";
 
 export default function ChatLayout({
   children,
