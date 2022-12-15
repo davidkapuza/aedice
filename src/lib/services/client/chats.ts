@@ -1,4 +1,5 @@
-import { TypeUser } from "@/lib/validations/user";
+import { TypeUser } from "@/lib/schemas/user";
+
 
 export async function joinChat(chat_id: string, user: TypeUser) {
   const responce = await fetch(`/api/chats/${chat_id}`, {

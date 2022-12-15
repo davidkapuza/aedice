@@ -29,6 +29,7 @@ function ChatsList({ prerenderedChats, user }: Props) {
       channel.unsubscribe();
     };
   }, [chats, mutate, clientPusher]);
+  
 
   return (
     <ul>

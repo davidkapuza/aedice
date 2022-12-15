@@ -1,4 +1,5 @@
-import { TypeMessage } from "@/lib/validations/message";
+
+import { TypeMessage } from "@/lib/schemas/message";
 import Image from "next/image";
 import { memo } from "react";
 import "./Message.styles.css";
@@ -22,21 +23,6 @@ function Message({
           className="Avatar"
         ></Image>
       )}
-      {/* <div>
-        <small
-          className={`text-xs ${isOwner ? "text-right" : "text-left"}`}
-        >
-          {!isOwner && message.username + " \u2022 "}
-
-          <TimeAgo
-            className="font-medium"
-            date={new Date(message.created_at)}
-          />
-
-          {isOwner && " \u2022 " + message.username}
-        </small>
-
-      </div> */}
     </li>
   );
 }
