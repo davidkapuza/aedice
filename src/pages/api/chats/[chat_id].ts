@@ -1,13 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { serverPusher } from "@/core/pusher";
-import type { NextApiRequest, NextApiResponse } from "next";
-import * as z from "zod";
+import { chatsRepository } from "@/core/redis";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
-import { chatSchema } from "@/schemas/chat";
 import { MessageZodSchema, TypeMessage } from "@/schemas/message";
+import type { NextApiRequest, NextApiResponse } from "next";
+import * as z from "zod";
 import { ZodIssue } from "zod";
-import db, { chatsRepository } from "@/core/redis";
 
 type Messages = {
   messages: TypeMessage[];
@@ -15,7 +14,7 @@ type Messages = {
 type Message = {
   message: TypeMessage;
 };
-type Error = ZodIssue[];
+type Error = ZodIssue[] | string;
 
 async function handler(
   req: NextApiRequest,
@@ -48,7 +47,7 @@ async function handler(
       };
 
       serverPusher.trigger(
-        `chat-messages-${chat_id}`,
+        `cache-chat-update-${chat_id}`,
         "new-message",
         newMessage
       );
@@ -72,6 +71,11 @@ async function handler(
     try {
       const user = req.body.user;
       const chat = await chatsRepository.fetch(chat_id);
+
+
+      if (chat.members_id.includes(user.id)) {
+        return res.status(405).json("Not Allowed")
+      }
       chat.members.push(JSON.stringify(user));
       chat.members_id.push(user.id);
 
@@ -79,7 +83,7 @@ async function handler(
         ...chat,
         members: chat.members.map((member: any) => JSON.parse(member)),
       });
-      serverPusher.trigger(`chat-members-${chat_id}`, "new-member", user);
+      serverPusher.trigger(`cache-chat-update-${chat_id}`, "new-member", user);
 
       await chatsRepository.save(chat);
       return res.end();

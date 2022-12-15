@@ -34,7 +34,7 @@ function Chat({ prerenderedMessages, chat_id, user }: Props) {
     mutate,
   } = useSWR<TypeMessage[]>(query, getMessages);
   useEffect(() => {
-    const channel = clientPusher.subscribe("chat-messages-" + chat_id);
+    const channel = clientPusher.subscribe(`chat-update-${chat_id}`);
     channel.bind("new-message", async (message: TypeMessage) => {
       if (messages?.find((msg) => msg.id === message.id)) return;
       if (!messages) {
