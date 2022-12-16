@@ -1,5 +1,5 @@
-import ChatsList from "@/core/ui/ChatsList/ChatsList";
-import UsersSearch from "@/core/ui/UsersSearch/UsersSearch";
+import ChatsList from "src/app/components/ChatsList/ChatsList";
+import UsersSearch from "src/app/components/UsersSearch/UsersSearch";
 import { getChats } from "@/lib/services/server/chats";
 import { getCurrentUser } from "@/lib/services/server/session";
 

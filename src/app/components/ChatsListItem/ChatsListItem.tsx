@@ -1,13 +1,9 @@
 "use client";
-import { clientPusher } from "@/core/pusher";
-import { TypeChat } from "@/core/schemas/chat";
-import { TypeMessage } from "@/core/schemas/message";
-import { TypeUser } from "@/core/schemas/user";
-
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import AvatarsGroup from "@/core/ui/AvatarsGroup/AvatarsGroup";
+import { useChatInfoSub } from "@/lib/hooks/useChatInfoSub";
+import { usePathname, useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";
-import AvatarsGroup from "../AvatarsGroup/AvatarsGroup";
+
 import "./ChatsListItem.styles.css";
 
 type Props = {
@@ -18,36 +14,26 @@ function ChatsListItem({
   chat: { members, id, last_message, last_message_time, chat_owner },
 }: Props) {
   const router = useRouter();
-  const [chatMembers, setChatMembers] = useState<TypeUser[]>(members!);
-  const [chatLastMsessage, setChatLastMessage] = useState({
-    last_message,
-    last_message_time,
-  });
-
+  const pathname = usePathname();
+  const chat_id = /[^/]*$/.exec(pathname!)?.[0];
   const chatOwner = members?.filter(
     (member: any) => member.id === chat_owner
   )[0];
-  useEffect(() => {
-    const channel = clientPusher.subscribe(`cache-chat-update-${id}`);
-    channel.bind("new-member", async (member: TypeUser) => {
-      if (chatMembers.some((m) => m.id === member.id)) return
-      setChatMembers((prev) => [...prev, member]);
-    });
-    channel.bind("new-message", async (message: TypeMessage) => {
-      setChatLastMessage({
-        last_message: message.text,
-        last_message_time: message.created_at,
-      });
-    });
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [members, clientPusher]);
+
+  const { chatMembers, chatLastMsessage } = useChatInfoSub(
+    members,
+    { last_message, last_message_time },
+    id
+  );
 
   return (
     <li>
-      <button className="Chats-li" onClick={() => router.push(`chat/${id}`)}>
+      <button
+        className={`Chats-li ${
+          chat_id === id ? "border-white" : "border-gray-500"
+        }`}
+        onClick={() => router.push(`chat/${id}`)}
+      >
         {chatMembers ? (
           <>
             <AvatarsGroup

@@ -1,28 +1,17 @@
 "use client";
-
-import { Session } from "next-auth";
+import { TypeMessage } from "@/core/schemas/message";
+import { getMessages, sendMessage } from "@/lib/services/client/messages";
+import Image from "next/image";
 import { useState } from "react";
 import AutosizeInput from "react-input-autosize";
 import useSWR from "swr";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
-import Image from "next/image";
-import { TypeMessage } from "@/core/schemas/message";
 
 type Props = {
   user: any;
   chat_id: string;
 };
-
-async function getMessages(query: string) {
-  const response = await fetch(query);
-  if (!response.ok) {
-    console.log("Err...")
-    return;
-  }
-  const { messages } = await response.json();
-  return messages;
-}
 
 function ChatInput({ user, chat_id }: Props) {
   const [input, setInput] = useState("");
@@ -45,18 +34,8 @@ function ChatInput({ user, chat_id }: Props) {
       email: user?.email!,
     };
     setInput("");
-    
-    const sendMessage = async () => {
-      const data = await fetch(`/api/chats/${chat_id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message }),
-      }).then((res) => res.json());
-      return [...messages!, data.message];
-    };
-    await mutate(sendMessage, {
+
+    await mutate(() => sendMessage(chat_id, message, messages), {
       optimisticData: [...messages!, message],
       rollbackOnError: true,
     });

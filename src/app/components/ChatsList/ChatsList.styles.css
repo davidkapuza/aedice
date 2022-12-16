@@ -1,0 +1,9 @@
+.Chats-ul {
+  @apply flex flex-col h-full gap-3 overflow-y-scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.Chats-ul::-webkit-scrollbar {
+  display: none;
+}

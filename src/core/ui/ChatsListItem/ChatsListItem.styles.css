@@ -1,3 +1,0 @@
-.Chats-li {
-  @apply w-full flex flex-col cursor-pointer justify-center hover:border-white border-gray-500 border bg-black p-5 rounded-xl text-white
-}

@@ -1,10 +1,7 @@
 "use client";
-import { clientPusher } from "@/core/pusher";
-import Message from "@/core/ui/Message/Message";
 import { TypeMessage } from "@/core/schemas/message";
-
-import { useEffect } from "react";
-import useSWR from "swr";
+import Message from "@/core/ui/Message/Message";
+import { useChatMessages } from "@/lib/hooks/useChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
@@ -14,44 +11,8 @@ type Props = {
   chat_id: string;
 };
 
-async function getMessages(query: string) {
-  const response = await fetch(query);
-  if (!response?.ok) {
-    // TODO add err handling in ui
-    console.log("Err...");
-    return;
-  }
-  const { messages } = await response.json();
-  return messages;
-}
-
 function Chat({ prerenderedMessages, chat_id, user }: Props) {
-  const query = `/api/chats/${chat_id}`;
-
-  const {
-    data: messages,
-    error,
-    mutate,
-  } = useSWR<TypeMessage[]>(query, getMessages);
-  useEffect(() => {
-    const channel = clientPusher.subscribe(`chat-update-${chat_id}`);
-    channel.bind("new-message", async (message: TypeMessage) => {
-      if (messages?.find((msg) => msg.id === message.id)) return;
-      if (!messages) {
-        mutate(() => getMessages(query));
-      } else {
-        mutate(() => getMessages(query), {
-          optimisticData: [...messages!, message],
-          rollbackOnError: true,
-        });
-      }
-    });
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [messages, mutate, clientPusher]);
-
+  const { messages } = useChatMessages(chat_id);
   return (
     <div>
       <ul className="Chat">
