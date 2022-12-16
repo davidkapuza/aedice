@@ -4,7 +4,7 @@ import { TypeUser } from "@/core/schemas/user";
 import { TypeInitialMessage } from "@/core/types/entities";
 import { useState, useEffect } from "react";
 
-export function useChatInfoSub(
+export function useChatInfoChannel(
   initialMemmbers: TypeUser[],
   initialLastMessage: TypeInitialMessage,
   chat_id: string
@@ -14,9 +14,12 @@ export function useChatInfoSub(
 
   useEffect(() => {
     const channel = clientPusher.subscribe(`cache-chat-update-${chat_id}`);
-    channel.bind("new-member", async (member: TypeUser) => {
-      if (chatMembers.some((m) => m.id === member.id)) return;
+    channel.bind("member-joined", async (member: TypeUser) => {
+      if (chatMembers.some((prev) => prev.id === member.id)) return;
       setChatMembers((prev) => [...prev, member]);
+    });
+    channel.bind("member-quit", async (members: TypeUser[]) => {
+      setChatMembers(members);
     });
     channel.bind("new-message", async (message: TypeMessage) => {
       setChatLastMessage({

@@ -1,7 +1,7 @@
 "use client";
 import { TypeMessage } from "@/core/schemas/message";
 import Message from "@/core/ui/Message/Message";
-import { useChatMessages } from "@/lib/hooks/useChatMessages";
+import { useMessagesChannel } from "@/lib/hooks/useMessagesChannel";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
@@ -12,7 +12,7 @@ type Props = {
 };
 
 function Chat({ prerenderedMessages, chat_id, user }: Props) {
-  const { messages } = useChatMessages(chat_id);
+  const { messages } = useMessagesChannel(chat_id);
   return (
     <div>
       <ul className="Chat">

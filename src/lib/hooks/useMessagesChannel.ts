@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import useSWR from "swr";
 import { getMessages } from "../services/client/messages";
 
-export function useChatMessages(chat_id: string) {
+export function useMessagesChannel(chat_id: string) {
   const query = `/api/chats/${chat_id}`;
 
   const {

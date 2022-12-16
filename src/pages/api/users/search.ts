@@ -27,9 +27,9 @@ async function handler(
     } else if (q.length < 50) {
       const users = await usersRepository
         .search()
-        .where("id")
-        .not.eq(session?.user.id)
-        .and("name")
+        .where("name")
+        // .not.eq(session?.user.id)
+        // .and("name")
         .matches(q + "*")
         .return.all();
       res.status(200).json({ users });

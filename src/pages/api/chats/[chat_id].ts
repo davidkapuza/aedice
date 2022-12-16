@@ -1,10 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { authOptions } from "@/core/auth";
 import { serverPusher } from "@/core/pusher";
 import { chatsRepository } from "@/core/redis";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
 import { MessageZodSchema, TypeMessage } from "@/schemas/message";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
 import { ZodIssue } from "zod";
 
@@ -72,18 +74,27 @@ async function handler(
       const user = req.body.user;
       const chat = await chatsRepository.fetch(chat_id);
 
-
       if (chat.members_id.includes(user.id)) {
-        return res.status(405).json("Not Allowed")
+        return res.status(405).json("Not Allowed");
       }
       chat.members.push(JSON.stringify(user));
       chat.members_id.push(user.id);
 
-      serverPusher.trigger(`user-chats-${user.id}`, "new-chat", {
-        ...chat,
+      serverPusher.trigger(`user-chats-${user.id}`, "chat-added", {
+        id: chat.id,
+        last_message: chat.last_message,
+        last_message_time: chat.last_message_time,
+        created_at: chat.created_at,
+        private: chat.private,
         members: chat.members.map((member: any) => JSON.parse(member)),
+        messages: chat.messages,
+        chat_owner: chat.chat_owner,
       });
-      serverPusher.trigger(`cache-chat-update-${chat_id}`, "new-member", user);
+      serverPusher.trigger(
+        `cache-chat-update-${chat_id}`,
+        "member-joined",
+        user
+      );
 
       await chatsRepository.save(chat);
       return res.end();
@@ -94,6 +105,42 @@ async function handler(
       return res.status(422).end();
     }
   }
+  if (req.method === "DELETE") {
+    try {
+      const session = await unstable_getServerSession(req, res, authOptions);
+      const chat = await chatsRepository.fetch(chat_id);
+
+      const filteredMembers = chat.members
+        .map((member: string) => JSON.parse(member))
+        .filter((member: any) => member.id !== session?.user.id);
+
+      serverPusher.trigger(
+        `cache-chat-update-${chat_id}`,
+        "member-quit",
+        filteredMembers
+      );
+      serverPusher.trigger(
+        `user-chats-${session?.user.id}`,
+        "chat-removed",
+        chat_id
+      );
+
+      chat.members = filteredMembers.map((member: any) =>
+        JSON.stringify(member)
+      );
+      chat.members_id = chat.members_id.filter(
+        (id: string) => id !== session?.user.id
+      );
+
+      await chatsRepository.save(chat);
+      return res.status(204).end();
+    } catch (error) {
+      return res.status(500).end();
+    }
+  }
 }
 
-export default withMethods(["GET", "POST", "PATCH"], withChat(handler));
+export default withMethods(
+  ["GET", "POST", "PATCH", "DELETE"],
+  withChat(handler)
+);

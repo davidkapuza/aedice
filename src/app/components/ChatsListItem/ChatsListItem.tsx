@@ -1,6 +1,7 @@
 "use client";
 import AvatarsGroup from "@/core/ui/AvatarsGroup/AvatarsGroup";
-import { useChatInfoSub } from "@/lib/hooks/useChatInfoSub";
+import { useChatInfoChannel } from "@/lib/hooks/useChatInfoChannel";
+import { getChatFromPath } from "@/lib/utils/getChatFromPath";
 import { usePathname, useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";
 
@@ -14,13 +15,12 @@ function ChatsListItem({
   chat: { members, id, last_message, last_message_time, chat_owner },
 }: Props) {
   const router = useRouter();
-  const pathname = usePathname();
-  const chat_id = /[^/]*$/.exec(pathname!)?.[0];
+  const chat_id = getChatFromPath()
   const chatOwner = members?.filter(
     (member: any) => member.id === chat_owner
   )[0];
 
-  const { chatMembers, chatLastMsessage } = useChatInfoSub(
+  const { chatMembers, chatLastMsessage } = useChatInfoChannel(
     members,
     { last_message, last_message_time },
     id

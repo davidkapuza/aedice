@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import useSWR from "swr";
 import { getChats } from "../services/client/chats";
 
-export function useChatsListSub(user_id: string) {
+export function useChatsChannel(user_id: string) {
   const { data: chats, error, mutate } = useSWR("api/chats", getChats);
   useEffect(() => {
     const channel = clientPusher.subscribe(`user-chats-${user_id}`);
-    channel.bind("new-chat", async (chat: any) => {
+    channel.bind("chat-added", async (chat: any) => {
+      if (chats.some((prev: any) => prev.id === chat.id)) return;
       if (!chat) {
         mutate(getChats);
       } else {
@@ -16,6 +17,12 @@ export function useChatsListSub(user_id: string) {
           rollbackOnError: true,
         });
       }
+    });
+    channel.bind("chat-removed", async (chat_id: any) => {
+      mutate(getChats, {
+        optimisticData: chats.filter((chat: any) => chat.id !== chat_id),
+        rollbackOnError: true,
+      });
     });
     return () => {
       channel.unbind_all();
