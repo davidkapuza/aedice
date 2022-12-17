@@ -7,6 +7,9 @@ module.exports = {
   experimental: {
     appDir: true,
     esmExternals: false,
+    fontLoaders: [
+      { loader: '@next/font/google', options: { subsets: ['latin'] } },
+    ],
   },
   webpack: (config) => {
     config.experiments = { ...config.experiments, ...{ topLevelAwait: true }};

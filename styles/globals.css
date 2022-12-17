@@ -9,6 +9,12 @@
   padding: 0;
 }
 
+@layer base {
+  html {
+    font-family: var(--font-space_mono);
+  }
+}
+
 @layer components {
   .Avatar {
     @apply object-cover rounded-full cursor-pointer;
@@ -19,14 +25,16 @@
   }
 
   .Chat-layout {
-    @apply flex flex-col flex-1 w-full h-full m-0 overflow-y-scroll bg-white dark:bg-black;
+    @apply flex flex-col flex-1 w-full h-full px-40 m-0 overflow-y-scroll bg-white dark:bg-black;
     -ms-overflow-style: none;
-    scrollbar-width: none; 
+    scrollbar-width: none;
   }
   .Chat-layout::-webkit-scrollbar {
     display: none;
   }
-
+  .Chat-layout > div {
+    @apply h-full;
+  }
 }
 
 @tailwind utilities;

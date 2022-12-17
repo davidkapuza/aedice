@@ -4,10 +4,10 @@ import "./Header.styles.css";
 export default function Header() {
   return (
     <header className="Header">
-      <h1 className="flex-1">LOGO</h1>
-      <p className="flex-1 text-xs whitespace-nowrap">
-        {"Welcome back David Kapuza | You have 0 unread messages."}
-      </p>
+      <div className="flex-1">
+        <h1 className="flex-1 font-sans font-medium">David Kapuza</h1>
+      </div>
+      <h1 className="flex-1 font-sans text-center text-2xl font-bold">aedice.</h1>
       <DropdownMenu />
     </header>
   );

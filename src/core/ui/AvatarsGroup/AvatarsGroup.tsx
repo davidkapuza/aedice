@@ -8,7 +8,7 @@ type Props = {
 function AvatarsGroup({ avatars }: Props) {
   return (
     <ul className="Avatars-group">
-      <p className="ml-3 mr-auto text-xs text-gray-500">{avatars.length} members</p>
+      {avatars.length > 1 && <p className="px-2 py-0.5 ml-3 mr-auto text-[10px] text-white bg-gray-800 rounded-full">+{avatars.length - 1}</p>}
       {avatars.map((avatar) => (
         <span key={avatar} className="Avatar-wrapper">
           <Image

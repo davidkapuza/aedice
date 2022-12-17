@@ -40,7 +40,7 @@ function ChatsListItem({
               avatars={chatMembers.map((member: any) => member.image)}
             />
             <div className="flex-1 w-full mt-3 text-left">
-              <h1 className="text-sm leading-3">{chatOwner?.name}</h1>
+              <h1 className="font-sans text-sm leading-3">{chatOwner?.name}</h1>
               <span className="inline-flex justify-between w-full">
                 <small className="text-xs text-gray-500">
                   {chatLastMsessage.last_message}

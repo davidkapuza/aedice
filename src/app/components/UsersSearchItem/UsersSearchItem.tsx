@@ -36,7 +36,7 @@ function SearchItem({ owner: { name, email, image, chat_id }, user }: Props) {
           </button>
         </div>
         <div className="flex-1 w-full mt-3 text-left">
-          <h1 className="text-sm leading-3">{name}</h1>
+          <h1 className="font-sans text-sm leading-3">{name}</h1>
           <small className="text-xs text-gray-500">{email}</small>
         </div>
       </div>
