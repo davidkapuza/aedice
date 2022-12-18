@@ -1,4 +1,5 @@
-import { TypeMessage } from "@/core/schemas/message";
+import { TypeMessage } from "@/core/types/entities";
+
 
 export async function getMessages(query: string) {
   const response = await fetch(query);

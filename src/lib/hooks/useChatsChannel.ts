@@ -1,4 +1,5 @@
 import { clientPusher } from "@/core/pusher";
+import type { ChatEntity } from "@/core/types/entities";
 import { useEffect } from "react";
 import useSWR from "swr";
 import { getChats } from "../services/client/chats";
@@ -7,20 +8,20 @@ export function useChatsChannel(user_id: string) {
   const { data: chats, error, mutate } = useSWR("api/chats", getChats);
   useEffect(() => {
     const channel = clientPusher.subscribe(`user-chats-${user_id}`);
-    channel.bind("chat-added", async (chat: any) => {
-      if (chats.some((prev: any) => prev.id === chat.id)) return;
+    channel.bind("chat-added", async (chat: ChatEntity) => {
+      if (chats.some((prev: ChatEntity) => prev.entityId === chat.entityId)) return;
       if (!chat) {
         mutate(getChats);
       } else {
         mutate(getChats, {
-          optimisticData: [chat, ...chats],
+          optimisticData: [...chats, chat],
           rollbackOnError: true,
         });
       }
     });
-    channel.bind("chat-removed", async (chat_id: any) => {
+    channel.bind("chat-removed", async (chat_id: string) => {
       mutate(getChats, {
-        optimisticData: chats.filter((chat: any) => chat.id !== chat_id),
+        optimisticData: chats.filter((chat: ChatEntity) => chat.entityId !== chat_id),
         rollbackOnError: true,
       });
     });

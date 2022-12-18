@@ -1,28 +1,27 @@
 import { clientPusher } from "@/core/pusher";
-import { TypeMessage } from "@/core/schemas/message";
-import { TypeUser } from "@/core/schemas/user";
-import { TypeInitialMessage } from "@/core/types/entities";
+import { TypeMessage, TypeLastMessage } from "@/core/types/entities";
+import { User } from "next-auth";
 import { useState, useEffect } from "react";
 
 export function useChatInfoChannel(
-  initialMemmbers: TypeUser[],
-  initialLastMessage: TypeInitialMessage,
+  initialMemmbers: User[],
+  initialLastMessage: TypeLastMessage,
   chat_id: string
 ) {
-  const [chatMembers, setChatMembers] = useState<TypeUser[]>(initialMemmbers);
-  const [chatLastMsessage, setChatLastMessage] = useState(initialLastMessage);
+  const [membersFromChannel, setMembersFromChannel] = useState<User[]>(initialMemmbers);
+  const [lastMessageFromChannel, setLastMessageFromChannel] = useState(initialLastMessage);
 
   useEffect(() => {
     const channel = clientPusher.subscribe(`cache-chat-update-${chat_id}`);
-    channel.bind("member-joined", async (member: TypeUser) => {
-      if (chatMembers.some((prev) => prev.id === member.id)) return;
-      setChatMembers((prev) => [...prev, member]);
+    channel.bind("member-joined", async (member: User) => {
+      if (membersFromChannel.some((prev) => prev.id === member.id)) return;
+      setMembersFromChannel((prev) => [...prev, member]);
     });
-    channel.bind("member-quit", async (members: TypeUser[]) => {
-      setChatMembers(members);
+    channel.bind("member-quit", async (members: User[]) => {
+      setMembersFromChannel(members);
     });
     channel.bind("new-message", async (message: TypeMessage) => {
-      setChatLastMessage({
+      setLastMessageFromChannel({
         last_message: message.text,
         last_message_time: message.created_at,
       });
@@ -32,5 +31,5 @@ export function useChatInfoChannel(
       channel.unsubscribe();
     };
   }, [initialMemmbers, clientPusher]);
-  return { chatMembers, chatLastMsessage };
+  return { membersFromChannel, lastMessageFromChannel };
 }

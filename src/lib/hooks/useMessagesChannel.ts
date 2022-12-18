@@ -1,5 +1,5 @@
 import { clientPusher } from "@/core/pusher";
-import { TypeMessage } from "@/core/schemas/message";
+import { TypeMessage } from "@/core/types/entities";
 import { useEffect } from "react";
 import useSWR from "swr";
 import { getMessages } from "../services/client/messages";

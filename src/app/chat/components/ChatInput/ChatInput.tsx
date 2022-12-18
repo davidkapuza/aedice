@@ -1,6 +1,7 @@
 "use client";
-import { TypeMessage } from "@/core/schemas/message";
+import { TypeMessage } from "@/core/types/entities";
 import { getMessages, sendMessage } from "@/lib/services/client/messages";
+import { User } from "next-auth";
 import Image from "next/image";
 import { useState } from "react";
 import AutosizeInput from "react-input-autosize";
@@ -9,7 +10,7 @@ import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
 
 type Props = {
-  user: any;
+  user: User | undefined;
   chat_id: string;
 };
 
@@ -44,7 +45,7 @@ function ChatInput({ user, chat_id }: Props) {
     <form className="Chat-form" onSubmit={(e) => send(e)}>
       <Image
         src={
-          user.image ||
+          user?.image ||
           "https://avatars.dicebear.com/api/open-peeps/random-seed.svg"
         }
         height={20}

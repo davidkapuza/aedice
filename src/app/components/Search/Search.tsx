@@ -1,18 +1,24 @@
 "use client";
+import { ChatEntity } from "@/core/types/entities";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { searchChats } from "@/lib/services/client/chats";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { User } from "next-auth";
 import { useState } from "react";
 import useSWR from "swr";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import UsersSearchItem from "../UsersSearchItem/UsersSearchItem";
-import "./UsersSearch.styles.css";
-import useDebounce from "@/lib/hooks/useDebounce";
-import { searchUsers } from "@/lib/services/client/users";
+import ChatCard from "../DefaultChatCard/DefaultChatCard";
+import "./Search.styles.css";
 
-function UsersSearch({ user }: any) {
+type Props = {
+  user: User;
+};
+
+function Search({ user }: Props) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-  const { data: users, error } = useSWR(
-    () => (debouncedSearch ? `/api/users/search?q=${debouncedSearch}` : null),
-    searchUsers
+  const { data: chats, error } = useSWR(
+    () => (debouncedSearch ? `/api/chats/search?q=${debouncedSearch}` : null),
+    searchChats
   );
   return (
     <>
@@ -33,12 +39,12 @@ function UsersSearch({ user }: any) {
 
       <ul>
         {search &&
-          (users?.map((owner: any) => (
-            <UsersSearchItem key={owner.id} owner={owner} user={user} />
+          (chats?.map((chat: ChatEntity) => (
+            <ChatCard key={chat.chat_id} chat={chat} user={user} />
           )) || <p className="text-white">"Loading..."</p>)}
       </ul>
     </>
   );
 }
 
-export default UsersSearch;
+export default Search;

@@ -9,4 +9,4 @@ export const MessageZodSchema = z.object({
   email: z.string().email(),
 })
 
-export type TypeMessage = z.infer<typeof MessageZodSchema>
+

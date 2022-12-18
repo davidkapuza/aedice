@@ -1,5 +1,5 @@
 .Avatars-group {
-  @apply inline-flex flex-row-reverse items-center justify-start flex-1;
+  @apply inline-flex flex-row-reverse items-center justify-start;
 }
 .Avatars-group .Avatar-wrapper:not(:last-child) {
   @apply -ml-2.5;

@@ -2,9 +2,10 @@
 import { authOptions } from "@/core/auth";
 import { serverPusher } from "@/core/pusher";
 import { chatsRepository } from "@/core/redis";
+import { TypeMessage } from "@/core/types/entities";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
-import { MessageZodSchema, TypeMessage } from "@/schemas/message";
+import { MessageZodSchema } from "@/schemas/message";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";

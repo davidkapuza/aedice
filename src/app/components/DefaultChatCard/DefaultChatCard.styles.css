@@ -1,0 +1,3 @@
+.Default-Chat-Card {
+  @apply w-full flex flex-col cursor-pointer justify-center border bg-black p-5 rounded-xl text-white border-gray-500
+}
