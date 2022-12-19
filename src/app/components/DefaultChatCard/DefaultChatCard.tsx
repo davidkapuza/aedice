@@ -21,8 +21,8 @@ function DefaultChatCard({ user, chat }: Props) {
     (member: User) => member.id === chat.chat_owner
   )[0];
   const join = async (chat_id: string) => {
-    router.push(`chat/${chat_id}`);
     await joinChat(chat_id, user);
+    router.push(`chat/${chat_id}`);
   };
 
   return (
@@ -47,6 +47,9 @@ function DefaultChatCard({ user, chat }: Props) {
 
             <div className="flex-1 w-full mt-3 text-left">
               <h1 className="font-sans text-sm leading-3">{chatOwner?.name}</h1>
+              <small className="text-xs text-gray-500">
+                {chatOwner?.email}
+              </small>
             </div>
           </>
         ) : (

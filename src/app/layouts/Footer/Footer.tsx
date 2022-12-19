@@ -1,3 +1,4 @@
+import ChatPresence from "src/app/components/ChatPresence/ChatPresence";
 import "./Footer.styles.css";
 
 function Footer() {
@@ -20,18 +21,9 @@ function Footer() {
 
         <p>Check on Github.</p>
       </a>
-      <div className="flex items-center justify-center flex-1 gap-2">
-        <svg
-          viewBox="0 0 10 10"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-1.5 h-1.5"
-          height={5}
-          width={5}
-        >
-          <circle cx="5" cy="5" r="5" fill="#90EE90" />
-        </svg>
-        <p className="text-xs">{2} here</p>
-      </div>
+      
+       <ChatPresence/>
+
       <a
         target="_blank"
         href="mailto:kapuzadavid@gmail.com"

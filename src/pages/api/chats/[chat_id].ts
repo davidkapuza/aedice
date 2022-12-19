@@ -81,18 +81,21 @@ async function handler(
       chat.members.push(JSON.stringify(user));
       chat.members_id.push(user.id);
 
-      serverPusher.trigger(`user-chats-${user.id}`, "chat-added", {
-        id: chat.id,
+      serverPusher.trigger(`private-user-chats-${user.id}`, "chat-added", {
+        chat_id: chat.entityId,
+        name: chat.name,
         last_message: chat.last_message,
         last_message_time: chat.last_message_time,
         created_at: chat.created_at,
         private: chat.private,
-        members: chat.members.map((member: any) => JSON.parse(member)),
+        members: chat.members.map((member: string) => JSON.parse(member)),
+        members_id: chat.members_id,
         messages: chat.messages,
         chat_owner: chat.chat_owner,
       });
+
       serverPusher.trigger(
-        `cache-chat-update-${chat_id}`,
+        `private-cache-chat-update-${chat_id}`,
         "member-joined",
         user
       );
@@ -110,20 +113,24 @@ async function handler(
     try {
       const session = await unstable_getServerSession(req, res, authOptions);
       const chat = await chatsRepository.fetch(chat_id);
+      if (chat.chat_owner === session?.user.id) {
+        return res.status(403)
+      }
 
       const filteredMembers = chat.members
         .map((member: string) => JSON.parse(member))
         .filter((member: any) => member.id !== session?.user.id);
 
       serverPusher.trigger(
-        `cache-chat-update-${chat_id}`,
-        "member-quit",
-        filteredMembers
-      );
-      serverPusher.trigger(
-        `user-chats-${session?.user.id}`,
+        `private-user-chats-${session?.user.id}`,
         "chat-removed",
         chat_id
+      );
+
+      serverPusher.trigger(
+        `private-cache-chat-update-${chat_id}`,
+        "member-quit",
+        filteredMembers
       );
 
       chat.members = filteredMembers.map((member: any) =>

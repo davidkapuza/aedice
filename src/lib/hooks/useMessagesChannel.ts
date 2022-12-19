@@ -13,7 +13,7 @@ export function useMessagesChannel(chat_id: string) {
     mutate,
   } = useSWR<TypeMessage[]>(query, getMessages);
   useEffect(() => {
-    const channel = clientPusher.subscribe(`chat-update-${chat_id}`);
+    const channel = clientPusher.subscribe(`private-chat-update-${chat_id}`);
     channel.bind("new-message", async (message: TypeMessage) => {
       if (messages?.find((msg) => msg.id === message.id)) return;
       if (!messages) {

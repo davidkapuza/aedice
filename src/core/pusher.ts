@@ -12,4 +12,6 @@ export const serverPusher = new Pusher({
 export const clientPusher = new ClientPusher("a6439a174650a7871d35", {
   cluster: "eu",
   forceTLS: true,
+  userAuthentication: { endpoint: "/api/pusher/user-auth", transport: "ajax" },
+  channelAuthorization: { endpoint: "/api/pusher/auth", transport: "ajax" },
 });

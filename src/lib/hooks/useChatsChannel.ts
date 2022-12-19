@@ -7,9 +7,9 @@ import { getChats } from "../services/client/chats";
 export function useChatsChannel(user_id: string) {
   const { data: chats, error, mutate } = useSWR("api/chats", getChats);
   useEffect(() => {
-    const channel = clientPusher.subscribe(`user-chats-${user_id}`);
+    const channel = clientPusher.subscribe(`private-user-chats-${user_id}`);
     channel.bind("chat-added", async (chat: ChatEntity) => {
-      if (chats.some((prev: ChatEntity) => prev.entityId === chat.entityId)) return;
+      if (chats.some((prev: ChatEntity) => prev.chat_id === chat.chat_id)) return;
       if (!chat) {
         mutate(getChats);
       } else {
@@ -21,7 +21,7 @@ export function useChatsChannel(user_id: string) {
     });
     channel.bind("chat-removed", async (chat_id: string) => {
       mutate(getChats, {
-        optimisticData: chats.filter((chat: ChatEntity) => chat.entityId !== chat_id),
+        optimisticData: chats.filter((chat: ChatEntity) => chat.chat_id !== chat_id),
         rollbackOnError: true,
       });
     });

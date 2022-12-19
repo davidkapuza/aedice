@@ -12,7 +12,7 @@ export function useChatInfoChannel(
   const [lastMessageFromChannel, setLastMessageFromChannel] = useState(initialLastMessage);
 
   useEffect(() => {
-    const channel = clientPusher.subscribe(`cache-chat-update-${chat_id}`);
+    const channel = clientPusher.subscribe(`private-cache-chat-update-${chat_id}`);
     channel.bind("member-joined", async (member: User) => {
       if (membersFromChannel.some((prev) => prev.id === member.id)) return;
       setMembersFromChannel((prev) => [...prev, member]);

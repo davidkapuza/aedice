@@ -9,6 +9,7 @@ import {
 import { Fragment } from "react";
 import { signOut } from "next-auth/react";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 
 function MenuIcon(props: any) {
   return (
@@ -25,11 +26,15 @@ function MenuIcon(props: any) {
     </svg>
   );
 }
+type Props = {
+  user_chat_id: string;
+};
 
-export default function DropdownMenu() {
+export default function DropdownMenu({ user_chat_id }: Props) {
+  const router = useRouter();
   const chat_id = getChatFromPath();
-
   const quit = async () => {
+    router.push(`chat`);
     await quitChat(chat_id!);
   };
 
@@ -54,12 +59,16 @@ export default function DropdownMenu() {
       >
         <Menu.Items className="absolute right-0 w-56 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg top-10 ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="px-1 py-1 ">
-            <Menu.Item>
-              {({ active }) => (
+            <Menu.Item disabled={user_chat_id === chat_id}>
+              {({ active, disabled }) => (
                 <button
                   onClick={() => quit()}
                   className={`${
-                    active ? "text-black bg-gray-200" : "text-gray-800"
+                    disabled
+                      ? "text-gray-500 cursor-not-allowed"
+                      : active
+                      ? "text-black bg-gray-200"
+                      : "text-gray-800"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                 >
                   <ArrowLeftCircleIcon className="w-4 h-4 mr-3" />
