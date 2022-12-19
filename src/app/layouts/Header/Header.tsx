@@ -7,7 +7,7 @@ import "./Header.styles.css";
 export default async function Header() {
   const chats = await getChats();
   const user = await getCurrentUser();
-  const user_chat_id = chats.find(
+  const user_chat_id = chats?.find(
     (chat: any) => chat.chat_owner === user?.id
   ).chat_id;
   return (

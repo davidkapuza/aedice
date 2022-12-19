@@ -11,7 +11,7 @@
     "@heroicons/react": "^2.0.13",
     "@next/font": "^13.0.6",
     "encoding": "^0.1.13",
-    "next": "13.0.7-canary.4",
+    "next": "^13.0.8-canary.0",
     "next-auth": "^4.18.6",
     "pusher": "^5.1.1-beta",
     "pusher-js": "^7.5.0",
