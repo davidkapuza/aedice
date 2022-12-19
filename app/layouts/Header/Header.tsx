@@ -1,7 +1,7 @@
 import { getChats } from "@/lib/services/server/chats";
 import { getCurrentUser } from "@/lib/services/server/session";
 import Image from "next/image";
-import DropdownMenu from "src/app/components/DropdownMenu/DropdownMenu";
+import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
 import "./Header.styles.css";
 
 export default async function Header() {

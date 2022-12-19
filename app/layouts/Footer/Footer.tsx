@@ -1,4 +1,4 @@
-import ChatPresence from "src/app/components/ChatPresence/ChatPresence";
+import ChatPresence from "app/components/ChatPresence/ChatPresence";
 import "./Footer.styles.css";
 
 function Footer() {

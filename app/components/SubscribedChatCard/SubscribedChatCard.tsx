@@ -32,7 +32,7 @@ function SubscribedChatCard({ chat }: Props) {
         className={`Chat-card ${
           isSelected ? "border-white" : "border-gray-500"
         }`}
-        onClick={() => router.push(`chat/${chat.chat_id}`)}
+        onClick={() => router.push(`/chat/${chat.chat_id}`)}
       >
         {membersFromChannel ? (
           <>

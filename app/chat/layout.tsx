@@ -1,4 +1,4 @@
-import { Header, Sidebar, Footer } from "@/layouts/exports";
+import { Header, Sidebar, Footer } from "app/layouts/exports";
 
 export default function ChatLayout({
   children,

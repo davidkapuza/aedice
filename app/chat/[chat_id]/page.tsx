@@ -1,4 +1,4 @@
-import Chat from "src/app/chat/components/Chat/Chat";
+import Chat from "app/chat/components/Chat/Chat";
 import { getCurrentUser } from "@/lib/services/server/session";
 import { getMessages } from "@/lib/services/server/messages";
 

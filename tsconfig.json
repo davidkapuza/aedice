@@ -26,19 +26,19 @@
     "baseUrl": ".",
     "paths": {
       // * app
-      "@/layouts/*": ["src/app/layouts/*"],
+      "@/layouts/*": ["app/layouts/*"],
       // * core
-      "@/core/*": ["src/core/*"],
-      "@/middlewares/*": ["src/core/middlewares/*"],
-      "@/schemas/*": ["src/core/schemas/*"],
-      "@/types/*": ["src/core/types/*"],
-      "@/ui/*": ["src/core/ui/*"],
+      "@/core/*": ["core/*"],
+      "@/middlewares/*": ["core/middlewares/*"],
+      "@/schemas/*": ["core/schemas/*"],
+      "@/types/*": ["core/types/*"],
+      "@/ui/*": ["core/ui/*"],
       // * lib
-      "@/lib/*": ["src/lib/*"],
-      "@/hooks/*": ["src/lib/hooks/*"],
-      "@/services/*": ["src/lib/services/*"],
+      "@/lib/*": ["lib/*"],
+      "@/hooks/*": ["lib/hooks/*"],
+      "@/services/*": ["lib/services/*"],
       // * api
-      "@/api/*": ["src/pages/api/*"],
+      "@/api/*": ["pages/api/*"],
 
     },
   },

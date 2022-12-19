@@ -3,7 +3,6 @@ import { quitChat } from "@/lib/services/client/chats";
 import { getChatFromPath } from "@/lib/utils/getChatFromPath";
 import { Menu, Transition } from "@headlessui/react";
 import {
-  EllipsisVerticalIcon,
   ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
@@ -34,7 +33,7 @@ export default function DropdownMenu({ user_chat_id }: Props) {
   const router = useRouter();
   const chat_id = getChatFromPath();
   const quit = async () => {
-    router.push(`chat`);
+    router.push(`/chat`);
     await quitChat(chat_id!);
   };
 

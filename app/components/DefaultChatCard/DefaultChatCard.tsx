@@ -22,14 +22,14 @@ function DefaultChatCard({ user, chat }: Props) {
   )[0];
   const join = async (chat_id: string) => {
     await joinChat(chat_id, user);
-    router.push(`chat/${chat_id}`);
+    router.push(`/chat/${chat_id}`);
   };
 
   return (
     <li>
       <div
         className="Default-Chat-Card"
-        onClick={() => router.push(`chat/${chat.chat_id}`)}
+        onClick={() => router.push(`/chat/${chat.chat_id}`)}
       >
         {chat.members ? (
           <>

@@ -1,8 +1,6 @@
-
-
 async function NoChatPage() {
   return (
-    <div className='text-white'>Hello</div>
+    <div className='text-white'>NoChatPage</div>
   )
 }
 
