@@ -6,8 +6,7 @@ export default withAuth(
   async function middleware(req) {
     const token = await getToken({ req });
     const isAuth = !!token;
-    const isAuthPage = req.nextUrl.pathname.startsWith("/api/auth/signin");
-
+    const isAuthPage = req.nextUrl.pathname.endsWith("signin");
     if (isAuthPage) {
       if (isAuth) {
         return NextResponse.redirect(new URL("/chat", req.url));

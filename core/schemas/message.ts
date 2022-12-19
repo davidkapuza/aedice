@@ -6,7 +6,7 @@ export const MessageZodSchema = z.object({
   text: z.string().min(1),
   username: z.string(),
   image: z.string().url(),
-  email: z.string().email(),
+  sender_id: z.string(),
 })
 
 

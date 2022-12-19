@@ -11,8 +11,7 @@ export default function ChatLayout({
       <Header />
       {/* @ts-expect-error Server Component */}
       <Sidebar />
-      <main className="Chat-layout">{children}</main>
-      {/* <Footer /> */}
+      {children}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default async function RootLayout({
     <html className={`dark ${space_mono.variable} ${syne.variable}`}>
       <head />
       <body className="dark:bg-black">
-        <div>{children}</div>
+        {children}
       </body>
     </html>
   );

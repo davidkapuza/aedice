@@ -1,5 +1,6 @@
 
-import { TypeMessage } from "@/core/schemas/message";
+
+import { TypeMessage } from "@/core/types/entities";
 import Image from "next/image";
 import { memo } from "react";
 import "./Message.styles.css";

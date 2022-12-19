@@ -32,7 +32,7 @@ function ChatInput({ user, chat_id }: Props) {
       created_at: Date.now(),
       username: user?.name!,
       image: user?.image!,
-      email: user?.email!,
+      sender_id: user?.id!,
     };
     setInput("");
 
