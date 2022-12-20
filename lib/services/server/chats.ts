@@ -10,7 +10,6 @@ export async function getChats() {
     }
   );
   if (!responce?.ok) {
-    // TODO handle errors with ui
     console.log("Err...");
     return;
   }

@@ -12,6 +12,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
   if (req.method === "GET") {
     try {
+      console.log("GETTING CHATS...")
       const foundChats = await chatsRepository
         .search()
         .where("members_id")

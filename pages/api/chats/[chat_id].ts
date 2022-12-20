@@ -50,7 +50,7 @@ async function handler(
       };
 
       serverPusher.trigger(
-        `cache-chat-update-${chat_id}`,
+        [`chat-room-${chat_id}`, `chat-room-messages-${chat_id}`],
         "new-message",
         newMessage
       );
@@ -81,24 +81,20 @@ async function handler(
       chat.members.push(JSON.stringify(user));
       chat.members_id.push(user.id);
 
-      serverPusher.trigger(`private-user-chats-${user.id}`, "chat-added", {
-        chat_id: chat.entityId,
-        name: chat.name,
-        last_message: chat.last_message,
-        last_message_time: chat.last_message_time,
-        created_at: chat.created_at,
-        private: chat.private,
-        members: chat.members.map((member: string) => JSON.parse(member)),
-        members_id: chat.members_id,
-        messages: chat.messages,
-        chat_owner: chat.chat_owner,
-      });
+      const events = [
+        {
+          channel: `user-chats-${user.id}`,
+          name: "chat-created",
+          data: chat_id,
+        },
+        {
+          channel: `chat-room-${chat_id}`,
+          name: "member-joined",
+          data: user,
+        },
+      ];
 
-      serverPusher.trigger(
-        `private-cache-chat-update-${chat_id}`,
-        "member-joined",
-        user
-      );
+      serverPusher.triggerBatch(events);
 
       await chatsRepository.save(chat);
       return res.end();
@@ -114,26 +110,29 @@ async function handler(
       const session = await unstable_getServerSession(req, res, authOptions);
       const chat = await chatsRepository.fetch(chat_id);
       if (chat.chat_owner === session?.user.id) {
-        return res.status(403)
+        return res.status(403);
       }
 
-      const filteredMembers = chat.members
+      const members = chat.members
         .map((member: string) => JSON.parse(member))
         .filter((member: any) => member.id !== session?.user.id);
 
-      serverPusher.trigger(
-        `private-user-chats-${session?.user.id}`,
-        "chat-removed",
-        chat_id
-      );
+      const events = [
+        {
+          channel: `chat-room-${chat_id}`,
+          name: "member-left",
+          data: members,
+        },
+        {
+          channel: `user-chats-${session?.user.id}`,
+          name: "chat-removed",
+          data: chat_id,
+        },
+      ];
 
-      serverPusher.trigger(
-        `private-cache-chat-update-${chat_id}`,
-        "member-quit",
-        filteredMembers
-      );
+      serverPusher.triggerBatch(events);
 
-      chat.members = filteredMembers.map((member: any) =>
+      chat.members = members.map((member: any) =>
         JSON.stringify(member)
       );
       chat.members_id = chat.members_id.filter(

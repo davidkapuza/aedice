@@ -3,6 +3,7 @@ import { chatSchema } from "./schemas/chat";
 import { userSchema } from "./schemas/user";
 
 const client = new Client();
+
 export async function connect() {
   if (!client.isOpen()) {
     await client.open(process.env.REDIS_URL);
@@ -12,10 +13,10 @@ export async function connect() {
 
 const registerService = async (name: string, initFn: () => Promise<Client>) => {
   if (process.env.NODE_ENV === "development" && name === "__redisClient") {
-    if (!(name in global)) {
-      global[name] = await initFn();
+    if (!(name in globalThis)) {
+      globalThis[name] = await initFn();
     }
-    return global[name];
+    return globalThis[name];
   }
   return await initFn();
 };

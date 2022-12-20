@@ -16,9 +16,12 @@ type Props = {
 function Search({ user }: Props) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-  const { data: chats, error } = useSWR(
+  const { data: chats, isLoading } = useSWR(
     () => (debouncedSearch ? `/api/chats/search?q=${debouncedSearch}` : null),
-    searchChats
+    searchChats,
+    {
+      keepPreviousData: true,
+    }
   );
   return (
     <>
@@ -39,9 +42,9 @@ function Search({ user }: Props) {
 
       <ul>
         {search &&
-          (chats?.map((chat: ChatEntity) => (
+          chats?.map((chat: ChatEntity) => (
             <ChatCard key={chat.chat_id} chat={chat} user={user} />
-          )) || <p className="text-white">"Loading..."</p>)}
+          ))}
       </ul>
     </>
   );
