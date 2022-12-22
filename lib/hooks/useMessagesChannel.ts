@@ -13,25 +13,24 @@ export function useMessagesChannel(chat_id: string) {
     mutate,
   } = useSWR<TypeMessage[]>(query, getMessages);
   useEffect(() => {
-    const channel = clientPusher.subscribe(`chat-room-${chat_id}`);
-    channel
-      .bind("pusher:subscription_error", (error: any) => {
-        var { status } = error;
-        console.log(status);
-      })
-      .bind("new-message", async (message: TypeMessage) => {
-        if (messages?.find((msg) => msg.id === message.id)) return;
-        if (!messages) {
-          mutate(() => getMessages(query));
-        } else {
-          mutate(() => getMessages(query), {
-            optimisticData: [...messages!, message],
-            populateCache: true,
-            revalidate: false,
-            rollbackOnError: true,
-          });
-        }
-      });
+    const channel = clientPusher.subscribe(`presence-chat-room-messages-${chat_id}`);
+    channel.bind("pusher:subscription_error", (error: any) => {
+      var { status } = error;
+      console.log(status);
+    });
+    channel.bind("new-message", async (message: TypeMessage) => {
+      if (messages?.find((msg) => msg.id === message.id)) return;
+      if (!messages) {
+        mutate(() => getMessages(query));
+      } else {
+        mutate(() => getMessages(query), {
+          optimisticData: [...messages!, message],
+          populateCache: true,
+          revalidate: false,
+          rollbackOnError: true,
+        });
+      }
+    });
     return () => {
       channel.unbind_all();
       channel.unsubscribe();

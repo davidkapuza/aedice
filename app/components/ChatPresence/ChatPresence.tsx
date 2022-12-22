@@ -10,7 +10,7 @@ function ChatPresence() {
 
   useEffect(() => {
     const channel = clientPusher.subscribe(
-      `presence-private-cache-chat-update-${chat_id}`
+      `presence-chat-room-messages-${chat_id}`
     );
     channel.bind("pusher:subscription_succeeded", () => {
       setPresence((channel as PresenceChannel).members.count);
@@ -23,7 +23,7 @@ function ChatPresence() {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [clientPusher]);
+  }, [chat_id, clientPusher]);
 
   return (
     <>

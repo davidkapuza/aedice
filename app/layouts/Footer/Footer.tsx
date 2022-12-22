@@ -21,8 +21,8 @@ function Footer() {
 
         <p>Check on Github.</p>
       </a>
-      
-       <ChatPresence/>
+
+      <ChatPresence />
 
       <a
         target="_blank"

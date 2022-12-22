@@ -1,5 +1,5 @@
 .Message {
-  @apply flex min-h-[28px] flex-row gap-[0.6rem] max-w-md my-0.5 pr-0.5 items-center;
+  @apply flex flex-row gap-[0.6rem] max-w-md my-0.5 pr-0.5 items-center;
 }
 
 .Message-text {

@@ -1,7 +1,6 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { authOptions } from "@/core/auth";
 import { serverPusher } from "@/core/pusher";
-import { chatsRepository } from "@/core/redis";
+import db, { chatsRepository } from "@/core/redis";
 import { TypeMessage } from "@/core/types/entities";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
@@ -37,6 +36,41 @@ async function handler(
       return res.status(500).end();
     }
   }
+  if (req.method === "PATCH") {
+    try {
+      const user = req.body.user;
+      const chat = await chatsRepository.fetch(chat_id);
+
+      if (chat.members_id.includes(user.id)) {
+        return res.status(405).json("Not Allowed");
+      }
+      chat.members.push(JSON.stringify(user));
+      chat.members_id.push(user.id);
+
+      const events = [
+        {
+          channel: `private-user-chats-${user.id}`,
+          name: "chat-created",
+          data: chat_id,
+        },
+        {
+          channel: `private-chat-room-${chat_id}`,
+          name: "member-joined",
+          data: user,
+        },
+      ];
+      serverPusher.triggerBatch(events);
+
+      await chatsRepository.save(chat);
+
+      return res.end();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(422).json(error.issues);
+      }
+      return res.status(422).end();
+    }
+  }
 
   if (req.method === "POST") {
     try {
@@ -50,7 +84,10 @@ async function handler(
       };
 
       serverPusher.trigger(
-        [`chat-room-${chat_id}`, `chat-room-messages-${chat_id}`],
+        [
+          `private-chat-room-${chat_id}`,
+          `presence-chat-room-messages-${chat_id}`,
+        ],
         "new-message",
         newMessage
       );
@@ -70,41 +107,6 @@ async function handler(
       return res.status(422).end();
     }
   }
-  if (req.method === "PATCH") {
-    try {
-      const user = req.body.user;
-      const chat = await chatsRepository.fetch(chat_id);
-
-      if (chat.members_id.includes(user.id)) {
-        return res.status(405).json("Not Allowed");
-      }
-      chat.members.push(JSON.stringify(user));
-      chat.members_id.push(user.id);
-
-      const events = [
-        {
-          channel: `user-chats-${user.id}`,
-          name: "chat-created",
-          data: chat_id,
-        },
-        {
-          channel: `chat-room-${chat_id}`,
-          name: "member-joined",
-          data: user,
-        },
-      ];
-
-      serverPusher.triggerBatch(events);
-
-      await chatsRepository.save(chat);
-      return res.end();
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(422).json(error.issues);
-      }
-      return res.status(422).end();
-    }
-  }
   if (req.method === "DELETE") {
     try {
       const session = await unstable_getServerSession(req, res, authOptions);
@@ -119,12 +121,12 @@ async function handler(
 
       const events = [
         {
-          channel: `chat-room-${chat_id}`,
+          channel: `private-chat-room-${chat_id}`,
           name: "member-left",
           data: members,
         },
         {
-          channel: `user-chats-${session?.user.id}`,
+          channel: `private-user-chats-${session?.user.id}`,
           name: "chat-removed",
           data: chat_id,
         },
@@ -132,9 +134,7 @@ async function handler(
 
       serverPusher.triggerBatch(events);
 
-      chat.members = members.map((member: any) =>
-        JSON.stringify(member)
-      );
+      chat.members = members.map((member: any) => JSON.stringify(member));
       chat.members_id = chat.members_id.filter(
         (id: string) => id !== session?.user.id
       );

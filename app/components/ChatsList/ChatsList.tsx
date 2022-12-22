@@ -10,10 +10,10 @@ import "./ChatsList.styles.css";
 type Props = {
   user: User;
 };
-preload("api/chats", getChats);
 
 function ChatsList({ user }: Props) {
   const { chats, isLoading } = useChatsChannel(user.id);
+  // preload("api/chats", getChats);
   return (
     <ul className="Chats-ul">
       <div className="py-3 ">

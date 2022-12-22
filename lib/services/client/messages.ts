@@ -1,6 +1,5 @@
 import { TypeMessage } from "@/core/types/entities";
 
-
 export async function getMessages(query: string) {
   const response = await fetch(query);
   if (!response?.ok) {
@@ -17,12 +16,18 @@ export async function sendMessage(
   message: TypeMessage,
   messages: TypeMessage[]
 ) {
-  const data = await fetch(`/api/chats/${chat_id}`, {
+  const response = await fetch(`/api/chats/${chat_id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ message }),
-  }).then((res) => res.json());
+  });
+  if (!response?.ok) {
+    // TODO add err handling in ui
+    console.log("Err...");
+    return;
+  }
+  const data = await response.json();
   return [...messages!, data.message];
 }
