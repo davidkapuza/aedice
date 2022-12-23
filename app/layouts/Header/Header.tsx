@@ -1,8 +1,8 @@
 import { getChats } from "@/lib/services/server/chats";
 import { getCurrentUser } from "@/lib/services/server/session";
-import Image from "next/image";
 import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
 import "./Header.styles.css";
+import Avatar from "@/core/ui/Avatar/Avatar";
 
 export default async function Header() {
   const chats = await getChats();
@@ -13,16 +13,7 @@ export default async function Header() {
   return (
     <header className="Header">
       <div className="inline-flex items-center flex-1 gap-4">
-        <Image
-          src={
-            user?.image ||
-            `https://avatars.dicebear.com/api/open-peeps/${user?.name}.svg`
-          }
-          width={30}
-          height={30}
-          alt="Avatar"
-          className="Avatar"
-        />
+        <Avatar src={user?.image} className="w-7 h-7"/>
         <span className="flex flex-col">
           <small className="text-gray-500 text-[10px]">Welcome back,</small>
           <h1 className="flex-1 font-sans font-medium">{user?.name}</h1>

@@ -1,16 +1,10 @@
 import React from "react";
 
-type Props = {
-  className?: string;
-};
-
-function Loader({
-  className = "w-4 h-4 dark:text-gray-600 fill-gray-600 dark:fill-gray-300",
-}: Props) {
+function Loader() {
   return (
-    <div role="status">
+    <div role="status" className="h-[27px]">
       <svg
-        className={`inline text-gray-200 animate-spin ${className}`}
+        className={`inline text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300 w-3.5 h-3.5`}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

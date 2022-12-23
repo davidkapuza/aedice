@@ -1,5 +1,5 @@
 import type { Chat } from "@/core/types";
-import AvatarsGroup from "@/core/ui/AvatarsGroup/AvatarsGroup";
+import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
 import { useChatInfoChannel } from "@/lib/hooks/channels/useChatInfoChannel";
 import { getChatFromPath } from "@/lib/utils/getChatFromPath";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,6 @@ function SubscribedChatCard({ chat }: Props) {
             <AvatarsGroup
               avatars={membersFromChannel.map((member: any) => member.image)}
             />
-
             <div className="flex-1 w-full mt-3 text-left">
               <h1 className="font-sans text-sm leading-3">{chat.name}</h1>
               <span className="inline-flex justify-between w-full">
@@ -49,12 +48,12 @@ function SubscribedChatCard({ chat }: Props) {
                     date={new Date(+lastMessageFromChannel?.last_message_time!)}
                     formatter={(value, unit) => {
                       if (unit === "second" && value < 15) return "now";
-                      if (unit === "second") return `${value}s ago`;
-                      if (unit === "minute") return `${value}m ago`;
-                      if (unit === "hour") return `${value}h ago`;
-                      if (unit === "day") return `${value}d ago`;
-                      if (unit === "month") return `${value}mo ago`;
-                      if (unit === "year") return `${value}y ago`;
+                      if (unit === "second") return `${value}s`;
+                      if (unit === "minute") return `${value}m`;
+                      if (unit === "hour") return `${value}h`;
+                      if (unit === "day") return `${value}d`;
+                      if (unit === "month") return `${value}mo`;
+                      if (unit === "year") return `${value}y`;
                     }}
                   />
                 )}

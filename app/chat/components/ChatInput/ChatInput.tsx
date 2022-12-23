@@ -1,5 +1,6 @@
 "use client";
 import type { Message, User } from "@/core/types";
+import Avatar from "@/core/ui/Avatar/Avatar";
 import { MessageTextSchema } from "@/core/validations";
 import { getMessages, sendMessage } from "@/lib/services/client/messages";
 import Image from "next/image";
@@ -42,13 +43,7 @@ function ChatInput({ user, chat_id }: Props) {
   };
   return (
     <form className="Chat-form" onSubmit={(e) => send(e)}>
-      <Image
-        src={user?.image}
-        height={20}
-        width={20}
-        alt="Avatar"
-        className="Avatar"
-      />
+      <Avatar src={user?.image} className="w-5 h-5"/>
       <AutosizeInput
         type="text"
         autoComplete="off"

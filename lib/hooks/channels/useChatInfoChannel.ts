@@ -1,5 +1,6 @@
 import { clientPusher } from "@/core/pusher";
 import type { LastMessage, Message, User } from "@/core/types";
+import { LastMessageSchema } from "@/core/validations";
 import { useEffect, useState } from "react";
 
 export function useChatInfoChannel(
@@ -18,10 +19,12 @@ export function useChatInfoChannel(
       console.log(error.message);
     });
     channel.bind("new-message", async (message: Message) => {
-      setLastMessageFromChannel({
-        last_message: message.text,
-        last_message_time: message.created_at,
-      });
+      setLastMessageFromChannel(
+        LastMessageSchema.parse({
+          last_message: message.text,
+          last_message_time: message.created_at,
+        })
+      );
     });
     channel.bind("member-joined", async (member: User) => {
       if (membersFromChannel.some((prev) => prev.id === member.id)) return;
