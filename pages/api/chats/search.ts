@@ -2,51 +2,54 @@
 import { authOptions } from "@/core/auth";
 import { withMethods } from "@/core/middlewares/with-methods";
 import { chatsRepository } from "@/core/redis";
-import { ChatEntity } from "@/core/types/entities";
+import { Chat, DatabaseChat, PublicChat, UniqueId } from "@/core/types";
+import { QuerySchema } from "@/core/validations";
+import { PublicChatSchema } from "@/core/validations/chat";
+import * as z from "zod";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
+import { fromZodError, ValidationError } from "zod-validation-error";
 
-type Data = {
-  chats: ChatEntity[];
-};
-type Error = {
-  error: string;
+type Response = {
+  chats: PublicChat[];
 };
 
 async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data | Error>
+  res: NextApiResponse<Response | ValidationError>
 ) {
   if (req.method === "GET") {
-    const query = req.query.q;
-    const session = await unstable_getServerSession(req, res, authOptions);
-    if (!query) {
-      res.status(400).json({
-        error: "Search can not be empty...",
-      });
-    } else if (query.length < 50) {
-      const foundChats = await chatsRepository
-        .search()
-        .where("chat_owner")
-        .not.eq(session?.user.id)
-        .and("name")
-        .matches(query + "*")
-        .return.all();
+    try {
+      const query = QuerySchema.parse(req.query.q);
+      const session = await unstable_getServerSession(req, res, authOptions);
+      if (!session) {
+        return res.status(403).end();
+      }
+      const foundChats: Array<DatabaseChat & { entityId: UniqueId }> =
+        await chatsRepository
+          .search()
+          .where("chat_owner_id")
+          .not.eq(session?.user.id)
+          .and("name")
+          .matches(query + "*")
+          .return.all();
 
-      const chats = foundChats.map((chat: ChatEntity) => ({
-        chat_id: chat.entityId,
-        name: chat.name,
-        private: chat.private,
-        members: chat.members.map((member: string) => JSON.parse(member)),
-        members_id: chat.members_id,
-        chat_owner: chat.chat_owner,
-      }));
+      const chats: PublicChat[] = foundChats.map((chat) =>
+        PublicChatSchema.parse({
+          chat_id: chat.entityId,
+          name: chat.name,
+          private: chat.private,
+          member_ids: chat.member_ids,
+          chat_image: chat.chat_image,
+        })
+      );
 
       res.status(200).json({ chats });
-    } else {
-      res.status(400).json({
-        error: "Max 50 characters please.",
-      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const zodErr = fromZodError(error);
+        return res.status(422).json(zodErr);
+      }
     }
   }
 }

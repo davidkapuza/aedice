@@ -1,16 +1,14 @@
 "use client";
 import { clientPusher } from "@/core/pusher";
-import { TypeMessage } from "@/core/types/entities";
+import type { User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
 import { useMessagesChannel } from "@/lib/hooks/useMessagesChannel";
-import { getMessages } from "@/lib/services/server/messages";
-import { User } from "next-auth";
 import { useEffect, useRef } from "react";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
 type Props = {
-  user: User | undefined;
+  user: User;
   chat_id: string;
 };
 
@@ -31,7 +29,7 @@ function Chat({ chat_id, user }: Props) {
   return (
     <main className="Chat-layout">
       <ul className="Chat">
-        {messages?.map((message: TypeMessage) => {
+        {messages?.map((message) => {
           const isOwner = user?.id === message.sender_id;
           return (
             <Message key={message.id} message={message} isOwner={isOwner} />

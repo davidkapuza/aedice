@@ -1,3 +1,4 @@
+import type { Chat } from "@/core/types";
 import { headers } from "next/headers";
 
 export async function getChats() {
@@ -13,6 +14,6 @@ export async function getChats() {
     console.log("Err...");
     return;
   }
-  const { chats } = await responce.json();
+  const { chats }: { chats: Chat[] } = await responce.json();
   return chats;
 }

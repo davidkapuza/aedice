@@ -1,9 +1,8 @@
 "use client";
-import { ChatEntity } from "@/core/types/entities";
+import type { User } from "@/core/types";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { searchChats } from "@/lib/services/client/chats";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { User } from "next-auth";
 import { useState } from "react";
 import useSWR from "swr";
 import ChatCard from "../DefaultChatCard/DefaultChatCard";
@@ -14,15 +13,19 @@ type Props = {
 };
 
 function Search({ user }: Props) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const debouncedSearch = useDebounce(search, 500);
   const { data: chats, isLoading } = useSWR(
-    () => (debouncedSearch ? `/api/chats/search?q=${debouncedSearch}` : null),
+    () =>
+      debouncedSearch.length > 2
+        ? `/api/chats/search?q=${debouncedSearch}`
+        : null,
     searchChats,
     {
       keepPreviousData: true,
     }
   );
+  const noResults = debouncedSearch.length > 2 && !chats?.length && !isLoading;
   return (
     <>
       <div className="Search">
@@ -41,10 +44,11 @@ function Search({ user }: Props) {
       </div>
 
       <ul>
-        {search &&
-          chats?.map((chat: ChatEntity) => (
+        {debouncedSearch &&
+          chats?.map((chat) => (
             <ChatCard key={chat.chat_id} chat={chat} user={user} />
           ))}
+        {noResults && <p className="text-sm text-white">No results.</p>}
       </ul>
     </>
   );

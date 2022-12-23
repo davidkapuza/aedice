@@ -2,15 +2,13 @@
 import { quitChat } from "@/lib/services/client/chats";
 import { getChatFromPath } from "@/lib/utils/getChatFromPath";
 import { Menu, Transition } from "@headlessui/react";
-import {
-  ArrowLeftOnRectangleIcon,
-} from "@heroicons/react/20/solid";
-import { Fragment } from "react";
-import { signOut } from "next-auth/react";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/20/solid";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Fragment, SVGProps } from "react";
 
-function MenuIcon(props: any) {
+function MenuIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -25,11 +23,11 @@ function MenuIcon(props: any) {
     </svg>
   );
 }
-type Props = {
-  user_chat_id: string;
+type DropdownMenuProps = {
+  user_chat_id?: string;
 };
 
-export default function DropdownMenu({ user_chat_id }: Props) {
+export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
   const router = useRouter();
   const chat_id = getChatFromPath();
   const quit = async () => {

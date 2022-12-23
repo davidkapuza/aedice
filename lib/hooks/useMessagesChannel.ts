@@ -1,5 +1,5 @@
 import { clientPusher } from "@/core/pusher";
-import { TypeMessage } from "@/core/types/entities";
+import type { Message } from "@/core/types";
 import { useEffect } from "react";
 import useSWR from "swr";
 import { getMessages } from "../services/client/messages";
@@ -7,18 +7,16 @@ import { getMessages } from "../services/client/messages";
 export function useMessagesChannel(chat_id: string) {
   const query = `/api/chats/${chat_id}`;
 
-  const {
-    data: messages,
-    error,
-    mutate,
-  } = useSWR<TypeMessage[]>(query, getMessages);
+  const { data: messages, error, mutate } = useSWR(query, getMessages);
+
   useEffect(() => {
-    const channel = clientPusher.subscribe(`presence-chat-room-messages-${chat_id}`);
-    channel.bind("pusher:subscription_error", (error: any) => {
-      var { status } = error;
-      console.log(status);
+    const channel = clientPusher.subscribe(
+      `presence-chat-room-messages-${chat_id}`
+    );
+    channel.bind("pusher:subscription_error", (error: Error) => {
+      console.log(error.message);
     });
-    channel.bind("new-message", async (message: TypeMessage) => {
+    channel.bind("new-message", async (message: Message) => {
       if (messages?.find((msg) => msg.id === message.id)) return;
       if (!messages) {
         mutate(() => getMessages(query));

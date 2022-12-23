@@ -1,33 +1,43 @@
 import { authOptions } from "@/core/auth";
 import { serverPusher } from "@/core/pusher";
-import db, { chatsRepository } from "@/core/redis";
-import { TypeMessage } from "@/core/types/entities";
+import { chatsRepository } from "@/core/redis";
+import { UniqueIdSchema } from "@/core/validations";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
-import { MessageZodSchema } from "@/schemas/message";
+import { MessageSchema } from "@/validations/message";
+import type { DatabaseChat, Message, User } from "@/core/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
-import { ZodIssue } from "zod";
+import { UserSchema } from "@/core/validations/user";
+import { fromZodError, ValidationError } from "zod-validation-error";
 
-type Messages = {
-  messages: TypeMessage[];
+type Response = {
+  messages?: Message[];
+  message?: Message;
 };
-type Message = {
-  message: TypeMessage;
-};
-type Error = ZodIssue[] | string;
+
+type Error = ValidationError | string;
 
 async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Messages | Message | Error>
+  res: NextApiResponse<Response | Error>
 ) {
-  const chat_id = req.query.chat_id as string;
+  const session = await unstable_getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(403).end();
+  }
+  const query = UniqueIdSchema.safeParse(req.query.chat_id);
+  if (!query.success) {
+    const zodErr = fromZodError(query.error);
+    return res.status(422).json(zodErr);
+  }
+  const chat_id = query.data;
 
   if (req.method === "GET") {
     try {
       const { messages: messagesJson } = await chatsRepository.fetch(chat_id);
-      const messages: TypeMessage[] = messagesJson
+      const messages: Message[] = messagesJson
         .map((message: any) => JSON.parse(message))
         .sort((a: any, b: any) => a.created_at - b.created_at);
 
@@ -38,14 +48,14 @@ async function handler(
   }
   if (req.method === "PATCH") {
     try {
-      const user = req.body.user;
-      const chat = await chatsRepository.fetch(chat_id);
+      const user = UserSchema.parse(req.body.user);
+      const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
 
-      if (chat.members_id.includes(user.id)) {
+      if (chat.member_ids.includes(user.id)) {
         return res.status(405).json("Not Allowed");
       }
       chat.members.push(JSON.stringify(user));
-      chat.members_id.push(user.id);
+      chat.member_ids.push(user.id);
 
       const events = [
         {
@@ -62,11 +72,11 @@ async function handler(
       serverPusher.triggerBatch(events);
 
       await chatsRepository.save(chat);
-
-      return res.end();
+      return res.status(200).end();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(422).json(error.issues);
+        const zodErr = fromZodError(error);
+        return res.status(422).json(zodErr);
       }
       return res.status(422).end();
     }
@@ -74,9 +84,8 @@ async function handler(
 
   if (req.method === "POST") {
     try {
-      const message = MessageZodSchema.parse(req.body.message);
+      const message = MessageSchema.parse(req.body.message);
 
-      // * Update to server timestamp
       const created_at = Date.now();
       const newMessage = {
         ...message,
@@ -92,7 +101,7 @@ async function handler(
         newMessage
       );
 
-      const chat = await chatsRepository.fetch(chat_id);
+      const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
       chat.messages.push(JSON.stringify(newMessage));
       chat.last_message_time = created_at;
       chat.last_message = message.text;
@@ -101,23 +110,21 @@ async function handler(
       res.status(200).json({ message: newMessage });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(422).json(error.issues);
+        const zodErr = fromZodError(error);
+        return res.status(422).json(zodErr);
       }
-
       return res.status(422).end();
     }
   }
   if (req.method === "DELETE") {
     try {
-      const session = await unstable_getServerSession(req, res, authOptions);
-      const chat = await chatsRepository.fetch(chat_id);
-      if (chat.chat_owner === session?.user.id) {
-        return res.status(403);
+      const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
+      if (chat.chat_owner_id === session?.user.id) {
+        return res.status(403).json("Can't remove own chat.");
       }
-
-      const members = chat.members
+      const members: User[] = chat.members
         .map((member: string) => JSON.parse(member))
-        .filter((member: any) => member.id !== session?.user.id);
+        .filter((member: User) => member.id !== session?.user.id);
 
       const events = [
         {
@@ -134,11 +141,10 @@ async function handler(
 
       serverPusher.triggerBatch(events);
 
-      chat.members = members.map((member: any) => JSON.stringify(member));
-      chat.members_id = chat.members_id.filter(
+      chat.members = members.map((member) => JSON.stringify(member));
+      chat.member_ids = chat.member_ids.filter(
         (id: string) => id !== session?.user.id
       );
-
       await chatsRepository.save(chat);
       return res.status(204).end();
     } catch (error) {

@@ -1,10 +1,10 @@
+import { DatabaseChatSchema } from "@/validations/chat";
+import { DatabaseUserSchema, UserSchema } from "@/validations/user";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import * as z from "zod";
+import { fromZodError } from "zod-validation-error";
 import { chatsRepository, usersRepository } from "./redis";
-
-import { ChatZodSchema } from "./schemas/chat";
-import { UserZodSchema } from "./schemas/user";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,9 +16,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile, credentials }) {
       try {
-        const created_at = Date.now();
-
-        // * Checking if user already exists
         const exists = await usersRepository
           .search()
           .where("email")
@@ -29,31 +26,39 @@ export const authOptions: NextAuthOptions = {
         }
 
         // * Create User
-        const newUser = UserZodSchema.parse(user);
-        const userEntity = await usersRepository.createAndSave(newUser);
+        const dbUser = DatabaseUserSchema.parse({
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        });
+        const userEntity = await usersRepository.createAndSave(dbUser);
 
         // * Create chat for a new User
-        const newChat = ChatZodSchema.parse({
-          name: userEntity.name,
-          created_at,
-          private: false,
-          last_message: null,
-          last_message_time: null,
-          members: [JSON.stringify({ id: userEntity.entityId, ...newUser })],
-          members_id: [userEntity.entityId],
-          messages: [],
-          chat_owner: userEntity.entityId,
+        const chatMember = UserSchema.parse({
+          id: userEntity.entityId,
+          ...dbUser,
         });
+        const dbChat = DatabaseChatSchema.parse({
+          name: userEntity.name,
+          created_at: Date.now(),
+          private: false,
+          members: [JSON.stringify(chatMember)],
+          member_ids: [userEntity.entityId],
+          messages: [],
+          chat_owner_id: userEntity.entityId,
+          chat_image: userEntity.image,
+        });
+        const chatEntity = chatsRepository.createEntity(dbChat);
+        chatEntity.chat_id = chatEntity.entityId;
+        await chatsRepository.save(chatEntity);
 
-        await chatsRepository.createAndSave(newChat);
-
-        // * Augument User
+        // * Augment Session
         user.id = userEntity.entityId;
-
         return true;
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.log(error.issues);
+          console.log(fromZodError(error));
+          return false;
         }
         console.log(error);
         return false;
@@ -82,10 +87,10 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token, user }) {
       if (token) {
-        session.user.id = token.id as string;
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        session.user.image = token.image as string;
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.image;
       }
       return session;
     },
@@ -99,5 +104,5 @@ export const authOptions: NextAuthOptions = {
     brandColor: "#0000",
     logo: "https://next-auth.js.org/img/logo/logo-sm.png",
   },
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
 };

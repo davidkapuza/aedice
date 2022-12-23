@@ -1,3 +1,5 @@
+import type { Message } from "@/core/types";
+
 export async function getMessages(chat_id: string) {
   const response = await fetch(
     `${
@@ -9,6 +11,6 @@ export async function getMessages(chat_id: string) {
     console.log("Err...");
     return;
   }
-  const { messages } = await response.json();
+  const { messages }: {messages: Message[]} = await response.json();
   return messages;
 }

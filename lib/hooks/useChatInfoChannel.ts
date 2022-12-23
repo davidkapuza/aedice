@@ -1,25 +1,23 @@
 import { clientPusher } from "@/core/pusher";
-import { TypeMessage, TypeLastMessage } from "@/core/types/entities";
-import { User } from "next-auth";
-import { useState, useEffect } from "react";
+import type { LastMessage, Message, User } from "@/core/types";
+import { useEffect, useState } from "react";
 
 export function useChatInfoChannel(
   initialMemmbers: User[],
-  initialLastMessage: TypeLastMessage,
+  initialLastMessage: LastMessage,
   chat_id: string
 ) {
   const [membersFromChannel, setMembersFromChannel] =
     useState<User[]>(initialMemmbers);
   const [lastMessageFromChannel, setLastMessageFromChannel] =
-    useState<TypeLastMessage>(initialLastMessage);
+    useState<LastMessage>(initialLastMessage);
 
   useEffect(() => {
     const channel = clientPusher.subscribe(`private-chat-room-${chat_id}`);
-    channel.bind("pusher:subscription_error", (error: any) => {
-      const { status } = error;
-      console.log(status);
+    channel.bind("pusher:subscription_error", (error: Error) => {
+      console.log(error.message);
     });
-    channel.bind("new-message", async (message: TypeMessage) => {
+    channel.bind("new-message", async (message: Message) => {
       setLastMessageFromChannel({
         last_message: message.text,
         last_message_time: message.created_at,

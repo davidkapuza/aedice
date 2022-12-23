@@ -1,4 +1,4 @@
-import { TypeMessage } from "@/core/types/entities";
+import type { Message } from "@/core/types";
 
 export async function getMessages(query: string) {
   const response = await fetch(query);
@@ -7,14 +7,14 @@ export async function getMessages(query: string) {
     console.log("Err...");
     return;
   }
-  const { messages } = await response.json();
+  const { messages }: { messages: Message[] } = await response.json();
   return messages;
 }
 
 export async function sendMessage(
   chat_id: string,
-  message: TypeMessage,
-  messages: TypeMessage[]
+  message: Message,
+  messages: Message[]
 ) {
   const response = await fetch(`/api/chats/${chat_id}`, {
     method: "POST",
@@ -28,6 +28,6 @@ export async function sendMessage(
     console.log("Err...");
     return;
   }
-  const data = await response.json();
+  const data: { message: Message } = await response.json();
   return [...messages!, data.message];
 }

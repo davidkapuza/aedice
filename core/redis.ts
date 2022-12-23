@@ -2,6 +2,7 @@ import { Client } from "redis-om";
 import { chatSchema } from "./schemas/chat";
 import { userSchema } from "./schemas/user";
 
+
 const client = new Client();
 
 export async function connect() {
@@ -23,6 +24,8 @@ const registerService = async (name: string, initFn: () => Promise<Client>) => {
 
 const db = await registerService("__redisClient", connect);
 export const usersRepository = db.fetchRepository(userSchema);
+const usesIdx = await usersRepository.createIndex()
 export const chatsRepository = db.fetchRepository(chatSchema);
+const chatIdx = await chatsRepository.createIndex()
 
 export default db;

@@ -1140,6 +1140,11 @@ yaml@^1.10.2:
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
 
+zod-validation-error@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/zod-validation-error/-/zod-validation-error-0.3.0.tgz#59118411ce24780e7a0380e89945b147cb8fe877"
+  integrity sha512-M0g8+1fgEgz6do82lA90v1IA4WXOK7TxAHqohAPktNJbTacl7tI74JS38AUWJPIJgDjUkhtEuLkUUFl3uhneyA==
+
 zod@^3.19.1:
   version "3.19.1"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.19.1.tgz#112f074a97b50bfc4772d4ad1576814bd8ac4473"

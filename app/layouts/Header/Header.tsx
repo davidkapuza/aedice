@@ -8,8 +8,8 @@ export default async function Header() {
   const chats = await getChats();
   const user = await getCurrentUser();
   const user_chat_id = chats?.find(
-    (chat: any) => chat.chat_owner === user?.id
-  ).chat_id;
+    (chat) => chat.chat_owner_id === user?.id
+  )?.chat_id;
   return (
     <header className="Header">
       <div className="inline-flex items-center flex-1 gap-4">

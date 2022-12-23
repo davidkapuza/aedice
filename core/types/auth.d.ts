@@ -1,10 +1,10 @@
 import "next-auth";
-
+import "@/validations/index";
 declare module "next-auth" {
   interface User {
-    // chat_id?: string
+    id: UniqueId;
+    image: Image;
   }
-
   interface Session {
     user: User;
   }

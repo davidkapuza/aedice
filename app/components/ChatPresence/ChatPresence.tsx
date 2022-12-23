@@ -6,14 +6,14 @@ import React, { useEffect, useState } from "react";
 
 function ChatPresence() {
   const chat_id = getChatFromPath();
-  const [presence, setPresence] = useState(0);
+  const [presence, setPresence] = useState<number>(0);
 
   useEffect(() => {
     const channel = clientPusher.subscribe(
       `presence-chat-room-messages-${chat_id}`
-    );
+    ) as PresenceChannel;
     channel.bind("pusher:subscription_succeeded", () => {
-      setPresence((channel as PresenceChannel).members.count);
+      setPresence(channel.members.count);
     });
     channel.bind("pusher:member_removed", () => {
       setPresence((prev) => prev - 1);
@@ -27,7 +27,7 @@ function ChatPresence() {
 
   return (
     <>
-      {(chat_id !== "chat" && presence > 0) && (
+      {chat_id !== "chat" && presence > 0 && (
         <div className="flex items-center justify-center flex-1 gap-2">
           <svg
             viewBox="0 0 10 10"

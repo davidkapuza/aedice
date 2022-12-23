@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
 
 export default async function retryAsync<T>(
   func: () => Promise<T>,

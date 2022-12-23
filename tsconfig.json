@@ -30,6 +30,7 @@
       // * core
       "@/core/*": ["core/*"],
       "@/middlewares/*": ["core/middlewares/*"],
+      "@/validations/*": ["core/validations/*"],
       "@/schemas/*": ["core/schemas/*"],
       "@/types/*": ["core/types/*"],
       "@/ui/*": ["core/ui/*"],

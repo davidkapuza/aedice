@@ -1,17 +1,11 @@
-
-
-import { TypeMessage } from "@/core/types/entities";
 import Image from "next/image";
 import { memo } from "react";
+import { Message } from "@/types/index";
 import "./Message.styles.css";
 
-function Message({
-  isOwner,
-  message,
-}: {
-  message: TypeMessage;
-  isOwner: boolean;
-}) {
+type Props = { message: Message; isOwner: boolean };
+
+function Message({ isOwner, message }: Props) {
   return (
     <li className={`Message ${isOwner ? "Message-left" : "Message-right"}`}>
       <p className="text-black leading-[1.1rem]">{message.text}</p>

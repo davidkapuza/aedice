@@ -1,4 +1,4 @@
-import { User } from "next-auth";
+import type { Chat, PublicChat, User } from "@/core/types";
 
 export async function getChats() {
   const response = await fetch(`/api/chats`);
@@ -7,7 +7,7 @@ export async function getChats() {
     console.log("Err...");
     return;
   }
-  const { chats } = await response.json();
+  const { chats }: { chats: Chat[] } = await response.json();
   return chats;
 }
 
@@ -18,7 +18,7 @@ export async function searchChats(query: string) {
     console.log("Err...");
     return;
   }
-  const { chats } = await response.json();
+  const { chats }: { chats: PublicChat[] } = await response.json();
   return chats;
 }
 

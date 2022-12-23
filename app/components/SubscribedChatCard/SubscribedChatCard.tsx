@@ -1,22 +1,19 @@
+import type { Chat } from "@/core/types";
 import AvatarsGroup from "@/core/ui/AvatarsGroup/AvatarsGroup";
 import { useChatInfoChannel } from "@/lib/hooks/useChatInfoChannel";
 import { getChatFromPath } from "@/lib/utils/getChatFromPath";
-import { User } from "next-auth";
 import { useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";
 import "./SubscribedChatCard.styles.css"
 
 type Props = {
-  chat: any;
+  chat: Chat;
 };
 
 function SubscribedChatCard({ chat }: Props) {
   const router = useRouter();
   const path_id = getChatFromPath();
   const isSelected = path_id === chat.chat_id;
-  const chatOwner = chat.members?.filter(
-    (member: User) => member.id === chat.chat_owner
-  )[0];
   const { membersFromChannel, lastMessageFromChannel } = useChatInfoChannel(
     chat.members,
     {
@@ -41,15 +38,15 @@ function SubscribedChatCard({ chat }: Props) {
             />
 
             <div className="flex-1 w-full mt-3 text-left">
-              <h1 className="font-sans text-sm leading-3">{chatOwner?.name}</h1>
+              <h1 className="font-sans text-sm leading-3">{chat.name}</h1>
               <span className="inline-flex justify-between w-full">
                 <small className="text-xs text-gray-500">
                   {lastMessageFromChannel?.last_message}
                 </small>
-                {lastMessageFromChannel?.last_message_time && (
+                {lastMessageFromChannel?.last_message_time! > 0 && (
                   <ReactTimeago
                     className="text-xs text-gray-500"
-                    date={new Date(+lastMessageFromChannel?.last_message_time)}
+                    date={new Date(+lastMessageFromChannel?.last_message_time!)}
                     formatter={(value, unit) => {
                       if (unit === "second" && value < 15) return "now";
                       if (unit === "second") return `${value}s ago`;
