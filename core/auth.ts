@@ -99,6 +99,9 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/login",
+  },
   theme: {
     colorScheme: "dark",
     brandColor: "#0000",

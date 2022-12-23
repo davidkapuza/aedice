@@ -2,7 +2,7 @@ import { clientPusher } from "@/core/pusher";
 import type { Message } from "@/core/types";
 import { useEffect } from "react";
 import useSWR from "swr";
-import { getMessages } from "../services/client/messages";
+import { getMessages } from "../../services/client/messages";
 
 export function useMessagesChannel(chat_id: string) {
   const query = `/api/chats/${chat_id}`;

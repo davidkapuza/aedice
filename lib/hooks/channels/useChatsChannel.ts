@@ -1,7 +1,7 @@
 import { clientPusher } from "@/core/pusher";
 import { useEffect } from "react";
 import useSWR from "swr";
-import { getChats } from "../services/client/chats";
+import { getChats } from "../../services/client/chats";
 
 export function useChatsChannel(user_id: string) {
   const { data: chats, isLoading, mutate } = useSWR("api/chats", getChats);

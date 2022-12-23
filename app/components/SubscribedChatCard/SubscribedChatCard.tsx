@@ -1,6 +1,6 @@
 import type { Chat } from "@/core/types";
 import AvatarsGroup from "@/core/ui/AvatarsGroup/AvatarsGroup";
-import { useChatInfoChannel } from "@/lib/hooks/useChatInfoChannel";
+import { useChatInfoChannel } from "@/lib/hooks/channels/useChatInfoChannel";
 import { getChatFromPath } from "@/lib/utils/getChatFromPath";
 import { useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";

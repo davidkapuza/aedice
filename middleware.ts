@@ -6,7 +6,7 @@ export default withAuth(
   async function middleware(req) {
     const token = await getToken({ req });
     const isAuth = !!token;
-    const isAuthPage = req.nextUrl.pathname.endsWith("signin");
+    const isAuthPage = req.nextUrl.pathname.endsWith("/login");
     if (isAuthPage) {
       if (isAuth) {
         return NextResponse.redirect(new URL("/chat", req.url));
@@ -22,7 +22,7 @@ export default withAuth(
       }
 
       return NextResponse.redirect(
-        new URL(`/api/auth/signin?from=${encodeURIComponent(from)}`, req.url)
+        new URL(`/login?from=${encodeURIComponent(from)}`, req.url)
       );
     }
   },
@@ -36,5 +36,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/", "/chat/:path*", "/api/auth/signin"],
+  matcher: ["/", "/chat/:path*", "/login"],
 };

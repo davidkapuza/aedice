@@ -1,6 +1,6 @@
 "use client";
 import type { User } from "@/core/types";
-import { useChatsChannel } from "@/lib/hooks/useChatsChannel";
+import { useChatsChannel } from "@/lib/hooks/channels/useChatsChannel";
 import SubscribedChatCard from "../SubscribedChatCard/SubscribedChatCard";
 import "./ChatsList.styles.css";
 

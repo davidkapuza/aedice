@@ -2,7 +2,7 @@
 import { clientPusher } from "@/core/pusher";
 import type { User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
-import { useMessagesChannel } from "@/lib/hooks/useMessagesChannel";
+import { useMessagesChannel } from "@/lib/hooks/channels/useMessagesChannel";
 import { useEffect, useRef } from "react";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
