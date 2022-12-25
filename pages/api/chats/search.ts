@@ -2,12 +2,12 @@
 import { authOptions } from "@/core/auth";
 import { withMethods } from "@/core/middlewares/with-methods";
 import { chatsRepository } from "@/core/redis";
-import { Chat, DatabaseChat, PublicChat, UniqueId } from "@/core/types";
+import { DatabaseChat, PublicChat, UniqueId } from "@/core/types";
 import { QuerySchema } from "@/core/validations";
 import { PublicChatSchema } from "@/core/validations/chat";
-import * as z from "zod";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
+import * as z from "zod";
 import { fromZodError, ValidationError } from "zod-validation-error";
 
 type Response = {

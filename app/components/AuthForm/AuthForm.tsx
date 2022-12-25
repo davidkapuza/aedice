@@ -1,6 +1,7 @@
 "use client";
 import "./AuthForm.styles.css";
 import { getProviders, signIn } from "next-auth/react";
+import { Icons } from "@/core/ui/Icons/Icons";
 
 type Props = {
   providers: Awaited<ReturnType<typeof getProviders>>;
@@ -21,6 +22,7 @@ function AuthForm({ providers }: Props) {
               }
             >
               {provider.name}
+              {provider.name === "Google" && <Icons.google className="w-4 h-4"/>}
             </button>
           </div>
         ))}

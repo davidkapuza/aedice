@@ -44,7 +44,7 @@ async function handler(
             chat_image: chat.chat_image,
           })
         )
-        .sort((a: any, b: any) => a.created_at - b.created_at);
+        .sort((a, b) => a.created_at - b.created_at);
 
       return res.status(200).json({ chats });
     } catch (error) {

@@ -1,9 +1,11 @@
 "use client";
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { Icons } from "@/core/ui/Icons/Icons";
+import Loader from "@/core/ui/Loader/Loader";
 import { joinChat } from "@/lib/services/client/chats";
 import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import useSWRMutation from "swr/mutation";
 import "./DefaultChatCard.styles.css";
 
@@ -13,10 +15,13 @@ type Props = {
 };
 
 function DefaultChatCard({ user, chat }: Props) {
+  const [isMember, setIsMember] = useState<boolean>(
+    chat.member_ids.includes(user.id)
+  );
   const { trigger, isMutating } = useSWRMutation("/api/chats", () =>
     joinChat(chat.chat_id, user)
   );
-  const isMember = chat.member_ids.includes(user.id);
+  // const isMember = chat.member_ids.includes(user.id);
   const router = useRouter();
   const join = async () => {
     trigger();
@@ -37,7 +42,13 @@ function DefaultChatCard({ user, chat }: Props) {
           disabled={isMember}
           onClick={join}
         >
-          {isMember ? <Icons.checkCheck size={12} /> : "join"}
+          {isMutating ? (
+            <Loader />
+          ) : isMember ? (
+            <Icons.checkCheck size={12} />
+          ) : (
+            "join"
+          )}
         </button>
       </div>
     </div>

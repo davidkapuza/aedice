@@ -12,11 +12,14 @@ function ChatPresence() {
     const channel = clientPusher.subscribe(
       `presence-chat-room-messages-${chat_id}`
     ) as PresenceChannel;
-    channel.bind("pusher:subscription_succeeded", () => {
-      setPresence(channel.members.count);
+    channel.bind("pusher:subscription_succeeded", (members: any) => {
+      setPresence(members.count);
     });
-    channel.bind("pusher:member_removed", () => {
-      setPresence((prev) => prev - 1);
+    channel.bind("pusher:member_added", (members: any) => {
+      setPresence(members.count);
+    });
+    channel.bind("pusher:member_removed", (members: any) => {
+      setPresence(members.count);
     });
 
     return () => {
