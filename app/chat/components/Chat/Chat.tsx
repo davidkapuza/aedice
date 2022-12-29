@@ -1,9 +1,10 @@
 "use client";
-import { clientPusher } from "@/core/pusher";
-import type { User } from "@/core/types";
+import type { Message as TypeMessage, User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
-import { useMessagesChannel } from "@/lib/hooks/channels/useMessagesChannel";
+import usePusherChannel from "@/lib/hooks/usePusherChannel";
+import { getMessages } from "@/lib/services/client/messages";
 import { useEffect, useRef } from "react";
+import useSWR from "swr";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
@@ -13,14 +14,30 @@ type Props = {
 };
 
 function Chat({ chat_id, user }: Props) {
+  const query = `/api/chats/${chat_id}`;
   const bottomRef = useRef<HTMLSpanElement>(null);
-  const { messages } = useMessagesChannel(chat_id);
-
+  const { data: messages, error, mutate } = useSWR(query, getMessages);
+  const [events] = usePusherChannel(`presence-chat-room-messages-${chat_id}`, [
+    "new-message",
+  ]);
   useEffect(() => {
-    clientPusher.connection.bind("state_change", function (states: any) {
-      console.log("Channels current state is >> " + states.current);
-    });
-  }, [])
+    if (events?.["new-message"]) {
+      if (messages?.find((msg) => msg.id === events["new-message"].id)) return;
+      if (!messages) {
+        mutate(() => getMessages(query));
+      } else {
+        mutate(() => getMessages(query), {
+          optimisticData: [
+            ...messages!,
+            events?.["new-message"] as TypeMessage,
+          ],
+          populateCache: true,
+          revalidate: false,
+          rollbackOnError: true,
+        });
+      }
+    }
+  }, [events]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

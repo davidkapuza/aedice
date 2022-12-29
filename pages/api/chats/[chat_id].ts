@@ -61,7 +61,7 @@ async function handler(
         {
           channel: `private-user-chats-${user.id}`,
           name: "chat-created",
-          data: chat_id,
+          data: {chat_id},
         },
         {
           channel: `private-chat-room-${chat_id}`,
@@ -135,7 +135,7 @@ async function handler(
         {
           channel: `private-user-chats-${session?.user.id}`,
           name: "chat-removed",
-          data: chat_id,
+          data: {chat_id},
         },
       ];
 

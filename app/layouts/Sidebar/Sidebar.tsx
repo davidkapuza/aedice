@@ -5,7 +5,7 @@ import ChatsSearch from "app/components/ChatsSearch/ChatsSearch";
 import "./Sidebar.styles.css";
 
 export default async function Sidebar() {
-  const user = (await getCurrentUser()) as User;
+  const user = await getCurrentUser() as User;
   if (!user) return <p className="text-white">No User</p>;
 
   return (

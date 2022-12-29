@@ -25,5 +25,5 @@ export const DatabaseChatSchema = PublicChatSchema.extend({
 
 export const ChatSchema = DatabaseChatSchema.extend({
   chat_id: UniqueIdSchema,
-  members: z.array(UserSchema).nonempty(),
+  members: z.array(UserSchema),
 }).omit({ messages: true });

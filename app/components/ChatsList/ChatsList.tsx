@@ -1,6 +1,9 @@
 "use client";
 import type { User } from "@/core/types";
-import { useChatsChannel } from "@/lib/hooks/channels/useChatsChannel";
+import usePusherChannel from "@/lib/hooks/usePusherChannel";
+import { getChats } from "@/lib/services/client/chats";
+import { useEffect } from "react";
+import useSWR from "swr";
 import SubscribedChatCard from "../SubscribedChatCard/SubscribedChatCard";
 import "./ChatsList.styles.css";
 
@@ -9,8 +12,15 @@ type Props = {
 };
 
 function ChatsList({ user }: Props) {
-  const { chats, isLoading } = useChatsChannel(user.id);
-  // preload("api/chats", getChats);
+  const [events] = usePusherChannel(`private-user-chats-${user.id}`, [
+    "chat-created",
+    "chat-removed",
+  ]);
+  const { data: chats, isLoading, mutate } = useSWR("api/chats", getChats);
+  useEffect(() => {
+    mutate(getChats);
+  }, [events]);
+
   return (
     <ul className="Chats-ul">
       <div className="py-3 ">

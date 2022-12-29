@@ -2,6 +2,7 @@ import AuthForm from "app/components/AuthForm/AuthForm";
 import { getProviders } from "next-auth/react";
 import React from "react";
 import parseProviders from "next-auth/core/lib/providers"
+import Loader from "@/core/ui/Loader/Loader";
 async function LoginPage() {
   // ! BUG fetch to /api/auth/providers fails at build time.
   const providers = await getProviders();
@@ -18,7 +19,6 @@ async function LoginPage() {
           consectetur reiciendis accusantium.
         </p>
       </div>
-
       <AuthForm providers={providers} />
     </main>
   );

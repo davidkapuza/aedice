@@ -45,7 +45,7 @@ export default function ChatsSearch({ user }: Props) {
           }`}
         >
           {(isLoading || isDebouncing) && query ? (
-            <Loader />
+            <Loader className="h-3.5 w-3.5" />
           ) : (
             <Icons.search size={16} />
           )}

@@ -13,7 +13,7 @@ export default async function Header() {
   return (
     <header className="Header">
       <div className="inline-flex items-center flex-1 gap-4">
-        <Avatar src={user?.image} className="w-7 h-7"/>
+        <Avatar src={user?.image!} className="w-7 h-7"/>
         <span className="flex flex-col">
           <small className="text-gray-500 text-[10px]">Welcome back,</small>
           <h1 className="flex-1 font-sans font-medium">{user?.name}</h1>

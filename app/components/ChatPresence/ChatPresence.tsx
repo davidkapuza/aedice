@@ -1,11 +1,11 @@
 "use client";
 import { clientPusher } from "@/core/pusher";
-import { getChatFromPath } from "@/lib/utils/getChatFromPath";
+import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import { PresenceChannel } from "pusher-js";
 import React, { useEffect, useState } from "react";
 
 function ChatPresence() {
-  const chat_id = getChatFromPath();
+  const chat_id = getIdFromPathname();
   const [presence, setPresence] = useState<number>(0);
 
   useEffect(() => {

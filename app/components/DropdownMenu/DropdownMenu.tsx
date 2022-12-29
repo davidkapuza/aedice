@@ -1,7 +1,7 @@
 "use client";
 import { Icons } from "@/core/ui/Icons/Icons";
-import { quitChat } from "@/lib/services/client/chats";
-import { getChatFromPath } from "@/lib/utils/getChatFromPath";
+import { quitChat, searchChats } from "@/lib/services/client/chats";
+import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ type DropdownMenuProps = {
 
 export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
   const router = useRouter();
-  const chat_id = getChatFromPath();
+  const chat_id = getIdFromPathname();
   const quit = async () => {
     router.push(`/chat`);
     await quitChat(chat_id!);
@@ -61,7 +61,7 @@ export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
               {({ active }) => (
                 <button
                   onClick={() =>
-                    signOut({ callbackUrl: "http://localhost:3000/" })
+                    signOut({ callbackUrl: "http://localhost:3000/login" })
                   }
                   className={`${
                     active ? "text-black bg-gray-200" : "text-gray-800"
