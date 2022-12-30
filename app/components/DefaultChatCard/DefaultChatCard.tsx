@@ -2,7 +2,7 @@
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { Icons } from "@/core/ui/Icons/Icons";
 import Loader from "@/core/ui/Loader/Loader";
-import usePusherChannel from "@/lib/hooks/usePusherChannel";
+import usePusherEvents from "@/lib/hooks/usePusherEvents";
 import { joinChat } from "@/lib/services/client/chats";
 import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ type Props = {
 };
 
 function DefaultChatCard({ user, chat }: Props) {
-  const [events] = usePusherChannel(`private-user-chats-${user.id}`, [
+  const [events] = usePusherEvents(`private-user-chats-${user.id}`, [
     "chat-created",
     "chat-removed",
   ]);
@@ -34,7 +34,6 @@ function DefaultChatCard({ user, chat }: Props) {
   };
   useEffect(() => {
     if (events?.["chat-removed"]) {
-      console.log(events["chat-removed"])
       events["chat-removed"].chat_id === chat.chat_id && setIsMember(false);
     }
   }, [events]);

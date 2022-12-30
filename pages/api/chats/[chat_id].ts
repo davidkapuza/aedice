@@ -61,10 +61,21 @@ async function handler(
         {
           channel: `private-user-chats-${user.id}`,
           name: "chat-created",
-          data: {chat_id},
+          data: {
+            chat_id: chat.chat_id,
+            last_message_time: chat.last_message_time,
+            created_at: chat.created_at,
+            name: chat.name,
+            private: chat.private,
+            member_ids: chat.member_ids,
+            chat_image: chat.chat_image,
+            members: chat.members.map((memmber) => JSON.parse(memmber)),
+            chat_owner_id: chat.chat_owner_id,
+            last_message: chat.last_message,
+          },
         },
         {
-          channel: `private-chat-room-${chat_id}`,
+          channel: `private-chat-${chat_id}`,
           name: "member-joined",
           data: user,
         },
@@ -93,10 +104,7 @@ async function handler(
       };
 
       serverPusher.trigger(
-        [
-          `private-chat-room-${chat_id}`,
-          `presence-chat-room-messages-${chat_id}`,
-        ],
+        [`private-chat-${chat_id}`, `presence-chat-messages-${chat_id}`],
         "new-message",
         newMessage
       );
@@ -125,17 +133,17 @@ async function handler(
       const members: User[] = chat.members
         .map((member: string) => JSON.parse(member))
         .filter((member: User) => member.id !== session?.user.id);
-
+      
       const events = [
-        {
-          channel: `private-chat-room-${chat_id}`,
-          name: "member-left",
-          data: members,
-        },
         {
           channel: `private-user-chats-${session?.user.id}`,
           name: "chat-removed",
-          data: {chat_id},
+          data: { chat_id },
+        },
+        {
+          channel: `private-chat-${chat_id}`,
+          name: "member-left",
+          data: session?.user,
         },
       ];
 

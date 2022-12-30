@@ -1,7 +1,7 @@
 "use client";
 import type { Message as TypeMessage, User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
-import usePusherChannel from "@/lib/hooks/usePusherChannel";
+import usePusherEvents from "@/lib/hooks/usePusherEvents";
 import { getMessages } from "@/lib/services/client/messages";
 import { useEffect, useRef } from "react";
 import useSWR from "swr";
@@ -17,7 +17,7 @@ function Chat({ chat_id, user }: Props) {
   const query = `/api/chats/${chat_id}`;
   const bottomRef = useRef<HTMLSpanElement>(null);
   const { data: messages, error, mutate } = useSWR(query, getMessages);
-  const [events] = usePusherChannel(`presence-chat-room-messages-${chat_id}`, [
+  const [events] = usePusherEvents(`presence-chat-messages-${chat_id}`, [
     "new-message",
   ]);
   useEffect(() => {

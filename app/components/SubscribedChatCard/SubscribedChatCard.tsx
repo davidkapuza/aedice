@@ -1,5 +1,5 @@
-import type { Chat, LastMessage, User } from "@/core/types";
-import usePusherChannel from "@/lib/hooks/usePusherChannel";
+import type { Chat, LastMessage, Message, User } from "@/core/types";
+import usePusherChannel from "@/lib/hooks/usePusherEvents";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
 import { useRouter } from "next/navigation";
@@ -9,9 +9,10 @@ import "./SubscribedChatCard.styles.css";
 
 type Props = {
   chat: Chat;
+  user: User;
 };
 
-function SubscribedChatCard({ chat }: Props) {
+function SubscribedChatCard({ chat, user }: Props) {
   const { last_message, last_message_time } = chat;
   const router = useRouter();
   const chat_id = getIdFromPathname();
@@ -22,7 +23,7 @@ function SubscribedChatCard({ chat }: Props) {
     last_message_time,
   });
 
-  const [events] = usePusherChannel(`private-chat-${chat.chat_id}`, [
+  const [events, setEvent] = usePusherChannel(`private-chat-${chat.chat_id}`, [
     "member-joined",
     "member-left",
     "new-message",
@@ -30,10 +31,34 @@ function SubscribedChatCard({ chat }: Props) {
 
   useEffect(() => {
     if (events?.["member-joined"]) {
-      setMembers(() => events["member-joined"] as User[]);
+      const newMember = events["member-joined"] as User;
+      console.log(
+        "USER LEFT >>> ",
+        events["member-joined"],
+        events["member-joined"].id === user.id
+      );
+      setMembers((prev) => [...prev, newMember]);
+    }
+    if (events?.["member-left"]) {
+      console.log(
+        "USER LEFT >>> ",
+        events["member-left"],
+        events["member-left"].id === user.id
+      );
+      if (events["member-left"].id === user.id) return;
+      setMembers(
+        (prev) =>
+          prev.filter(
+            (member) => member.id !== events["member-left"].id
+          ) as User[]
+      );
     }
     if (events?.["new-message"]) {
-      setLastMessage(() => events["new-message"] as LastMessage);
+      const message = events["new-message"] as Message;
+      setLastMessage({
+        last_message: message.text,
+        last_message_time: message.created_at,
+      });
     }
   }, [events]);
 
@@ -48,7 +73,7 @@ function SubscribedChatCard({ chat }: Props) {
         {members ? (
           <>
             <AvatarsGroup
-              avatars={members.map((member: any) => member.image)}
+              avatars={members?.map((member: any) => member.image)}
             />
             <div className="flex-1 w-full mt-3 text-left">
               <h1 className="font-sans text-sm leading-3">{chat.name}</h1>

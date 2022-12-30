@@ -16,7 +16,7 @@ function Footer() {
         <p>GitHub.</p>
       </a>
 
-      <ChatPresence />
+      {/* <ChatPresence /> */}
 
       <ContactLinks
         links={[

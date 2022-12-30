@@ -7,10 +7,10 @@ export type Action = {
   channelName: string;
   eventName: string;
   payload: any;
-}
+};
 
 export default function usePusherContext(): {
-  getEvent: () => ChannelEvents;
+  getEvent: (channelName: string) => ChannelEvents;
   setEvent: (event: Action) => void;
   subscribeToEvents: (callback: () => void) => () => void;
   subscribeToChannel: (channel: string, events: string[]) => void;
@@ -39,34 +39,25 @@ export default function usePusherContext(): {
     subscribers.current.add(callback);
     return () => subscribers.current.delete(callback);
   }, []);
-  const getEvent = useCallback(() => channelEvents.current, []);
+  const getEvent = useCallback(
+    (channelName: string) => channelEvents.current[channelName],
+    []
+  );
   const setEvent = useCallback(
-    ({
-      channelName,
-      eventName,
-      payload,
-    }: {
-      channelName: string;
-      eventName: string;
-      payload: any;
-    }) => {
-      if (
-        !channelEvents.current?.[channelName] ||
-        !channelEvents.current?.[channelName]?.[eventName]
-      ) {
-        channelEvents.current[channelName] = { [eventName]: payload };
-        subscribers.current.forEach((callback) => callback());
-        return;
-      }
-      channelEvents.current[channelName][eventName] = payload;
+    ({ channelName, eventName, payload }: Action) => {
+      channelEvents.current = {
+        ...channelEvents.current,
+        [channelName]: { [eventName]: payload },
+      };
+      console.log("CURRENT EVENTS >> ", channelEvents.current);
       subscribers.current.forEach((callback) => callback());
     },
     []
   );
   const subscribeToChannel = useCallback(
-    (channel: string, events: string[]) => {
-      subscribe(channel, events, setEvent);
-      return () => unsubscribe(channel);
+    (channelName: string, events: string[]) => {
+      subscribe(channelName, events, setEvent);
+      return () => unsubscribe(channelName);
     },
     []
   );

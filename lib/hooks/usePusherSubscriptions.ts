@@ -2,7 +2,6 @@ import Pusher, { Channel } from "pusher-js";
 import { useRef } from "react";
 import { Action } from "./usePusherContext";
 
-
 type Subscriptions = {
   [key: string]: {
     channel: Channel;
@@ -14,51 +13,49 @@ function usePusherSubscriptions(clientPusher: Pusher) {
   const subscriptions = useRef<Subscriptions>({});
 
   function subscribe(
-    channel: string,
+    channelName: string,
     events: string[],
     setEvent: (event: Action) => void
   ) {
-    if (subscriptions.current?.[channel]) {
-      const currentEvents = subscriptions.current[channel].events;
+    console.log("ALL SUBSCRIPTIONS >> ", subscriptions.current)
+    if (subscriptions.current?.[channelName]) {
+      const currentEvents = subscriptions.current[channelName].events;
       if (
         currentEvents.size === events.length &&
         events.every((event) => currentEvents.has(event))
       )
         return;
-      
+
       const newEvents = new Set([...currentEvents, ...events]);
-      const pusherChannel = clientPusher.subscribe(channel);
-      for (const event of newEvents) {
-        pusherChannel.bind(event, (data: any) => {
-          setEvent({ channelName: channel, eventName: event, payload: data });
+      const pusherChannel = clientPusher.subscribe(channelName);
+      for (const eventName of newEvents) {
+        pusherChannel.bind(eventName, (payload: any) => {
+          setEvent({ channelName, eventName, payload });
         });
       }
-      subscriptions.current[channel] = {
+      subscriptions.current[channelName] = {
         channel: pusherChannel,
         events: newEvents,
       };
       return;
     }
-    const pusherChannel = clientPusher.subscribe(channel);
-    pusherChannel.bind("pusher:subscription_error", (error: Error) => {
-      console.log(error.message);
-    });
-    events.forEach((event) => {
-      pusherChannel.bind(event, (data: any) => {
-        setEvent({ channelName: channel, eventName: event, payload: data });
+    const pusherChannel = clientPusher.subscribe(channelName);
+    events.forEach((eventName) => {
+      pusherChannel.bind(eventName, (payload: any) => {
+        setEvent({ channelName, eventName, payload });
       });
     });
-    subscriptions.current[channel] = {
+    subscriptions.current[channelName] = {
       channel: pusherChannel,
       events: new Set(events),
     };
   }
 
-  function unsubscribe(channel: string) {
-    if (subscriptions?.current?.[channel]) {
-      subscriptions.current[channel].channel.unbind_all();
-      clientPusher.unsubscribe(channel);
-      delete subscriptions.current[channel];
+  function unsubscribe(channelName: string) {
+    if (subscriptions?.current?.[channelName]) {
+      subscriptions.current[channelName].channel.unbind_all();
+      clientPusher.unsubscribe(channelName);
+      delete subscriptions.current[channelName];
     }
   }
 

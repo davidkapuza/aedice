@@ -1,32 +1,24 @@
 "use client";
-import { clientPusher } from "@/core/pusher";
+import usePusherEvents from "@/lib/hooks/usePusherEvents";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
-import { PresenceChannel } from "pusher-js";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function ChatPresence() {
   const chat_id = getIdFromPathname();
   const [presence, setPresence] = useState<number>(0);
+  const [events] = usePusherEvents(`presence-chat-messages-${chat_id}`, [
+    "pusher:subscription_succeeded",
+    "pusher:member_added",
+    "pusher:member_removed",
+  ]);
 
   useEffect(() => {
-    const channel = clientPusher.subscribe(
-      `presence-chat-room-messages-${chat_id}`
-    ) as PresenceChannel;
-    channel.bind("pusher:subscription_succeeded", (members: any) => {
-      setPresence(members.count);
-    });
-    channel.bind("pusher:member_added", (members: any) => {
-      setPresence(members.count);
-    });
-    channel.bind("pusher:member_removed", (members: any) => {
-      setPresence(members.count);
-    });
-
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [chat_id, clientPusher]);
+    setPresence(
+      events?.["pusher:subscription_succeeded"]?.members ||
+        events?.["pusher:member_added"]?.members ||
+        events?.["pusher:member_removed"]?.members
+    );
+  }, [events]);
 
   return (
     <>

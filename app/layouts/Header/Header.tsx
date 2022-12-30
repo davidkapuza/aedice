@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/services/server/session";
 import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
 import "./Header.styles.css";
 import Avatar from "@/core/ui/Avatar/Avatar";
+import Image from "next/image";
 
 export default async function Header() {
   const chats = await getChats();
@@ -19,9 +20,7 @@ export default async function Header() {
           <h1 className="flex-1 font-sans font-medium">{user?.name}</h1>
         </span>
       </div>
-      <h1 className="flex-1 font-sans text-2xl font-bold text-center">
-        aedice.
-      </h1>
+      <Image className="pt-1.5" width={100} height={20} src="/static/logo.svg" alt="Logo"/>
       <DropdownMenu user_chat_id={user_chat_id} />
     </header>
   );

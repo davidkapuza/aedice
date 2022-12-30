@@ -1,5 +1,5 @@
 "use client";
-import usePusherChannel from "@/lib/hooks/usePusherChannel";
+import usePusherChannel from "@/lib/hooks/usePusherEvents";
 
 function TestComponent() {
   const [event] = usePusherChannel("private-test-channel", ["test-event"]);
