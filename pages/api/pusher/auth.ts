@@ -1,11 +1,19 @@
 import { authOptions } from "@/core/auth";
-import { serverPusher } from "@/core/pusher";
+// import { serverPusher } from "@/core/pusher";
 import { chatsRepository } from "@/core/redis";
 import { DatabaseChat } from "@/core/types";
 import { UniqueIdSchema } from "@/core/validations";
 import retryAsync from "@/lib/utils/retryAsync";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
+import Pusher from "pusher";
+
+const serverPusher = new Pusher({
+  appId: process.env.APP_ID || process.env.PUSHER_APP_ID!,
+  key: process.env.KEY! || process.env.NEXT_PUBLIC_PUSHER_KEY!,
+  secret: process.env.SECRET! || process.env.PUSHER_SECRET!,
+  cluster: process.env.CLUSTER! || "eu",
+});
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
