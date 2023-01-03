@@ -15,10 +15,10 @@ import Pusher from "pusher";
 
 
 const serverPusher = new Pusher({
-  appId: process.env.APP_ID!,
-  key: process.env.KEY!,
-  secret: process.env.SECRET!,
-  cluster: process.env.CLUSTER!,
+  appId: process.env.APP_ID || process.env.PUSHER_APP_ID!,
+  key: process.env.KEY! || process.env.NEXT_PUBLIC_PUSHER_KEY!,
+  secret: process.env.SECRET! || process.env.PUSHER_SECRET!,
+  cluster: process.env.CLUSTER! || "eu",
 });
 
 type Response = {
@@ -107,6 +107,7 @@ async function handler(
 
   if (req.method === "POST") {
     try {
+
       const message = MessageSchema.parse(req.body.message);
 
       const created_at = Date.now();
@@ -132,6 +133,7 @@ async function handler(
         const zodErr = fromZodError(error);
         return res.status(422).json(zodErr);
       }
+      console.error(error)
       return res.status(422).end();
     }
   }
