@@ -1,15 +1,7 @@
 import { authOptions } from "@/core/auth";
-// import { serverPusher } from "@/core/pusher";
+import { serverPusher } from "@/core/pusher";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
-import Pusher from "pusher";
-
-const serverPusher = new Pusher({
-  appId: process.env.APP_ID || process.env.PUSHER_APP_ID!,
-  key: process.env.KEY! || process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  secret: process.env.SECRET! || process.env.PUSHER_SECRET!,
-  cluster: process.env.CLUSTER! || "eu",
-});
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);
@@ -24,6 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         name: session.user.name,
       },
     };
+    console.log(serverPusher)
     const authResponse = serverPusher.authenticateUser(socketId, user);
     return res.send(authResponse);
   } catch (error) {

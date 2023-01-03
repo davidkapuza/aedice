@@ -1,5 +1,5 @@
 import { authOptions } from "@/core/auth";
-// import { serverPusher } from "@/core/pusher";
+import { serverPusher } from "@/core/pusher";
 import { chatsRepository } from "@/core/redis";
 import { UniqueIdSchema } from "@/core/validations";
 import { withChat } from "@/middlewares/with-chat";
@@ -11,15 +11,6 @@ import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
 import { UserSchema } from "@/core/validations/user";
 import { fromZodError, ValidationError } from "zod-validation-error";
-import Pusher from "pusher";
-
-
-const serverPusher = new Pusher({
-  appId: process.env.APP_ID || process.env.PUSHER_APP_ID!,
-  key: process.env.KEY! || process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  secret: process.env.SECRET! || process.env.PUSHER_SECRET!,
-  cluster: process.env.CLUSTER! || "eu",
-});
 
 type Response = {
   messages?: Message[];
@@ -92,6 +83,7 @@ async function handler(
           data: user,
         },
       ];
+      console.log(serverPusher)
       serverPusher.triggerBatch(events);
 
       await chatsRepository.save(chat);

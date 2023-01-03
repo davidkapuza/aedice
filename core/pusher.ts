@@ -6,3 +6,4 @@ export const serverPusher = new Pusher({
   cluster: "eu",
   useTLS: true,
 });
+console.log(serverPusher)
