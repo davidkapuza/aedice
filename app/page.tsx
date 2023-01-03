@@ -19,7 +19,7 @@ async function HomePage() {
           alt="Aedice"
         />
         <p className="mb-3 font-sans text-white">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, ipsam.
+          Project is under construction... 🏗️
         </p>
         <ContactLinks
           links={[
