@@ -45,11 +45,10 @@ export default function usePusherContext(): {
   );
   const setEvent = useCallback(
     ({ channelName, eventName, payload }: Action) => {
-      channelEvents.current = {
-        ...channelEvents.current,
-        [channelName]: { [eventName]: payload },
-      };
-      console.log("CURRENT EVENTS >> ", channelEvents.current);
+        channelEvents.current = {
+          ...channelEvents.current,
+          [channelName]: { [eventName]: payload },
+        };
       subscribers.current.forEach((callback) => callback());
     },
     []

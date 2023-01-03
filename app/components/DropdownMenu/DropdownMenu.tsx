@@ -1,22 +1,29 @@
 "use client";
 import { Icons } from "@/core/ui/Icons/Icons";
-import { quitChat, searchChats } from "@/lib/services/client/chats";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react";
+import useSWRMutation from "swr/mutation";
 
 type DropdownMenuProps = {
   user_chat_id?: string;
 };
 
+async function quitChat(url: string, {arg}: {arg: string}) {
+  await fetch(`${url}/${arg}`, { method: "DELETE" });
+}
+
 export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
   const router = useRouter();
   const chat_id = getIdFromPathname();
+  const { trigger, isMutating } = useSWRMutation("/api/chats", quitChat
+  );
   const quit = async () => {
+    if (!chat_id) return;
     router.push(`/chat`);
-    await quitChat(chat_id!);
+    trigger(chat_id);
   };
 
   return (
@@ -40,7 +47,7 @@ export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
       >
         <Menu.Items className="absolute right-0 w-56 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg top-10 ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="px-1 py-1 ">
-            <Menu.Item disabled={user_chat_id === chat_id}>
+            <Menu.Item disabled={chat_id === null || user_chat_id === chat_id}>
               {({ active, disabled }) => (
                 <button
                   onClick={() => quit()}
@@ -61,7 +68,7 @@ export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
               {({ active }) => (
                 <button
                   onClick={() =>
-                    signOut({ callbackUrl: "http://localhost:3000/login" })
+                    signOut({ callbackUrl: process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000" })
                   }
                   className={`${
                     active ? "text-black bg-gray-200" : "text-gray-800"

@@ -1,5 +1,5 @@
-import { getChats } from "@/lib/services/server/chats";
-import { getCurrentUser } from "@/lib/services/server/session";
+import { getChats } from "@/lib/services/chats";
+import { getCurrentUser } from "@/lib/services/session";
 import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
 import "./Header.styles.css";
 import Avatar from "@/core/ui/Avatar/Avatar";
@@ -14,13 +14,21 @@ export default async function Header() {
   return (
     <header className="Header">
       <div className="inline-flex items-center flex-1 gap-4">
-        <Avatar src={user?.image!} className="w-7 h-7"/>
+        <Avatar src={user?.image!} className="w-7 h-7" />
         <span className="flex flex-col">
           <small className="text-gray-500 text-[10px]">Welcome back,</small>
           <h1 className="flex-1 font-sans font-medium">{user?.name}</h1>
         </span>
       </div>
-      <Image className="pt-1.5" width={100} height={20} src="/static/logo.svg" alt="Logo"/>
+      <div className="flex justify-center">
+        <Image
+          className="pt-1.5"
+          width={100}
+          height={20}
+          src="/static/logo.svg"
+          alt="Logo"
+        />
+      </div>
       <DropdownMenu user_chat_id={user_chat_id} />
     </header>
   );

@@ -1,28 +1,33 @@
 "use client";
-import usePusherEvents from "@/lib/hooks/usePusherEvents";
+import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import { useEffect, useState } from "react";
 
 function ChatPresence() {
   const chat_id = getIdFromPathname();
   const [presence, setPresence] = useState<number>(0);
-  const [events] = usePusherEvents(`presence-chat-messages-${chat_id}`, [
-    "pusher:subscription_succeeded",
-    "pusher:member_added",
-    "pusher:member_removed",
-  ]);
+  const [events] = usePusherEvents(
+    chat_id ? `presence-chat-messages-${chat_id}` : null,
+    [
+      "pusher:subscription_succeeded",
+      "pusher:member_added",
+      "pusher:member_removed",
+    ]
+  );
 
   useEffect(() => {
-    setPresence(
-      events?.["pusher:subscription_succeeded"]?.members ||
-        events?.["pusher:member_added"]?.members ||
-        events?.["pusher:member_removed"]?.members
-    );
+    if (chat_id) {
+      setPresence(
+        events?.["pusher:subscription_succeeded"]?.count ||
+          events?.["pusher:member_added"]?.count ||
+          events?.["pusher:member_removed"]?.count
+      );
+    }
   }, [events]);
 
   return (
     <>
-      {chat_id !== "chat" && presence > 0 && (
+      {presence > 0 && (
         <div className="flex items-center justify-center flex-1 gap-2">
           <svg
             viewBox="0 0 10 10"

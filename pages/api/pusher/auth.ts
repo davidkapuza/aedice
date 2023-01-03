@@ -26,20 +26,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       presenceData
     );
 
-    // if (channel.includes("chat-room")) {
-    //   const chat_id = UniqueIdSchema.parse(channel.match(/[^-]+$/)[0]);
-    //   const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
+    if (channel.includes("chat-room")) {
+      const chat_id = UniqueIdSchema.parse(channel.match(/[^-]+$/)[0]);
+      const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
 
-    //   if (!chat.member_ids.includes(user_id)) {
-    //     await retryAsync(async () => {
-    //       const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
-    //       if (!chat.member_ids.includes(user_id)) {
-    //         throw new Error("Access denied...");
-    //       }
-    //       return res.send(authResponse);
-    //     }, res);
-    //   }
-    // }
+      if (!chat.member_ids.includes(user_id)) {
+        await retryAsync(async () => {
+          const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
+          if (!chat.member_ids.includes(user_id)) {
+            throw new Error("Access denied...");
+          }
+          return res.send(authResponse);
+        }, res);
+      }
+    }
 
     return res.send(authResponse);
   } catch (error) {

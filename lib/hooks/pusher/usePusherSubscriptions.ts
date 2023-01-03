@@ -17,7 +17,6 @@ function usePusherSubscriptions(clientPusher: Pusher) {
     events: string[],
     setEvent: (event: Action) => void
   ) {
-    console.log("ALL SUBSCRIPTIONS >> ", subscriptions.current)
     if (subscriptions.current?.[channelName]) {
       const currentEvents = subscriptions.current[channelName].events;
       if (

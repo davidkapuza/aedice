@@ -1,9 +1,9 @@
 .ContactLinks {
-  @apply inline-flex items-center justify-end flex-1 gap-2 text-xs text-gray-500;
+  @apply inline-flex items-center gap-2 text-xs text-gray-500;
 }
 .Link {
   @apply inline-flex items-center gap-2 cursor-pointer hover:text-white;
 }
-.Link::before {
+.Link:not(:first-child)::before {
   content: " | ";
 }

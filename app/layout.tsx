@@ -5,7 +5,7 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "@/core/auth";
 
 const space_mono = Space_Mono({ variable: "--font-space_mono", weight: "400" });
-const syne = Syne({ variable: "--font-syne" });
+const syne = Syne({ variable: "--font-syne", weight: "500" });
 
 export default async function RootLayout({
   children,

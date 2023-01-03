@@ -2,13 +2,14 @@
 import type { User } from "@/core/types";
 import { Icons } from "@/core/ui/Icons/Icons";
 import Loader from "@/core/ui/Loader/Loader";
+import useChatsSearch from "@/lib/hooks/swr/useChatsSearch";
 import useDebounce from "@/lib/hooks/useDebounce";
 import useOutsideClick from "@/lib/hooks/useOutsideClick";
-import { searchChats } from "@/lib/services/client/chats";
 import { Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
-import useSWR from "swr";
+import ChatsList from "../ChatsList/ChatsList";
 import DefaultChatCard from "../DefaultChatCard/DefaultChatCard";
+import "./ChatsSearch.styles.css";
 
 type Props = {
   user: User;
@@ -18,16 +19,7 @@ export default function ChatsSearch({ user }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const { debouncedValue, isDebouncing } = useDebounce(query, 500);
-  const { data: chats, isLoading } = useSWR(
-    () =>
-      debouncedValue.length > 2
-        ? `/api/chats/search?q=${debouncedValue}`
-        : null,
-    searchChats,
-    {
-      keepPreviousData: true,
-    }
-  );
+  const { chats, isLoading } = useChatsSearch(debouncedValue);
   useEffect(() => {
     setOpen(() => debouncedValue.length > 2 && !!chats?.length);
   }, [debouncedValue]);
@@ -71,24 +63,27 @@ export default function ChatsSearch({ user }: Props) {
           </button>
         )}
       </div>
-      <Transition
-        as={Fragment}
-        show={open}
-        leave="transition ease-in duration-100"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <ul className="w-full py-1 text-base bg-transparent cursor-default focus:outline-none">
-          {chats?.map((chat) => (
-            <DefaultChatCard key={chat.chat_id} user={user} chat={chat} />
-          ))}
-        </ul>
-      </Transition>
-      {debouncedValue.length > 2 && !isLoading && !chats?.length && (
-        <div className="relative px-4 py-2 text-xs text-white cursor-default select-none">
-          Nothing found.
-        </div>
-      )}
+      <div className="SidebarContent">
+        <Transition
+          as={Fragment}
+          show={open}
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <ul className="w-full py-1 text-base bg-transparent cursor-default focus:outline-none">
+            {chats?.map((chat) => (
+              <DefaultChatCard key={chat.chat_id} user={user} chat={chat} />
+            ))}
+          </ul>
+        </Transition>
+        {debouncedValue.length > 2 && !isLoading && !chats?.length && (
+          <div className="relative px-4 py-2 text-xs text-white cursor-default select-none">
+            Nothing found.
+          </div>
+        )}
+        <ChatsList user={user} />
+      </div>
     </div>
   );
 }

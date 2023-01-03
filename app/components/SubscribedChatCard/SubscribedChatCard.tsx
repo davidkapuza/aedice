@@ -1,5 +1,5 @@
-import type { Chat, LastMessage, Message, User } from "@/core/types";
-import usePusherChannel from "@/lib/hooks/usePusherEvents";
+import type { Chat, LastMessage, Message, PublicChat, User } from "@/core/types";
+import usePusherChannel from "@/lib/hooks/pusher/usePusherEvents";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ function SubscribedChatCard({ chat, user }: Props) {
     last_message_time,
   });
 
-  const [events, setEvent] = usePusherChannel(`private-chat-${chat.chat_id}`, [
+  const [events, setEvent] = usePusherChannel(`private-chat-room-${chat.chat_id}`, [
     "member-joined",
     "member-left",
     "new-message",
@@ -32,19 +32,9 @@ function SubscribedChatCard({ chat, user }: Props) {
   useEffect(() => {
     if (events?.["member-joined"]) {
       const newMember = events["member-joined"] as User;
-      console.log(
-        "USER LEFT >>> ",
-        events["member-joined"],
-        events["member-joined"].id === user.id
-      );
       setMembers((prev) => [...prev, newMember]);
     }
     if (events?.["member-left"]) {
-      console.log(
-        "USER LEFT >>> ",
-        events["member-left"],
-        events["member-left"].id === user.id
-      );
       if (events["member-left"].id === user.id) return;
       setMembers(
         (prev) =>

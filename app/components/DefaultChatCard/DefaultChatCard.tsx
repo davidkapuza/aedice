@@ -2,8 +2,7 @@
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { Icons } from "@/core/ui/Icons/Icons";
 import Loader from "@/core/ui/Loader/Loader";
-import usePusherEvents from "@/lib/hooks/usePusherEvents";
-import { joinChat } from "@/lib/services/client/chats";
+import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
 import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,11 +14,18 @@ type Props = {
   chat: PublicChat;
 };
 
+export async function joinChat(chat_id: string, user: User) {
+  await fetch(`/api/chats/${chat_id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ user }),
+  });
+}
+
 function DefaultChatCard({ user, chat }: Props) {
-  const [events] = usePusherEvents(`private-user-chats-${user.id}`, [
-    "chat-created",
-    "chat-removed",
-  ]);
+  const [events] = usePusherEvents(`private-user-chats-${user.id}`);
   const [isMember, setIsMember] = useState<boolean>(
     chat.member_ids.includes(user.id)
   );

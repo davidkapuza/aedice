@@ -5,7 +5,7 @@ import { UniqueIdSchema } from "@/core/validations";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
 import { MessageSchema } from "@/validations/message";
-import type { DatabaseChat, Message, User } from "@/core/types";
+import type { Chat, DatabaseChat, Message, User } from "@/core/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
@@ -15,6 +15,7 @@ import { fromZodError, ValidationError } from "zod-validation-error";
 type Response = {
   messages?: Message[];
   message?: Message;
+  chat?: Chat;
 };
 
 type Error = ValidationError | string;
@@ -57,25 +58,27 @@ async function handler(
       chat.members.push(JSON.stringify(user));
       chat.member_ids.push(user.id);
 
+      const newChat: Chat = {
+        chat_id: chat_id,
+        last_message_time: chat.last_message_time,
+        created_at: chat.created_at,
+        name: chat.name,
+        private: chat.private,
+        member_ids: chat.member_ids,
+        chat_image: chat.chat_image,
+        members: chat.members.map((memmber) => JSON.parse(memmber)),
+        chat_owner_id: chat.chat_owner_id,
+        last_message: chat.last_message,
+      }
+
       const events = [
         {
           channel: `private-user-chats-${user.id}`,
           name: "chat-created",
-          data: {
-            chat_id: chat.chat_id,
-            last_message_time: chat.last_message_time,
-            created_at: chat.created_at,
-            name: chat.name,
-            private: chat.private,
-            member_ids: chat.member_ids,
-            chat_image: chat.chat_image,
-            members: chat.members.map((memmber) => JSON.parse(memmber)),
-            chat_owner_id: chat.chat_owner_id,
-            last_message: chat.last_message,
-          },
+          data: newChat,
         },
         {
-          channel: `private-chat-${chat_id}`,
+          channel: `private-chat-room-${chat_id}`,
           name: "member-joined",
           data: user,
         },
@@ -102,9 +105,8 @@ async function handler(
         ...message,
         created_at,
       };
-
       serverPusher.trigger(
-        [`private-chat-${chat_id}`, `presence-chat-messages-${chat_id}`],
+        [`private-chat-room-${chat_id}`, `presence-chat-messages-${chat_id}`],
         "new-message",
         newMessage
       );
@@ -115,7 +117,7 @@ async function handler(
       chat.last_message = message.text;
       await chatsRepository.save(chat);
 
-      res.status(200).json({ message: newMessage });
+      return res.status(200).json({ message: newMessage });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const zodErr = fromZodError(error);
@@ -141,7 +143,7 @@ async function handler(
           data: { chat_id },
         },
         {
-          channel: `private-chat-${chat_id}`,
+          channel: `private-chat-room-${chat_id}`,
           name: "member-left",
           data: session?.user,
         },

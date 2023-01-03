@@ -1,7 +1,7 @@
-.Chat-form {
-  @apply self-start sticky bottom-40 left-0 border-black border flex flex-row items-center gap-[0.6rem] py-0.5 pl-0.5 pr-3 text-sm text-white placeholder-gray-500 bg-teal-600 rounded-full w-fit h-7;
+.ChatForm {
+  @apply self-start sticky bottom-40 left-0 border-black border flex flex-row items-center gap-[0.6rem] py-0.5 pl-0.5 pr-3 text-sm text-white placeholder-gray-500 bg-emerald-300 rounded-full w-fit min-h-[26px];
 }
 
-.Chat-input > input {
-  @apply h-full text-xs text-gray-900 placeholder-gray-800 bg-transparent border-none focus:ring-0 focus:ring-offset-0 focus:outline-none;
+.ChatInput > input {
+  @apply h-full max-w-md text-xs text-gray-900 placeholder-gray-800 bg-transparent border-none focus:ring-0 focus:ring-offset-0 focus:outline-none;
 }

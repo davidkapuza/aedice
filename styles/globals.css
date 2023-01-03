@@ -24,16 +24,13 @@
     @apply absolute w-auto p-2 m-2 text-xs font-bold text-white transition-all duration-100 origin-left scale-0 bg-gray-900 rounded-md shadow-md min-w-max left-14;
   }
 
-  .Chat-layout {
+  .ChatLayout {
     @apply flex flex-col flex-1 w-full h-full px-40 m-0 overflow-y-scroll bg-white dark:bg-black;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .Chat-layout::-webkit-scrollbar {
+  .ChatLayout::-webkit-scrollbar {
     display: none;
-  }
-  .Chat-layout > div {
-    @apply h-full;
   }
 }
 

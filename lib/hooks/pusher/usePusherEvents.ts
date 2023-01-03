@@ -1,16 +1,18 @@
 import Pusher from "pusher-js";
 import { useContext, useEffect, useState, useSyncExternalStore } from "react";
-import { PusherContext } from "../contexts/PusherContext";
+import { PusherContext } from "../../contexts/PusherContext";
 import { Action, ChannelEvents } from "./usePusherContext";
 
 export default function usePusherEvents(
-  channel: string,
+  channel: string | null,
   events?: string[]
-): [ChannelEvents, (event: Action) => void, Pusher] {
+): [ChannelEvents | undefined, (event: Action) => void, Pusher] {
   const pusherCtx = useContext(PusherContext);
   if (!pusherCtx) {
     throw new Error("Context not found");
   }
+  if (channel === null) return [undefined, pusherCtx.setEvent, pusherCtx.pusher]
+  
   const channelEvents = useSyncExternalStore(
     pusherCtx.subscribeToEvents,
     () => pusherCtx.getEvent(channel),

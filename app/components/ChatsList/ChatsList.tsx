@@ -1,9 +1,8 @@
 "use client";
 import type { Chat, User } from "@/core/types";
-import usePusherEvents from "@/lib/hooks/usePusherEvents";
-import { getChats } from "@/lib/services/client/chats";
+import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
+import useChats from "@/lib/hooks/swr/useChats";
 import { useEffect } from "react";
-import useSWR from "swr";
 import SubscribedChatCard from "../SubscribedChatCard/SubscribedChatCard";
 import "./ChatsList.styles.css";
 
@@ -12,23 +11,18 @@ type Props = {
 };
 
 function ChatsList({ user }: Props) {
-  const [events, setEvent] = usePusherEvents(`private-user-chats-${user.id}`, [
+  const [events] = usePusherEvents(`private-user-chats-${user.id}`, [
     "chat-created",
     "chat-removed",
   ]);
 
-  const { data: chats, isLoading, mutate } = useSWR("api/chats", getChats);
+  const { chats, isLoading, mutate } = useChats();
   useEffect(() => {
-    console.log(events?.["chat-created"]);
     if (events?.["chat-created"]) {
-      mutate(getChats, {
-        optimisticData: [...chats!, events["chat-created"] as Chat],
-        populateCache: true,
-        revalidate: false,
-        rollbackOnError: true,
-      });
+      const newChat = events["chat-created"] as Chat;
+      mutate({ chats: [...chats!, newChat] });
     } else {
-      mutate(getChats);
+      mutate();
     }
   }, [events]);
 

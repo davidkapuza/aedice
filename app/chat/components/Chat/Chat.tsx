@@ -1,10 +1,8 @@
 "use client";
-import type { Message as TypeMessage, User } from "@/core/types";
+import type { User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
-import usePusherEvents from "@/lib/hooks/usePusherEvents";
-import { getMessages } from "@/lib/services/client/messages";
+import useMessages from "@/lib/hooks/swr/useMessages";
 import { useEffect, useRef } from "react";
-import useSWR from "swr";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
@@ -14,37 +12,15 @@ type Props = {
 };
 
 function Chat({ chat_id, user }: Props) {
-  const query = `/api/chats/${chat_id}`;
   const bottomRef = useRef<HTMLSpanElement>(null);
-  const { data: messages, error, mutate } = useSWR(query, getMessages);
-  const [events] = usePusherEvents(`presence-chat-messages-${chat_id}`, [
-    "new-message",
-  ]);
-  useEffect(() => {
-    if (events?.["new-message"]) {
-      if (messages?.find((msg) => msg.id === events["new-message"].id)) return;
-      if (!messages) {
-        mutate(() => getMessages(query));
-      } else {
-        mutate(() => getMessages(query), {
-          optimisticData: [
-            ...messages!,
-            events?.["new-message"] as TypeMessage,
-          ],
-          populateCache: true,
-          revalidate: false,
-          rollbackOnError: true,
-        });
-      }
-    }
-  }, [events]);
-
+  const { messages } = useMessages(chat_id);
+  
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
-    <main className="Chat-layout">
+    <main className="ChatLayout">
       <ul className="Chat">
         {messages?.map((message) => {
           const isOwner = user?.id === message.sender_id;

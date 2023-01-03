@@ -2,11 +2,9 @@
 import type { Message, User } from "@/core/types";
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { MessageTextSchema } from "@/core/validations";
-import { getMessages, sendMessage } from "@/lib/services/client/messages";
-import Image from "next/image";
+import useMessages from "@/lib/hooks/swr/useMessages";
 import { useState } from "react";
 import AutosizeInput from "react-input-autosize";
-import useSWR from "swr";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
 
@@ -15,13 +13,25 @@ type Props = {
   chat_id: string;
 };
 
+async function sendMessage(
+  chat_id: string,
+  message: Message,
+  messages: Message[]
+) {
+  const response = await fetch(`/api/chats/${chat_id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message }),
+  });
+  const data: { message: Message } = await response.json();
+  return { messages: [...messages!, data.message] };
+}
+
 function ChatInput({ user, chat_id }: Props) {
   const [input, setInput] = useState<string>("");
-  const {
-    data: messages,
-    error,
-    mutate,
-  } = useSWR(`/api/chats/${chat_id}`, getMessages);
+  const { messages, mutate } = useMessages(chat_id);
 
   const send = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,19 +47,22 @@ function ChatInput({ user, chat_id }: Props) {
     setInput("");
 
     await mutate(() => sendMessage(chat_id, message, messages!), {
-      optimisticData: [...messages!, message],
+      optimisticData: { messages: [...messages!, message] },
+      populateCache(messages) {
+        return messages!;
+      },
       rollbackOnError: true,
     });
   };
   return (
-    <form className="Chat-form" onSubmit={(e) => send(e)}>
-      <Avatar src={user?.image} className="w-5 h-5"/>
+    <form className="ChatForm" onSubmit={(e) => send(e)}>
+      <Avatar src={user?.image} className="w-5 h-5" />
       <AutosizeInput
         type="text"
         autoComplete="off"
         placeholder="Type..."
         value={input}
-        className="Chat-input"
+        className="ChatInput"
         onChange={(e) => setInput(e.target.value)}
       />
     </form>

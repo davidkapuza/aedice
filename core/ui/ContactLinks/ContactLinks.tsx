@@ -8,12 +8,10 @@ type Props = {
 function ContactLinks({ links }: Props) {
   return (
     <ul className="ContactLinks">
-      Contact me by:
       {links.map(({ href, label, icon }) => (
         <a key={href} className="Link" target="_blank" href={href}>
-          {" "}
-          {label}
           {icon}
+          {label}
         </a>
       ))}
     </ul>

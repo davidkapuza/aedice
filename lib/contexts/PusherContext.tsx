@@ -1,5 +1,5 @@
 import React, { createContext } from "react";
-import usePusherContext from "../hooks/usePusherContext";
+import usePusherContext from "../hooks/pusher/usePusherContext";
 
 type PusherContextType = ReturnType<typeof usePusherContext>;
 
