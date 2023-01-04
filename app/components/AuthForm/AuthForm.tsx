@@ -11,21 +11,24 @@ function AuthForm({ providers }: Props) {
     <form className="AuthForm">
       <p>Sign up with:</p>
       <div>
-        {Object.values(providers!).map((provider) => (
-          <div key={provider.name}>
-            <button
-              className="ProviderButton"
-              onClick={() =>
-                signIn(provider.id, {
-                  callbackUrl: `/chat`,
-                })
-              }
-            >
-              {provider.name}
-              {provider.name === "Google" && <Icons.google className="w-4 h-4"/>}
-            </button>
-          </div>
-        ))}
+        {providers &&
+          Object.values(providers).map((provider) => (
+            <div key={provider.name}>
+              <button
+                className="ProviderButton"
+                onClick={() =>
+                  signIn(provider.id, {
+                    callbackUrl: `/chat`,
+                  })
+                }
+              >
+                {provider.name}
+                {provider.name === "Google" && (
+                  <Icons.google className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          ))}
       </div>
     </form>
   );
