@@ -1,5 +1,7 @@
 "use client";
+import { User } from "@/core/types";
 import { Icons } from "@/core/ui/Icons/Icons";
+import useChats from "@/lib/hooks/swr/useChats";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
@@ -8,18 +10,21 @@ import { Fragment } from "react";
 import useSWRMutation from "swr/mutation";
 
 type DropdownMenuProps = {
-  user_chat_id?: string;
+  user: User;
 };
 
-async function quitChat(url: string, {arg}: {arg: string}) {
+async function quitChat(url: string, { arg }: { arg: string }) {
   await fetch(`${url}/${arg}`, { method: "DELETE" });
 }
 
-export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
+export default function DropdownMenu({ user }: DropdownMenuProps) {
   const router = useRouter();
   const chat_id = getIdFromPathname();
-  const { trigger, isMutating } = useSWRMutation("/api/chats", quitChat
-  );
+  const { chats } = useChats();
+  const user_chat_id = chats?.find(
+    (chat) => chat.chat_owner_id === user?.id
+  )?.chat_id;
+  const { trigger, isMutating } = useSWRMutation("/api/chats", quitChat);
   const quit = async () => {
     if (!chat_id) return;
     router.push(`/chat`);
@@ -68,7 +73,11 @@ export default function DropdownMenu({ user_chat_id }: DropdownMenuProps) {
               {({ active }) => (
                 <button
                   onClick={() =>
-                    signOut({ callbackUrl: process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000" })
+                    signOut({
+                      callbackUrl:
+                        process.env.NEXT_PUBLIC_VERCEL_URL ||
+                        "http://localhost:3000",
+                    })
                   }
                   className={`${
                     active ? "text-black bg-gray-200" : "text-gray-800"

@@ -95,12 +95,13 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
   secret: process.env.NEXTAUTH_SECRET!,
   session: {
     strategy: "jwt",
   },
   pages: {
-    // signIn: "/login",
+    // signIn: "/",
   },
   theme: {
     colorScheme: "dark",

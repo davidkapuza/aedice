@@ -1,5 +1,5 @@
 import type { User } from "@/core/types";
-import { getCurrentUser } from "@/lib/services/session";
+import { getCurrentUser } from "@/lib/session";
 import Chat from "app/chat/components/Chat/Chat";
 
 type ChatPageProps = {

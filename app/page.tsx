@@ -2,11 +2,8 @@ import ContactLinks from "@/core/ui/ContactLinks/ContactLinks";
 import { Icons } from "@/core/ui/Icons/Icons";
 import AuthForm from "./components/AuthForm/AuthForm";
 import Image from "next/image";
-import { getProviders } from "next-auth/react";
 
 async function HomePage() {
-  const providers = await getProviders();
-
   return (
     <section className="flex items-center h-screen">
       <main className="flex flex-col gap-3 mb-20 ml-20">
@@ -14,6 +11,7 @@ async function HomePage() {
         <Image
           width={350}
           height={150}
+          priority
           className="my-4"
           src="/static/aedice.svg"
           alt="Aedice"
@@ -45,7 +43,7 @@ async function HomePage() {
           ]}
         />
       </main>
-      <AuthForm providers={providers} />
+      <AuthForm/>
     </section>
   );
 }

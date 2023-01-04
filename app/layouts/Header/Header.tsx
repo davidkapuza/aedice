@@ -1,16 +1,11 @@
-import { getChats } from "@/lib/services/chats";
-import { getCurrentUser } from "@/lib/services/session";
-import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
-import "./Header.styles.css";
 import Avatar from "@/core/ui/Avatar/Avatar";
+import { getCurrentUser } from "@/lib/session";
+import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
 import Image from "next/image";
+import "./Header.styles.css";
 
 export default async function Header() {
-  const chats = await getChats();
   const user = await getCurrentUser();
-  const user_chat_id = chats?.find(
-    (chat) => chat.chat_owner_id === user?.id
-  )?.chat_id;
   return (
     <header className="Header">
       <div className="inline-flex items-center flex-1 gap-4">
@@ -29,7 +24,7 @@ export default async function Header() {
           alt="Logo"
         />
       </div>
-      <DropdownMenu user_chat_id={user_chat_id} />
+      <DropdownMenu user={user} />
     </header>
   );
 }
