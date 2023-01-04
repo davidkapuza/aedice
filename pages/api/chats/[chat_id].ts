@@ -83,7 +83,6 @@ async function handler(
           data: user,
         },
       ];
-      console.log(serverPusher)
       serverPusher.triggerBatch(events);
 
       await chatsRepository.save(chat);

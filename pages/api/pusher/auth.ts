@@ -20,7 +20,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       user_id: user_id,
       user_info: { name: session.user.name },
     };
-    console.log(serverPusher)
     const authResponse = serverPusher.authorizeChannel(
       socketId,
       channel,

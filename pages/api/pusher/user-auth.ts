@@ -16,7 +16,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         name: session.user.name,
       },
     };
-    console.log(serverPusher)
     const authResponse = serverPusher.authenticateUser(socketId, user);
     return res.send(authResponse);
   } catch (error) {
