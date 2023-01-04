@@ -23,7 +23,7 @@ function SubscribedChatCard({ chat, user }: Props) {
     last_message_time,
   });
 
-  const [events, setEvent] = usePusherChannel(`private-chat-room-${chat.chat_id}`, [
+  const [events] = usePusherChannel(`private-chat-room-${chat.chat_id}`, [
     "member-joined",
     "member-left",
     "new-message",
@@ -32,14 +32,16 @@ function SubscribedChatCard({ chat, user }: Props) {
   useEffect(() => {
     if (events?.["member-joined"]) {
       const newMember = events["member-joined"] as User;
+      if (newMember.id === user.id) return;
       setMembers((prev) => [...prev, newMember]);
     }
     if (events?.["member-left"]) {
-      if (events["member-left"].id === user.id) return;
+      const oldMember = events["member-left"]
+      if (oldMember.id === user.id) return;
       setMembers(
         (prev) =>
           prev.filter(
-            (member) => member.id !== events["member-left"].id
+            (member) => member.id !== oldMember.id
           ) as User[]
       );
     }
