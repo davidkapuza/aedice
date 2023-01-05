@@ -1,4 +1,3 @@
-import type { User } from "@/core/types";
 import { getCurrentUser } from "@/lib/session";
 import Chat from "app/chat/components/Chat/Chat";
 
