@@ -1,16 +1,7 @@
 import { authOptions } from "@/core/auth";
+import { serverPusher } from "@/core/pusher";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
-import Pusher from "pusher";
-
-export const serverPusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID!,
-  key: process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  secret: process.env.PUSHER_SECRET!,
-  cluster: "eu",
-  useTLS: true,
-});
-
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);

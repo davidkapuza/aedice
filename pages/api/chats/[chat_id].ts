@@ -10,15 +10,7 @@ import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
 import { UserSchema } from "@/core/validations/user";
 import { fromZodError, ValidationError } from "zod-validation-error";
-import Pusher from "pusher";
-
-export const serverPusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID!,
-  key: process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  secret: process.env.PUSHER_SECRET!,
-  cluster: "eu",
-  useTLS: true,
-});
+import { serverPusher } from "@/core/pusher";
 
 
 type Response = {
