@@ -12,7 +12,6 @@ import { UserSchema } from "@/core/validations/user";
 import { fromZodError, ValidationError } from "zod-validation-error";
 import { serverPusher } from "@/core/pusher";
 
-
 type Response = {
   messages?: Message[];
   message?: Message;
@@ -70,7 +69,9 @@ async function handler(
         members: chat.members.map((memmber) => JSON.parse(memmber)),
         chat_owner_id: chat.chat_owner_id,
         last_message: chat.last_message,
-      }
+      };
+
+      await chatsRepository.save(chat);
 
       const events = [
         {
@@ -85,8 +86,6 @@ async function handler(
         },
       ];
       serverPusher.triggerBatch(events);
-
-      await chatsRepository.save(chat);
       return res.status(200).end();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -99,7 +98,6 @@ async function handler(
 
   if (req.method === "POST") {
     try {
-
       const message = MessageSchema.parse(req.body.message);
 
       const created_at = Date.now();
@@ -107,25 +105,26 @@ async function handler(
         ...message,
         created_at,
       };
-      serverPusher.trigger(
-        [`private-chat-room-${chat_id}`, `private-chat-room-messages-${chat_id}`],
-        "new-message",
-        newMessage
-      );
-
       const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
       chat.messages.push(JSON.stringify(newMessage));
       chat.last_message_time = created_at;
       chat.last_message = message.text;
       await chatsRepository.save(chat);
-
+      serverPusher.trigger(
+        [
+          `private-chat-room-${chat_id}`,
+          `private-chat-room-messages-${chat_id}`,
+        ],
+        "new-message",
+        newMessage
+      );
       return res.status(200).json({ message: newMessage });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const zodErr = fromZodError(error);
         return res.status(422).json(zodErr);
       }
-      console.error(error)
+      console.error(error);
       return res.status(422).end();
     }
   }
@@ -138,7 +137,12 @@ async function handler(
       const members: User[] = chat.members
         .map((member: string) => JSON.parse(member))
         .filter((member: User) => member.id !== session?.user.id);
-      
+
+      chat.members = members.map((member) => JSON.stringify(member));
+      chat.member_ids = chat.member_ids.filter(
+        (id: string) => id !== session?.user.id
+      );
+      await chatsRepository.save(chat);
       const events = [
         {
           channel: `private-user-chats-${session?.user.id}`,
@@ -153,12 +157,6 @@ async function handler(
       ];
 
       serverPusher.triggerBatch(events);
-
-      chat.members = members.map((member) => JSON.stringify(member));
-      chat.member_ids = chat.member_ids.filter(
-        (id: string) => id !== session?.user.id
-      );
-      await chatsRepository.save(chat);
       return res.status(204).end();
     } catch (error) {
       return res.status(500).end();
