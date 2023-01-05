@@ -15,7 +15,7 @@ type Props = {
 function Chat({ chat_id, user }: Props) {
   const bottomRef = useRef<HTMLSpanElement>(null);
   const { messages, mutate } = useMessages(chat_id);
-  const [events] = usePusherEvents(`presence-chat-messages-${chat_id}`, [
+  const [events] = usePusherEvents(`private-chat-room-messages-${chat_id}`, [
     "new-message",
   ]);
   useEffect(() => {

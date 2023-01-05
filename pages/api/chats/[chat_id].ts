@@ -108,7 +108,7 @@ async function handler(
         created_at,
       };
       serverPusher.trigger(
-        [`private-chat-room-${chat_id}`, `presence-chat-messages-${chat_id}`],
+        [`private-chat-room-${chat_id}`, `private-chat-room-messages-${chat_id}`],
         "new-message",
         newMessage
       );

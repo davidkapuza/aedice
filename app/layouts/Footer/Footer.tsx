@@ -15,7 +15,7 @@ function Footer() {
           },
         ]}
       />
-      <ChatPresence />
+      {/* <ChatPresence /> */}
       <ContactLinks
         links={[
           {
