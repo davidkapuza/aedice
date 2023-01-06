@@ -3,11 +3,10 @@ import { ImageSchema, NameSchema, UniqueIdSchema } from ".";
 
 export const DatabaseUserSchema = z
   .object({
-    name: NameSchema,
-    image: ImageSchema,
+    name: NameSchema.optional(),
+    image: ImageSchema.optional(),
     email: z.string().email(),
   })
-  .strict();
 
 export const UserSchema = z
   .object({

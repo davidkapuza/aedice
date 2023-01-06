@@ -36,7 +36,9 @@ export const authOptions: NextAuthOptions = {
         // * Create chat for a new User
         const chatMember = UserSchema.parse({
           id: userEntity.entityId,
-          ...dbUser,
+          name: userEntity.name,
+          email: userEntity.email,
+          image: userEntity.image,
         });
         const dbChat = DatabaseChatSchema.parse({
           name: userEntity.name,
