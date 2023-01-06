@@ -3,8 +3,7 @@ import type { Message, User } from "@/core/types";
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { MessageTextSchema } from "@/core/validations";
 import useMessages from "@/lib/hooks/swr/useMessages";
-import Pusher from "pusher-js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AutosizeInput from "react-input-autosize";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
@@ -13,7 +12,6 @@ type Props = {
   user: User;
   chat_id: string;
 };
-
 
 async function sendMessage(
   chat_id: string,
@@ -34,7 +32,7 @@ async function sendMessage(
 function ChatInput({ user, chat_id }: Props) {
   const [input, setInput] = useState<string>("");
   const { messages, mutate } = useMessages(chat_id);
-  
+
   const send = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!MessageTextSchema.safeParse(input).success || !user) return;
@@ -42,8 +40,8 @@ function ChatInput({ user, chat_id }: Props) {
       id: uuid(),
       text: input,
       created_at: Date.now(),
-      username: user?.name,
-      image: user?.image,
+      username: user?.name!,
+      image: user?.image!,
       sender_id: user?.id,
     };
     setInput("");
@@ -58,7 +56,7 @@ function ChatInput({ user, chat_id }: Props) {
   };
   return (
     <form className="ChatForm" onSubmit={(e) => send(e)}>
-      <Avatar src={user?.image} className="w-5 h-5" />
+      <Avatar src={user?.image!} className="w-5 h-5" />
       <AutosizeInput
         type="text"
         autoComplete="off"
