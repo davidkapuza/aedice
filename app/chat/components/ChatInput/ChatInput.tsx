@@ -15,7 +15,6 @@ type Props = {
 };
 
 
-
 async function sendMessage(
   chat_id: string,
   message: Message,
@@ -35,10 +34,7 @@ async function sendMessage(
 function ChatInput({ user, chat_id }: Props) {
   const [input, setInput] = useState<string>("");
   const { messages, mutate } = useMessages(chat_id);
-
-
   
-
   const send = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!MessageTextSchema.safeParse(input).success || !user) return;

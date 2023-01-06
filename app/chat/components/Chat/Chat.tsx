@@ -3,7 +3,6 @@ import type { Message as TypeMessage, User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
 import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
 import useMessages from "@/lib/hooks/swr/useMessages";
-import Pusher from "pusher-js";
 import { useEffect, useRef } from "react";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
@@ -12,16 +11,7 @@ type Props = {
   user: User;
   chat_id: string;
 };
-// const pusher =  new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-//   cluster: "eu",
-//   activityTimeout: 60,
-//   forceTLS: true,
-//   userAuthentication: {
-//     endpoint: "/api/pusher/user-auth",
-//     transport: "ajax",
-//   },
-//   channelAuthorization: { endpoint: "/api/pusher/auth", transport: "ajax" },
-// })
+
 function Chat({ chat_id, user }: Props) {
   const bottomRef = useRef<HTMLSpanElement>(null);
   const { messages, mutate } = useMessages(chat_id);
@@ -41,25 +31,6 @@ function Chat({ chat_id, user }: Props) {
       }
     }
   }, [events]);
-
-  
-
-    // useEffect(() => {
-    //   let channel = pusher.subscribe(`private-chat-room-messages-${chat_id}`)
-    //   channel.bind("new-message", (message: any) => {
-    //     if (messages?.find((msg) => msg.id === message.id)) return;
-    //   if (!messages) {
-    //     mutate();
-    //   } else {
-    //     mutate({
-    //       messages: [...messages!, message],
-    //     });
-    //   }
-    //   })
-    //   return () => {
-    //     channel.unsubscribe()
-    //   }
-    // }, [pusher])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

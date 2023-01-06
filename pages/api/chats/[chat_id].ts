@@ -85,7 +85,7 @@ async function handler(
           data: user,
         },
       ];
-      serverPusher.triggerBatch(events);
+      await serverPusher.triggerBatch(events);
       return res.status(200).end();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -110,7 +110,7 @@ async function handler(
       chat.last_message_time = created_at;
       chat.last_message = message.text;
       await chatsRepository.save(chat);
-      serverPusher.trigger(
+      await serverPusher.trigger(
         [
           `private-chat-room-${chat_id}`,
           `private-chat-room-messages-${chat_id}`,
@@ -156,7 +156,7 @@ async function handler(
         },
       ];
 
-      serverPusher.triggerBatch(events);
+      await serverPusher.triggerBatch(events);
       return res.status(204).end();
     } catch (error) {
       return res.status(500).end();
