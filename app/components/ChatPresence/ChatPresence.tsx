@@ -5,29 +5,32 @@ import { useEffect, useState } from "react";
 
 function ChatPresence() {
   const chat_id = getIdFromPathname();
-  const [presence, setPresence] = useState<number>(0);
+  const [presence, setPresence] = useState<string[]>([]);
   const [events] = usePusherEvents(
     chat_id ? `presence-chat-room-messages-${chat_id}` : null,
-    [
-      "pusher:subscription_succeeded",
-      "pusher:member_added",
-      "pusher:member_removed",
-    ]
+    ["pusher:subscription_succeeded", "pusher:member_removed"]
   );
 
   useEffect(() => {
     if (chat_id) {
-      setPresence(
-        events?.["pusher:subscription_succeeded"]?.count ||
-          events?.["pusher:member_added"]?.count ||
-          events?.["pusher:member_removed"]?.count
-      );
+      if (events?.["pusher:subscription_succeeded"]) {
+        const members: string[] = [];
+        const event = events["pusher:subscription_succeeded"];
+        Object.entries(event.members).forEach(([id, info]) => {
+          members.push(id);
+        });
+        setPresence(members);
+      }
+      if (events?.["pusher:member_removed"]) {
+        const event = events["pusher:member_removed"];
+        setPresence(presence.filter((id) => id !== event.id));
+      }
     }
   }, [events]);
 
   return (
     <>
-      {presence > 0 && (
+      {!!presence.length && (
         <div className="flex items-center justify-center flex-1 gap-2">
           <svg
             viewBox="0 0 10 10"
@@ -38,7 +41,7 @@ function ChatPresence() {
           >
             <circle cx="5" cy="5" r="5" fill="#90EE90" />
           </svg>
-          <p className="text-xs">{presence} here</p>
+          <p className="text-xs">{presence.length} here</p>
         </div>
       )}
     </>

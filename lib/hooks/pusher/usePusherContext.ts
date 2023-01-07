@@ -19,7 +19,6 @@ export default function usePusherContext(): {
   const clientPusher = useRef<Pusher>(
     new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: "eu",
-      activityTimeout: 60,
       forceTLS: true,
       userAuthentication: {
         endpoint: "/api/pusher/user-auth",
@@ -45,10 +44,11 @@ export default function usePusherContext(): {
   );
   const setEvent = useCallback(
     ({ channelName, eventName, payload }: Action) => {
-        channelEvents.current = {
-          ...channelEvents.current,
-          [channelName]: { [eventName]: payload },
-        };
+      channelEvents.current = {
+        ...channelEvents.current,
+        [channelName]: { [eventName]: payload },
+      };
+      console.log(channelEvents.current);
       subscribers.current.forEach((callback) => callback());
     },
     []

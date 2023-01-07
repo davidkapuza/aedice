@@ -20,10 +20,10 @@ export function withChat(handler: NextApiHandler) {
         return handler(req, res);
       }
 
-      if (!chat.member_ids.includes(session?.user.id)) {
+      if (!chat.member_ids.includes(session?.user.id!)) {
         await retryAsync(async () => {
           const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
-          if (!chat.member_ids.includes(session?.user.id)) {
+          if (!chat.member_ids.includes(session?.user.id!)) {
             throw new Error("Access denied...");
           }
           return handler(req, res);

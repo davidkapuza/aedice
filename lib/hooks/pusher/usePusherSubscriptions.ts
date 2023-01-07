@@ -51,7 +51,10 @@ function usePusherSubscriptions(clientPusher: Pusher) {
   }
 
   function unsubscribe(channelName: string) {
-    if (subscriptions?.current?.[channelName]) {
+    if (
+      subscriptions?.current?.[channelName] &&
+      subscriptions.current[channelName].channel.subscribed
+    ) {
       subscriptions.current[channelName].channel.unbind_all();
       clientPusher.unsubscribe(channelName);
       delete subscriptions.current[channelName];

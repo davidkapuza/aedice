@@ -18,9 +18,17 @@ function ChatsList({ user }: Props) {
 
   const { chats, isLoading, mutate } = useChats();
   useEffect(() => {
-    if (events?.["chat-created"]) {
-      const newChat = events["chat-created"] as PrivateChat;
-      mutate({ chats: [...chats!, newChat] });
+    if (chats) {
+      if (events?.["chat-created"]) {
+        const newChat = events["chat-created"] as PrivateChat;
+        mutate({ chats: [...chats!, newChat] });
+      } else if (events?.["chat-removed"]) {
+        mutate({
+          chats: chats.filter(
+            (chat) => chat.chat_id !== events?.["chat-removed"].chat_id
+          ),
+        });
+      }
     } else {
       mutate();
     }
