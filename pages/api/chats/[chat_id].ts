@@ -1,21 +1,22 @@
 import { authOptions } from "@/core/auth";
-import { chatsRepository } from "@/core/redis";
+import { serverPusher } from "@/core/pusher";
+import db, { chatsRepository } from "@/core/redis";
+import type { PrivateChat, DatabaseChat, Message, User } from "@/core/types";
 import { UniqueIdSchema } from "@/core/validations";
+import { ChatMemberSchema, PrivateChatSchema } from "@/core/validations/chat";
+import { UserSchema } from "@/core/validations/user";
 import { withChat } from "@/middlewares/with-chat";
 import { withMethods } from "@/middlewares/with-methods";
 import { MessageSchema } from "@/validations/message";
-import type { Chat, DatabaseChat, Message, User } from "@/core/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
-import { UserSchema } from "@/core/validations/user";
 import { fromZodError, ValidationError } from "zod-validation-error";
-import { serverPusher } from "@/core/pusher";
 
 type Response = {
   messages?: Message[];
   message?: Message;
-  chat?: Chat;
+  chat?: PrivateChat;
 };
 
 type Error = ValidationError | string;
@@ -37,10 +38,16 @@ async function handler(
 
   if (req.method === "GET") {
     try {
-      const { messages: messagesJson } = await chatsRepository.fetch(chat_id);
-      const messages: Message[] = messagesJson
-        .map((message: any) => JSON.parse(message))
-        .sort((a: any, b: any) => a.created_at - b.created_at);
+      // TODO implement pagination
+      const messagesJson: string[] = await db.execute([
+        "ZRANGE",
+        `Chat:Messages:${chat_id}`,
+        0,
+        100,
+      ]);
+      const messages: Message[] = messagesJson.map((message) =>
+        JSON.parse(message)
+      );
 
       return res.status(200).json({ messages });
     } catch (error) {
@@ -50,26 +57,38 @@ async function handler(
   if (req.method === "PATCH") {
     try {
       const user = UserSchema.parse(req.body.user);
-      const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
-
+      const chat = await chatsRepository.fetch(chat_id);
+      const lastMessageJson = await db.execute([
+        "ZREVRANGE",
+        `Chat:Messages:${chat_id}`,
+        0,
+        0,
+      ]);
       if (chat.member_ids.includes(user.id)) {
-        return res.status(405).json("Not Allowed");
+        return res.status(405).json("Already a member");
       }
-      chat.members.push(JSON.stringify(user));
+      chat.members.push(
+        JSON.stringify(
+          ChatMemberSchema.parse({
+            ...user,
+            joined_at: Date.now(),
+            role: "member",
+          })
+        )
+      );
       chat.member_ids.push(user.id);
 
-      const newChat: Chat = {
-        chat_id: chat_id,
-        last_message_time: chat.last_message_time,
-        created_at: chat.created_at,
+      const newChat = PrivateChatSchema.parse({
+        chat_id: chat.entityId,
         name: chat.name,
         private: chat.private,
         member_ids: chat.member_ids,
         chat_image: chat.chat_image,
-        members: chat.members.map((memmber) => JSON.parse(memmber)),
+        created_at: chat.created_at,
+        members: chat.members.map((member: string) => JSON.parse(member)),
+        last_message: JSON.parse(lastMessageJson),
         chat_owner_id: chat.chat_owner_id,
-        last_message: chat.last_message,
-      };
+      });
 
       await chatsRepository.save(chat);
 
@@ -99,25 +118,30 @@ async function handler(
   if (req.method === "POST") {
     try {
       const message = MessageSchema.parse(req.body.message);
-
       const created_at = Date.now();
       const newMessage = {
         ...message,
         created_at,
       };
-      const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
-      chat.messages.push(JSON.stringify(newMessage));
-      chat.last_message_time = created_at;
-      chat.last_message = message.text;
-      await chatsRepository.save(chat);
+
+      await db.execute([
+        "ZADD",
+        `Chat:Messages:${chat_id}`,
+        created_at,
+        JSON.stringify(newMessage),
+      ]);
       await serverPusher.trigger(
         [
           `private-chat-room-${chat_id}`,
-          `private-chat-room-messages-${chat_id}`,
+          `presence-chat-room-messages-${chat_id}`,
         ],
         "new-message",
         newMessage
       );
+      const chat = await chatsRepository.fetch(chat_id);
+      chat.last_message = JSON.stringify(newMessage);
+      await chatsRepository.save(chat);
+
       return res.status(200).json({ message: newMessage });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -152,7 +176,7 @@ async function handler(
         {
           channel: `private-chat-room-${chat_id}`,
           name: "member-left",
-          data: session?.user,
+          data: session.user,
         },
       ];
 

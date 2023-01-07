@@ -24,8 +24,8 @@ const registerService = async (name: string, initFn: () => Promise<Client>) => {
 
 const db = await registerService("__redisClient", connect);
 export const usersRepository = db.fetchRepository(userSchema);
-// const usesIdx = await usersRepository.createIndex()
+const usesIdx = await usersRepository.createIndex()
 export const chatsRepository = db.fetchRepository(chatSchema);
-// const chatIdx = await chatsRepository.createIndex()
+const chatIdx = await chatsRepository.createIndex()
 
 export default db;

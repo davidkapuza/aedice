@@ -29,7 +29,7 @@ async function handler(
         await chatsRepository
           .search()
           .where("chat_owner_id")
-          .not.eq(session?.user.id)
+          .not.eq(session.user.id)
           .and("name")
           .matches(query + "*")
           .return.all();

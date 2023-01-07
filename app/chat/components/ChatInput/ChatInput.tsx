@@ -16,7 +16,7 @@ type Props = {
 async function sendMessage(
   chat_id: string,
   message: Message,
-  messages: Message[]
+  messages?: Message[]
 ) {
   const response = await fetch(`/api/chats/${chat_id}`, {
     method: "POST",
@@ -26,7 +26,7 @@ async function sendMessage(
     body: JSON.stringify({ message }),
   });
   const data: { message: Message } = await response.json();
-  return { messages: [...messages!, data.message] };
+  return { messages: messages ? [...messages, data.message] : [data.message] };
 }
 
 function ChatInput({ user, chat_id }: Props) {
@@ -46,8 +46,10 @@ function ChatInput({ user, chat_id }: Props) {
     };
     setInput("");
 
-    await mutate(() => sendMessage(chat_id, message, messages!), {
-      optimisticData: { messages: [...messages!, message] },
+    await mutate(() => sendMessage(chat_id, message, messages), {
+      optimisticData: {
+        messages: messages ? [...messages!, message] : [message],
+      },
       populateCache(messages) {
         return messages!;
       },

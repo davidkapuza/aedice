@@ -1,10 +1,12 @@
-import { DatabaseChatSchema } from "@/validations/chat";
-import { DatabaseUserSchema, UserSchema } from "@/validations/user";
-import { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { v4 as uuid } from "uuid";
 import * as z from "zod";
 import { fromZodError } from "zod-validation-error";
+import { ChatMemberSchema, DatabaseChatSchema } from "@/validations/chat";
+import { DatabaseUserSchema } from "@/validations/user";
+import { MessageSchema } from "@/validations/message";
 import { chatsRepository, usersRepository } from "./redis";
+import GoogleProvider from "next-auth/providers/google";
+import { NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -26,6 +28,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // * Create User
+        const created_at = Date.now();
         const dbUser = DatabaseUserSchema.parse({
           name: user.name,
           email: user.email,
@@ -34,24 +37,35 @@ export const authOptions: NextAuthOptions = {
         const userEntity = await usersRepository.createAndSave(dbUser);
 
         // * Create chat for a new User
-        const chatMember = UserSchema.parse({
+        const chatMember = ChatMemberSchema.parse({
           id: userEntity.entityId,
           name: userEntity.name,
           email: userEntity.email,
           image: userEntity.image,
+          joined_at: Date.now(),
+          role: "owner",
         });
+        const lastMessage = MessageSchema.parse({
+          id: uuid(),
+          text: "No messages yet...",
+          created_at,
+          username: userEntity.name,
+          image: userEntity.image,
+          sender_id: userEntity.entityId,
+        });
+        // TODO send first last_message from aedice account not user itself
         const dbChat = DatabaseChatSchema.parse({
           name: userEntity.name,
-          created_at: Date.now(),
+          created_at,
+          last_message: JSON.stringify(lastMessage),
           private: false,
           members: [JSON.stringify(chatMember)],
           member_ids: [userEntity.entityId],
-          messages: [],
-          chat_owner_id: userEntity.entityId,
           chat_image: userEntity.image,
+          chat_owner_id: userEntity.entityId,
         });
+
         const chatEntity = chatsRepository.createEntity(dbChat);
-        chatEntity.chat_id = chatEntity.entityId;
         await chatsRepository.save(chatEntity);
 
         // * Augment Session
@@ -59,10 +73,10 @@ export const authOptions: NextAuthOptions = {
         return true;
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.log(fromZodError(error));
+          console.error(fromZodError(error));
           return false;
         }
-        console.log(error);
+        console.error(error);
         return false;
       }
     },
@@ -89,10 +103,10 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token, user }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.image;
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
       }
       return session;
     },
@@ -103,7 +117,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    // signIn: "/",
+    signIn: "/",
   },
   theme: {
     colorScheme: "dark",

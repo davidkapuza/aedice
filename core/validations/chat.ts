@@ -1,7 +1,12 @@
 import * as z from "zod";
+import { ImageSchema, NameSchema, RolesSchema, UniqueIdSchema } from ".";
 import { MessageSchema } from "./message";
-import { ImageSchema, LastMessageSchema, NameSchema, UniqueIdSchema } from ".";
 import { UserSchema } from "./user";
+
+export const ChatMemberSchema = UserSchema.extend({
+  joined_at: z.number(),
+  role: RolesSchema,
+});
 
 export const PublicChatSchema = z
   .object({
@@ -14,16 +19,16 @@ export const PublicChatSchema = z
   .strict();
 
 export const DatabaseChatSchema = PublicChatSchema.extend({
-  chat_id: UniqueIdSchema.optional(),
   created_at: z.number(),
   members: z.array(z.string()),
-  messages: z.array(z.string()),
+  last_message: z.string(),
   chat_owner_id: UniqueIdSchema,
 })
-  .merge(LastMessageSchema)
+  .omit({ chat_id: true })
   .strict();
 
-export const ChatSchema = DatabaseChatSchema.extend({
+export const PrivateChatSchema = DatabaseChatSchema.extend({
   chat_id: UniqueIdSchema,
-  members: z.array(UserSchema),
-}).omit({ messages: true });
+  members: z.array(ChatMemberSchema),
+  last_message: MessageSchema,
+});

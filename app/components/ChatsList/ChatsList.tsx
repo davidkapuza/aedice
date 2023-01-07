@@ -1,5 +1,5 @@
 "use client";
-import type { Chat, User } from "@/core/types";
+import type { PrivateChat, User } from "@/core/types";
 import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
 import useChats from "@/lib/hooks/swr/useChats";
 import { useEffect } from "react";
@@ -19,7 +19,7 @@ function ChatsList({ user }: Props) {
   const { chats, isLoading, mutate } = useChats();
   useEffect(() => {
     if (events?.["chat-created"]) {
-      const newChat = events["chat-created"] as Chat;
+      const newChat = events["chat-created"] as PrivateChat;
       mutate({ chats: [...chats!, newChat] });
     } else {
       mutate();

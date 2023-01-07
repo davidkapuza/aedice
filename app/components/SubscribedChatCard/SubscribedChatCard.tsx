@@ -1,4 +1,4 @@
-import type { Chat, LastMessage, Message, PublicChat, User } from "@/core/types";
+import type { PrivateChat, Message, PublicChat, User } from "@/core/types";
 import usePusherChannel from "@/lib/hooks/pusher/usePusherEvents";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
@@ -8,20 +8,16 @@ import ReactTimeago from "react-timeago";
 import "./SubscribedChatCard.styles.css";
 
 type Props = {
-  chat: Chat;
+  chat: PrivateChat;
   user: User;
 };
 
 function SubscribedChatCard({ chat, user }: Props) {
-  const { last_message, last_message_time } = chat;
   const router = useRouter();
   const chat_id = getIdFromPathname();
   const isSelected = chat_id === chat.chat_id;
   const [members, setMembers] = useState<User[]>(chat.members);
-  const [lastMessage, setLastMessage] = useState<LastMessage>({
-    last_message,
-    last_message_time,
-  });
+  const [lastMessage, setLastMessage] = useState<Message>(chat.last_message);
 
   const [events] = usePusherChannel(`private-chat-room-${chat.chat_id}`, [
     "member-joined",
@@ -36,21 +32,15 @@ function SubscribedChatCard({ chat, user }: Props) {
       setMembers((prev) => [...prev, newMember]);
     }
     if (events?.["member-left"]) {
-      const oldMember = events["member-left"]
+      const oldMember = events["member-left"];
       if (oldMember.id === user.id) return;
       setMembers(
-        (prev) =>
-          prev.filter(
-            (member) => member.id !== oldMember.id
-          ) as User[]
+        (prev) => prev.filter((member) => member.id !== oldMember.id) as User[]
       );
     }
     if (events?.["new-message"]) {
       const message = events["new-message"] as Message;
-      setLastMessage({
-        last_message: message.text,
-        last_message_time: message.created_at,
-      });
+      setLastMessage(message);
     }
   }, [events]);
 
@@ -71,12 +61,12 @@ function SubscribedChatCard({ chat, user }: Props) {
               <h1 className="font-sans text-sm leading-3">{chat.name}</h1>
               <span className="inline-flex justify-between w-full">
                 <small className="text-xs text-gray-500">
-                  {lastMessage?.last_message}
+                  {lastMessage?.text}
                 </small>
-                {lastMessage?.last_message_time! > 0 && (
+                {lastMessage?.created_at && (
                   <ReactTimeago
                     className="text-xs text-gray-500"
-                    date={new Date(+lastMessage?.last_message_time!)}
+                    date={new Date(+lastMessage?.created_at)}
                     formatter={(value, unit) => {
                       if (unit === "second" && value < 15) return "now";
                       if (unit === "second") return `${value}s`;

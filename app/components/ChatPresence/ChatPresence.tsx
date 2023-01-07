@@ -7,7 +7,7 @@ function ChatPresence() {
   const chat_id = getIdFromPathname();
   const [presence, setPresence] = useState<number>(0);
   const [events] = usePusherEvents(
-    chat_id ? `presence-chat-messages-${chat_id}` : null,
+    chat_id ? `presence-chat-room-messages-${chat_id}` : null,
     [
       "pusher:subscription_succeeded",
       "pusher:member_added",

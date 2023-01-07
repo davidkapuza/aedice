@@ -1,15 +1,14 @@
 import { authOptions } from "@/core/auth";
 import { withMethods } from "@/core/middlewares/with-methods";
 import { chatsRepository } from "@/core/redis";
-import { Chat, DatabaseChat, UniqueId } from "@/core/types";
-import { ChatSchema } from "@/core/validations/chat";
+import { DatabaseChat, PrivateChat, UniqueId } from "@/core/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import * as z from "zod";
 import { fromZodError, ValidationError } from "zod-validation-error";
 
 type Response = {
-  chats: Chat[];
+  chats: PrivateChat[];
 };
 
 async function handler(
@@ -29,28 +28,30 @@ async function handler(
           .contain(session?.user.id)
           .return.all();
 
-      const chats: Chat[] = foundChats
-        .map((chat) =>
-          ChatSchema.parse({
-            chat_id: chat.entityId,
-            name: chat.name,
-            last_message: chat.last_message,
-            last_message_time: Number(chat?.last_message_time),
-            created_at: chat.created_at,
-            private: chat.private,
-            members: chat.members.map((member: string) => JSON.parse(member)),
-            member_ids: chat.member_ids,
-            chat_owner_id: chat.chat_owner_id,
-            chat_image: chat.chat_image,
-          })
-        )
-        .sort((a, b) => a.created_at - b.created_at);
+      const chats: PrivateChat[] = foundChats
+        .map((chat) => ({
+          chat_id: chat.entityId,
+          name: chat.name,
+          last_message: JSON.parse(chat.last_message),
+          created_at: chat.created_at,
+          private: chat.private,
+          members: chat.members.map((member: string) => JSON.parse(member)),
+          member_ids: chat.member_ids,
+          chat_image: chat.chat_image,
+          chat_owner_id: chat.chat_owner_id,
+        }))
+        .sort(
+          (a, b) =>
+            a.members.find((member) => member.id === session.user.id)
+              ?.joined_at -
+            b.members.find((member) => member.id === session.user.id)?.joined_at
+        );
 
       return res.status(200).json({ chats });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const zodErr = fromZodError(error);
-        console.log(zodErr)
+        console.log(zodErr);
         return res.status(422).json(zodErr);
       }
       return res.status(500).end();

@@ -1,9 +1,10 @@
 import "next-auth";
-import "@/validations/index";
 declare module "next-auth" {
   interface User {
-    id: UniqueId;
-    image: Image;
+    id: string;
+    image: string;
+    name: string;
+    email: string;
   }
   interface Session {
     user: User;
