@@ -38,7 +38,7 @@ function ChatsList({ user }: Props) {
     <ul className="Chats-ul">
       <div className="py-3 ">
         <h1 className="font-sans font-medium dark:text-white">Chats</h1>
-        <p className="text-xs text-gray-500">{"[ Feature coming soon... ]"}</p>
+        <p className="text-sm text-gray-500">{"[ Feature in progress... 👷 ]"}</p>
       </div>
       {chats?.map((chat) => {
         return (

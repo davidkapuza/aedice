@@ -3,7 +3,7 @@
 }
 
 .Message-text {
-  @apply text-xs w-fit rounded-2xl;
+  @apply text-sm w-fit rounded-2xl;
 }
 
 .Message-right {

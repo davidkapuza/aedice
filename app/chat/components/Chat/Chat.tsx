@@ -4,6 +4,7 @@ import Message from "@/core/ui/Message/Message";
 import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
 import useMessages from "@/lib/hooks/swr/useMessages";
 import { useEffect, useRef } from "react";
+import ChatHeader from "../ChatHeader/ChatHeader";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
 
@@ -37,7 +38,8 @@ function Chat({ chat_id, user }: Props) {
   }, [messages]);
 
   return (
-    <main className="ChatLayout">
+    <>
+      <ChatHeader user={user} chat_id={ chat_id} />
       <ul className="Chat">
         {messages?.map((message) => {
           const isOwner = user?.id === message.sender_id;
@@ -48,7 +50,7 @@ function Chat({ chat_id, user }: Props) {
       </ul>
       <span ref={bottomRef}></span>
       <ChatInput user={user} chat_id={chat_id} />
-    </main>
+    </>
   );
 }
 

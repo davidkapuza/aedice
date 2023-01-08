@@ -1,30 +1,34 @@
 import Avatar from "@/core/ui/Avatar/Avatar";
+import IconButton from "@/core/ui/IconButton/IconButton";
+import { Icons } from "@/core/ui/Icons/Icons";
 import { getCurrentUser } from "@/lib/session";
 import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
-import Image from "next/image";
 import "./Header.styles.css";
 
 export default async function Header() {
   const user = await getCurrentUser();
   return (
     <header className="Header">
-      <div className="inline-flex items-center flex-1 gap-4">
-        <Avatar src={user?.image!} className="w-7 h-7" />
-        <span className="flex flex-col">
-          <small className="text-gray-500 text-[10px]">Welcome back,</small>
-          <h1 className="flex-1 font-sans font-medium">{user?.name}</h1>
-        </span>
-      </div>
-      <div className="flex justify-center">
-        <Image
-          className="pt-1.5"
-          width={100}
-          height={20}
-          src="/static/logo.svg"
-          alt="Logo"
-        />
-      </div>
       <DropdownMenu user={user} />
+      
+      <h1 className="text-center">Aedice</h1>
+      
+      <div className="flex flex-row items-center justify-end gap-6">
+        <IconButton
+          icon={<Icons.bell className="w-3 h-3" />}
+          badge="5"
+          badgeStyles="absolute left-1 top-0.5 px-1 aspect-square min-h-[18px]"
+          tooltip="Feature in progress... 👷"
+          tooltipOrigin="right"
+        />
+        <a
+          href="https://github.com/davidkapuza/aedice"
+          target="_blank"
+          className="Link"
+        >
+          <Icons.github size={12} />
+        </a>
+      </div>
     </header>
   );
 }

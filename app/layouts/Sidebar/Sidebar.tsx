@@ -1,4 +1,3 @@
-import type { User } from "@/core/types";
 import { getCurrentUser } from "@/lib/session";
 import ChatsSearch from "app/components/ChatsSearch/ChatsSearch";
 import "./Sidebar.styles.css";

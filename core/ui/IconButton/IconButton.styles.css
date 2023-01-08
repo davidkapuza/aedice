@@ -1,3 +1,3 @@
-.Icon-button {
-  @apply flex items-center justify-center h-12 mx-auto text-gray-900 transition-all duration-300 ease-linear cursor-pointer aspect-square hover:bg-gray-800 dark:bg-black hover:text-white hover:rounded-xl rounded-3xl;
+.IconButton {
+  @apply relative flex items-center justify-center w-10 text-gray-500 transition-all duration-300 ease-linear bg-black  border-0.5 border-gray-500 rounded-full cursor-pointer aspect-square hover:text-black hover:bg-white disabled:cursor-not-allowed disabled:opacity-50;
 }

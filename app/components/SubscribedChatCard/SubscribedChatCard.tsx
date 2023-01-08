@@ -2,6 +2,7 @@ import type { PrivateChat, Message, PublicChat, User } from "@/core/types";
 import usePusherChannel from "@/lib/hooks/pusher/usePusherEvents";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReactTimeago from "react-timeago";
@@ -58,14 +59,21 @@ function SubscribedChatCard({ chat, user }: Props) {
               avatars={members?.map((member: any) => member.image)}
             />
             <div className="flex-1 w-full mt-3 text-left">
-              <h1 className="font-sans text-sm leading-3">{chat.name}</h1>
-              <span className="inline-flex justify-between w-full">
-                <small className="text-xs text-gray-500">
+              <h1 className="text-base leading-3">{chat.name}</h1>
+              <span className="inline-flex items-center w-full">
+                <Image
+                  src={lastMessage.image}
+                  height={12}
+                  width={12}
+                  className="Avatar"
+                  alt="Avatar"
+                />
+                <small className="ml-1.5 overflow-hidden text-sm text-gray-500 overflow-ellipsis whitespace-nowrap">
                   {lastMessage?.text}
                 </small>
                 {lastMessage?.created_at && (
                   <ReactTimeago
-                    className="text-xs text-gray-500"
+                    className="ml-auto text-sm text-gray-500"
                     date={new Date(+lastMessage?.created_at)}
                     formatter={(value, unit) => {
                       if (unit === "second" && value < 15) return "now";

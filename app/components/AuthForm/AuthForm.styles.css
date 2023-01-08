@@ -1,8 +1,8 @@
 .AuthForm {
-  @apply absolute flex flex-row items-center justify-between w-5/12 p-5 text-xs text-gray-500 -translate-x-1/2 bg-black border border-gray-500 rounded-full left-1/2 bottom-16;
+  @apply absolute flex flex-row items-center justify-between w-5/12 p-5 text-sm text-gray-500 -translate-x-1/2 bg-black border border-gray-500 rounded-full left-1/2 bottom-16;
 }
 .ProviderButton {
-  @apply inline-flex items-center gap-2 text-xs hover:text-white;
+  @apply inline-flex items-center gap-2 text-sm hover:text-white;
 }
 .ProviderButton::before {
   content: " | ";

@@ -1,9 +1,0 @@
-.Footer {
-  @apply fixed bottom-0 flex items-center justify-between w-full h-20 m-0 bg-transparent px-7 dark:text-white;
-}
-.Footer > *:last-child {
-  @apply justify-end;
-}
-.Footer > * {
-  @apply flex-1;
-}

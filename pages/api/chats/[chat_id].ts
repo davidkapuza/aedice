@@ -58,15 +58,16 @@ async function handler(
     try {
       const user = UserSchema.parse(req.body.user);
       const chat = await chatsRepository.fetch(chat_id);
-      const lastMessageJson = await db.execute([
-        "ZREVRANGE",
-        `Chat:Messages:${chat_id}`,
-        0,
-        0,
-      ]);
       if (chat.member_ids.includes(user.id)) {
         return res.status(405).json("Already a member");
       }
+      console.log(
+        ChatMemberSchema.parse({
+          ...user,
+          joined_at: Date.now(),
+          role: "member",
+        })
+      )
       chat.members.push(
         JSON.stringify(
           ChatMemberSchema.parse({
@@ -86,7 +87,7 @@ async function handler(
         chat_image: chat.chat_image,
         created_at: chat.created_at,
         members: chat.members.map((member: string) => JSON.parse(member)),
-        last_message: JSON.parse(lastMessageJson),
+        last_message: JSON.parse(chat.last_message),
         chat_owner_id: chat.chat_owner_id,
       });
 
@@ -111,6 +112,7 @@ async function handler(
         const zodErr = fromZodError(error);
         return res.status(422).json(zodErr);
       }
+      console.log(error)
       return res.status(422).end();
     }
   }

@@ -1,9 +1,0 @@
-.ContactLinks {
-  @apply inline-flex items-center gap-2 text-xs text-gray-500;
-}
-.Link {
-  @apply inline-flex items-center gap-2 cursor-pointer hover:text-white;
-}
-.Link:not(:first-child)::before {
-  content: " | ";
-}

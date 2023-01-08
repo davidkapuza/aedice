@@ -6,6 +6,9 @@ import {
   Search,
   XCircle,
   CheckCheck,
+  Bell,
+  Trash,
+  Phone,
 } from "lucide-react";
 import type { Icon as LucideIcon } from "lucide-react";
 import { SVGProps } from "react";
@@ -72,4 +75,7 @@ export const Icons = {
   search: Search,
   xcircle: XCircle,
   checkCheck: CheckCheck,
+  bell: Bell,
+  trash: Trash,
+  phone: Phone,
 };

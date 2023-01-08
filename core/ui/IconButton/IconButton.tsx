@@ -1,36 +1,42 @@
-import "./IconButton.styles.css"
-import Link from "next/link";
+import { ButtonHTMLAttributes } from "react";
+import "./IconButton.styles.css";
 
-type IconButtonProps = {
-  link?: string;
-  icon: React.ReactNode;
-  tooltip?: string;
-  styles?: string;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  type?: "button" | "submit" | "reset";
-  disabled?: boolean;
+const tooltipOrigins = {
+  right: "right-10 origin-right",
+  left: "left-10 origin-left",
+  top: "top-10 origin-top",
+  bottom: "bottom-10 origin-bottom",
 };
 
+type IconButtonProps = {
+  icon: React.ReactNode;
+  tooltip?: string;
+  tooltipOrigin?: "left" | "right" | "top" | "bottom";
+  badge?: string;
+  badgeStyles?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
 export default function IconButton({
-  link,
   icon,
   tooltip,
-  styles = "",
+  tooltipOrigin = "right",
+  badge,
+  badgeStyles = "",
+  className = "",
   ...props
 }: IconButtonProps) {
   return (
-    <>
-      {link ? (
-        <Link href={link} className={`Icon-button group ${styles}`}>
-          {icon}
-          {tooltip && <span className="Tooltip group-hover:scale-100">{tooltip}</span>}
-        </Link>
-      ) : (
-        <button {...props} className={`Icon-button group ${styles}`}>
-          {icon}
-          {tooltip && <span className="Tooltip group-hover:scale-100">{tooltip}</span>}
-        </button>
+    <button {...props} className={`IconButton group ${className}`}>
+      {icon}
+      {tooltip && (
+        <span
+          className={`Tooltip group-hover:scale-100 ${tooltipOrigins[tooltipOrigin]}`}
+        >
+          {tooltip}
+        </span>
       )}
-    </>
+      {badge && <span className={`Badge ${badgeStyles}`}>{badge}</span>}
+    </button>
   );
 }

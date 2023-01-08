@@ -7,8 +7,15 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-syne)"],
-        mono: ["var(--font-space_mono)"],
+        sans: ["var(--font-jakarta)"],
+      },
+      borderWidth: {
+        0.5: "0.5px",
+      },
+      fontSize: {
+        xs: "8px",
+        sm: "11px",
+        base: "14px",
       },
     },
   },

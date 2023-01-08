@@ -52,7 +52,7 @@ function DefaultChatCard({ user, chat }: Props) {
       <Avatar src={chat.chat_image} className="w-6 h-6" />
 
       <div className="justify-start flex-1 w-full text-left">
-        <h1 className="pt-[.125rem] font-sans text-sm">{chat.name}</h1>
+        <h1 className="pt-[.125rem] text-base">{chat.name}</h1>
         <button
           className="flex min-h-[19px] items-center flex-row gap-2 px-2 py-0.5 text-[10px] text-white bg-black border border-white rounded-full leading-3 disabled:cursor-not-allowed"
           disabled={isMember}

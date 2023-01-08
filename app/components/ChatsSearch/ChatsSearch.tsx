@@ -29,7 +29,7 @@ export default function ChatsSearch({ user }: Props) {
   }, ["button"]);
 
   return (
-    <div ref={ref} className="relative mt-1">
+    <div ref={ref} className="relative">
       <div className="relative top-0 w-full mb-1">
         <span
           className={`absolute inset-y-0 left-0 flex items-center pl-4 text-white ${
@@ -45,7 +45,7 @@ export default function ChatsSearch({ user }: Props) {
 
         <input
           autoComplete="off"
-          className="w-full py-2 pl-10 pr-10 text-xs leading-5 text-left text-white placeholder-gray-500 bg-black border border-gray-500 rounded-lg focus:border-white focus:ring-0 focus:outline-none"
+          className="w-full h-10 py-2 pl-10 pr-10 text-sm leading-5 text-left text-white placeholder-gray-500 bg-black border-0.5 border-gray-500 rounded-lg focus:border-white focus:ring-0 focus:outline-none"
           value={query}
           placeholder="Search..."
           onChange={(event) => setQuery(event.target.value)}
@@ -78,7 +78,7 @@ export default function ChatsSearch({ user }: Props) {
           </ul>
         </Transition>
         {debouncedValue.length > 2 && !isLoading && !chats?.length && (
-          <div className="relative px-4 py-2 text-xs text-white cursor-default select-none">
+          <div className="relative px-4 py-2 text-sm text-white cursor-default select-none">
             Nothing found.
           </div>
         )}
