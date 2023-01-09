@@ -12,7 +12,7 @@ export const PublicChatSchema = z
   .object({
     chat_id: UniqueIdSchema,
     name: NameSchema,
-    private: z.boolean(),
+    access: z.enum(["public", "private"]).default("public"),
     member_ids: z.array(UniqueIdSchema),
     chat_image: ImageSchema,
   })

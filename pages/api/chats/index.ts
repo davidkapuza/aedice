@@ -34,7 +34,7 @@ async function handler(
           name: chat.name,
           last_message: JSON.parse(chat.last_message),
           created_at: chat.created_at,
-          private: chat.private,
+          access: chat.access,
           members: chat.members.map((member: string) => JSON.parse(member)),
           member_ids: chat.member_ids,
           chat_image: chat.chat_image,

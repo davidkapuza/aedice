@@ -61,13 +61,6 @@ async function handler(
       if (chat.member_ids.includes(user.id)) {
         return res.status(405).json("Already a member");
       }
-      console.log(
-        ChatMemberSchema.parse({
-          ...user,
-          joined_at: Date.now(),
-          role: "member",
-        })
-      )
       chat.members.push(
         JSON.stringify(
           ChatMemberSchema.parse({
@@ -82,7 +75,7 @@ async function handler(
       const newChat = PrivateChatSchema.parse({
         chat_id: chat.entityId,
         name: chat.name,
-        private: chat.private,
+        access: chat.access,
         member_ids: chat.member_ids,
         chat_image: chat.chat_image,
         created_at: chat.created_at,

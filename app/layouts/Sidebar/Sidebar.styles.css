@@ -1,3 +1,9 @@
 .Sidebar {
-  @apply w-80 h-auto pl-4 pr-16 pt-6 border-0.5 border-gray-500 rounded-t-2xl border-b-0 bg-black;
+  @apply w-80 h-auto pl-4 pr-16 pt-6 border-0.5 border-gray-500 rounded-t-2xl border-b-0 bg-black overflow-y-scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.Sidebar::-webkit-scrollbar {
+  display: none;
 }

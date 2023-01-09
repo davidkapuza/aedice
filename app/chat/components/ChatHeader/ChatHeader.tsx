@@ -3,6 +3,7 @@ import { User } from "@/core/types";
 import IconButton from "@/core/ui/IconButton/IconButton";
 import { Icons } from "@/core/ui/Icons/Icons";
 import useChats from "@/lib/hooks/swr/useChats";
+import Dropdown from "app/components/Dropdown/Dropdown";
 import { useRouter } from "next/navigation";
 import useSWRMutation from "swr/mutation";
 
@@ -33,21 +34,27 @@ function ChatHeader({ user, chat_id }: ChatHeaderProps) {
     <div className="sticky left-0 top-0 w-full bg-black z-30 py-6 pr-6 pl-7 h-[88px] flex flex-row items-center justify-between">
       <div>
         <h1 className="mb-1 text-base text-white">{currentChat?.name}</h1>
-        <span className="Badge">public</span>
+        <span className="Badge">{currentChat?.access}</span>
       </div>
 
       <IconButton
-        className="ml-auto mr-3"
+        className="ml-auto mr-6"
         icon={<Icons.phone className="w-3 h-3" />}
         tooltip="Feature in progress... 👷"
         tooltipOrigin="top"
       />
-      <IconButton
-        icon={<Icons.trash className="w-3 h-3 text-red-400" />}
-        tooltip="Delete chat"
-        tooltipOrigin="top"
-        disabled={chat_id === null || userChatId === chat_id}
-        onClick={() => deleteChat()}
+
+      <Dropdown
+        button={<Icons.more className="w-3 h-3 text-white" />}
+        items={[
+          {
+            label: "Delete chat",
+            icon: <Icons.trash className="w-4 h-4 mr-3" />,
+            disabled: chat_id === null || userChatId === chat_id,
+            onClick: () => deleteChat(),
+          },
+        ]}
+        origin="right"
       />
     </div>
   );

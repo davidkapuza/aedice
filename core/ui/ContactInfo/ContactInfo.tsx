@@ -4,11 +4,11 @@ import { Icons } from "../Icons/Icons";
 function ContactInfo() {
   return (
     <div className="w-[60px] flex flex-col justify-end text-xs text-gray-500 absolute right-0 bottom-9 items-center">
-      <span className="mr-4 rotate-90 whitespace-nowrap h-[60px] leading-[43px] w-full">Contact me</span>
+      <span className="rotate-90">Contact me</span>
       <a
         target="_blank"
         href="mailto:kapuzadavid@gmail.com"
-        className="mb-3 Link"
+        className="mb-3 mt-7 Link"
       >
         <Icons.mail size={12} />
       </a>

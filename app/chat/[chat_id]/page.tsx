@@ -9,6 +9,6 @@ type ChatPageProps = {
 
 export default async function ChatPage({ params }: ChatPageProps) {
   const { chat_id } = params;
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
   return <Chat chat_id={chat_id} user={user} />;
 }

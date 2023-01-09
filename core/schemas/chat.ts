@@ -8,7 +8,7 @@ export const chatSchema = new Schema(Chat, {
   name: { type: "text" },
   last_message: { type: "string" },
   created_at: { type: "number" },
-  private: { type: "boolean" },
+  access: { type: "string" },
   members: { type: "string[]" },
   member_ids: { type: "string[]" },
   chat_owner_id: { type: "string" },

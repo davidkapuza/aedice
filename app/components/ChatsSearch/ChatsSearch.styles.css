@@ -1,8 +1,0 @@
-.SidebarContent {
-  @apply overflow-y-scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.SidebarContent::-webkit-scrollbar {
-  display: none;
-}

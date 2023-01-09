@@ -1,7 +1,6 @@
 import ContactInfo from "@/core/ui/ContactInfo/ContactInfo";
 import { getCurrentUser } from "@/lib/session";
 import { Header, Sidebar } from "app/layouts/exports";
-import ChatHeader from "./components/ChatHeader/ChatHeader";
 
 export default async function ChatLayout({
   children,
@@ -15,9 +14,7 @@ export default async function ChatLayout({
       <Header />
       {/* @ts-expect-error Server Component */}
       <Sidebar />
-      <main className="ChatLayout">
-        {children}
-      </main>
+      <main className="ChatLayout">{children}</main>
       <ContactInfo />
     </div>
   );

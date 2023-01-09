@@ -58,7 +58,6 @@ export const authOptions: NextAuthOptions = {
           name: userEntity.name,
           created_at,
           last_message: JSON.stringify(lastMessage),
-          private: false,
           members: [JSON.stringify(chatMember)],
           member_ids: [userEntity.entityId],
           chat_image: userEntity.image,

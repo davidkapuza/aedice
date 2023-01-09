@@ -38,7 +38,7 @@ async function handler(
         PublicChatSchema.parse({
           chat_id: chat.entityId,
           name: chat.name,
-          private: chat.private,
+          access: chat.access,
           member_ids: chat.member_ids,
           chat_image: chat.chat_image,
         })

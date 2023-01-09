@@ -1,18 +1,23 @@
-import Avatar from "@/core/ui/Avatar/Avatar";
 import IconButton from "@/core/ui/IconButton/IconButton";
 import { Icons } from "@/core/ui/Icons/Icons";
 import { getCurrentUser } from "@/lib/session";
-import DropdownMenu from "app/components/DropdownMenu/DropdownMenu";
 import "./Header.styles.css";
+import HeaderDropdownMenu from "./HeaderDropdownMenu";
 
 export default async function Header() {
   const user = await getCurrentUser();
   return (
     <header className="Header">
-      <DropdownMenu user={user} />
-      
+      <div className="inline-flex items-center gap-3">
+        <HeaderDropdownMenu user={user} />
+        <span>
+          <small className="text-xs text-gray-500">Welcome back,</small>
+          <h1 className="leading-[15px] mb-3">{user.name}</h1>
+        </span>
+      </div>
+
       <h1 className="text-center">Aedice</h1>
-      
+
       <div className="flex flex-row items-center justify-end gap-6">
         <IconButton
           icon={<Icons.bell className="w-3 h-3" />}

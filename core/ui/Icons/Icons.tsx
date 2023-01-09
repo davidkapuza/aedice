@@ -9,6 +9,8 @@ import {
   Bell,
   Trash,
   Phone,
+  LucideProps,
+  MoreVertical
 } from "lucide-react";
 import type { Icon as LucideIcon } from "lucide-react";
 import { SVGProps } from "react";
@@ -62,6 +64,37 @@ function MenuIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function Status({
+  size = 12,
+  className = "",
+  status = "online",
+}: LucideProps & { status?: "online" | "offline" | "hidden" }) {
+  const statusColors = {
+    online: "#4ade80",
+    offline: "#ef4444",
+    hidden: "#a8a29e",
+  };
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 12 12"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="6"
+        cy="6"
+        r="5"
+        fill={statusColors[status]}
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -78,4 +111,6 @@ export const Icons = {
   bell: Bell,
   trash: Trash,
   phone: Phone,
+  status: Status,
+  more: MoreVertical,
 };

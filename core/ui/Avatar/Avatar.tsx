@@ -3,17 +3,21 @@ import Image from "next/image";
 type Props = {
   src: string;
   className?: string;
+  children?: React.ReactNode;
 };
 
-function Avatar({ src, className }: Props) {
+function Avatar({ src, className, children }: Props) {
   return (
-    <Image
-      src={src}
-      height={20}
-      width={20}
-      className={`Avatar ${className}`}
-      alt="Avatar"
-    />
+    <div className="relative">
+      <Image
+        src={src}
+        height={20}
+        width={20}
+        className={`Avatar ${className}`}
+        alt="Avatar"
+      />
+      {children}
+    </div>
   );
 }
 

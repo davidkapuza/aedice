@@ -16,7 +16,7 @@ export function withChat(handler: NextApiHandler) {
       const chat: DatabaseChat = await chatsRepository.fetch(chat_id);
 
       // TODO implemet private | public chats authorization
-      if (req.method === "PATCH" && !chat.private) {
+      if (req.method === "PATCH") {
         return handler(req, res);
       }
 

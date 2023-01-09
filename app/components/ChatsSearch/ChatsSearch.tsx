@@ -9,7 +9,7 @@ import { Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import ChatsList from "../ChatsList/ChatsList";
 import DefaultChatCard from "../DefaultChatCard/DefaultChatCard";
-import "./ChatsSearch.styles.css";
+
 
 type Props = {
   user: User;
@@ -30,7 +30,7 @@ export default function ChatsSearch({ user }: Props) {
 
   return (
     <div ref={ref} className="relative">
-      <div className="relative top-0 w-full mb-1">
+      <div className="sticky top-0 z-10 w-full mb-1">
         <span
           className={`absolute inset-y-0 left-0 flex items-center pl-4 text-white ${
             open ? "text-white" : "text-gray-500"
@@ -63,7 +63,7 @@ export default function ChatsSearch({ user }: Props) {
           </button>
         )}
       </div>
-      <div className="SidebarContent">
+      <div>
         <Transition
           as={Fragment}
           show={open}

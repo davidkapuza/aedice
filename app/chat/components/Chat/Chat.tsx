@@ -39,7 +39,7 @@ function Chat({ chat_id, user }: Props) {
 
   return (
     <>
-      <ChatHeader user={user} chat_id={ chat_id} />
+      <ChatHeader user={user} chat_id={chat_id} />
       <ul className="Chat">
         {messages?.map((message) => {
           const isOwner = user?.id === message.sender_id;

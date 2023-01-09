@@ -11,7 +11,7 @@
 
 @layer components {
   .Avatar {
-    @apply object-cover rounded-full cursor-pointer;
+    @apply object-cover rounded-full cursor-pointer aspect-square;
   }
 
   .Tooltip {
