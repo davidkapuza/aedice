@@ -1,7 +1,7 @@
 "use client";
-import type { Message as TypeMessage, User } from "@/core/types";
+import type { Message as TypeMessage, PrivateChat, User } from "@/core/types";
 import Message from "@/core/ui/Message/Message";
-import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
+import usePusher from "@/lib/hooks/pusher/usePusher";
 import useMessages from "@/lib/hooks/swr/useMessages";
 import { useEffect, useRef } from "react";
 import ChatHeader from "../ChatHeader/ChatHeader";
@@ -10,15 +10,17 @@ import "./Chat.styles.css";
 
 type Props = {
   user: User;
-  chat_id: string;
+  chat: PrivateChat;
+  messages: TypeMessage[];
 };
 
-function Chat({ chat_id, user }: Props) {
+function Chat({ user, chat, messages: prerenderedMessages }: Props) {
   const bottomRef = useRef<HTMLSpanElement>(null);
-  const { messages, mutate } = useMessages(chat_id);
-  const [events] = usePusherEvents(`presence-chat-room-messages-${chat_id}`, [
-    "new-message",
-  ]);
+  const { messages, mutate } = useMessages(chat.chat_id);
+  const [events] = usePusher({
+    channel: `presence-chat-room-messages-${chat.chat_id}`,
+    events: ["new-message"],
+  });
   useEffect(() => {
     if (events?.["new-message"]) {
       const newMessage = events["new-message"] as TypeMessage;
@@ -39,9 +41,9 @@ function Chat({ chat_id, user }: Props) {
 
   return (
     <>
-      <ChatHeader user={user} chat_id={chat_id} />
+      <ChatHeader user={user} chat={chat} />
       <ul className="Chat">
-        {messages?.map((message) => {
+        {(messages || prerenderedMessages)?.map((message) => {
           const isOwner = user?.id === message.sender_id;
           return (
             <Message key={message.id} message={message} isOwner={isOwner} />
@@ -49,7 +51,7 @@ function Chat({ chat_id, user }: Props) {
         })}
       </ul>
       <span ref={bottomRef}></span>
-      <ChatInput user={user} chat_id={chat_id} />
+      <ChatInput user={user} chat_id={chat.chat_id} />
     </>
   );
 }

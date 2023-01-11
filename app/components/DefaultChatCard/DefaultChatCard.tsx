@@ -2,7 +2,7 @@
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { Icons } from "@/core/ui/Icons/Icons";
 import Loader from "@/core/ui/Loader/Loader";
-import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
+import usePusher from "@/lib/hooks/pusher/usePusher";
 import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,7 +25,7 @@ export async function joinChat(chat_id: string, user: User) {
 }
 
 function DefaultChatCard({ user, chat }: Props) {
-  const [events] = usePusherEvents(`private-user-chats-${user.id}`);
+  const [events] = usePusher({ channel: `private-user-chats-${user.id}` });
   const [isMember, setIsMember] = useState<boolean>(
     chat.member_ids.includes(user.id)
   );

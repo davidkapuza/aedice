@@ -1,3 +1,3 @@
-.Chats-ul {
+.ChatsList {
   @apply flex flex-col h-full gap-3;
 }

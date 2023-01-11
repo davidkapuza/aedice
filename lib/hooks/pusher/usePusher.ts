@@ -3,16 +3,20 @@ import { useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { PusherContext } from "../../contexts/PusherContext";
 import { Action, ChannelEvents } from "./usePusherContext";
 
-export default function usePusherEvents(
-  channel: string | null,
-  events?: string[]
-): [ChannelEvents | undefined, (event: Action) => void, Pusher] {
+export default function usePusher({
+  channel,
+  events,
+}: {
+  channel: string | null;
+  events?: string[];
+}): [ChannelEvents | undefined, (event: Action) => void, Pusher] {
   const pusherCtx = useContext(PusherContext);
   if (!pusherCtx) {
     throw new Error("Context not found");
   }
-  if (channel === null) return [undefined, pusherCtx.setEvent, pusherCtx.pusher]
-  
+  if (channel === null)
+    return [undefined, pusherCtx.setEvent, pusherCtx.pusher];
+
   const channelEvents = useSyncExternalStore(
     pusherCtx.subscribeToEvents,
     () => pusherCtx.getEvent(channel),

@@ -11,9 +11,7 @@ type Props = {
 export function Providers({ session, children }: Props) {
   return (
     // <SessionProvider session={session}>
-      <PusherProvider>
-        {children}
-      </PusherProvider>
+    <PusherProvider>{children}</PusherProvider>
     // </SessionProvider>
   );
 }

@@ -1,5 +1,5 @@
 import type { PrivateChat, Message, PublicChat, User } from "@/core/types";
-import usePusherChannel from "@/lib/hooks/pusher/usePusherEvents";
+import usePusher from "@/lib/hooks/pusher/usePusher";
 import { getIdFromPathname } from "@/lib/utils/getIdFromPathname";
 import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
 import Image from "next/image";
@@ -20,11 +20,10 @@ function SubscribedChatCard({ chat, user }: Props) {
   const [members, setMembers] = useState<User[]>(chat.members);
   const [lastMessage, setLastMessage] = useState<Message>(chat.last_message);
 
-  const [events] = usePusherChannel(`private-chat-room-${chat.chat_id}`, [
-    "member-joined",
-    "member-left",
-    "new-message",
-  ]);
+  const [events] = usePusher({
+    channel: `private-chat-room-${chat.chat_id}`,
+    events: ["member-joined", "member-left", "new-message"],
+  });
 
   useEffect(() => {
     if (events?.["member-joined"]) {

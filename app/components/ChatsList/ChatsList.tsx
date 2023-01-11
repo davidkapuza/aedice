@@ -1,6 +1,6 @@
 "use client";
 import type { PrivateChat, User } from "@/core/types";
-import usePusherEvents from "@/lib/hooks/pusher/usePusherEvents";
+import usePusher from "@/lib/hooks/pusher/usePusher";
 import useChats from "@/lib/hooks/swr/useChats";
 import { useEffect } from "react";
 import SubscribedChatCard from "../SubscribedChatCard/SubscribedChatCard";
@@ -8,13 +8,14 @@ import "./ChatsList.styles.css";
 
 type Props = {
   user: User;
+  chats?: PrivateChat[];
 };
 
-function ChatsList({ user }: Props) {
-  const [events] = usePusherEvents(`private-user-chats-${user.id}`, [
-    "chat-created",
-    "chat-removed",
-  ]);
+function ChatsList({ user, chats: prerenderedChats }: Props) {
+  const [events] = usePusher({
+    channel: `private-user-chats-${user.id}`,
+    events: ["chat-created", "chat-removed"],
+  });
 
   const { chats, isLoading, mutate } = useChats();
   useEffect(() => {
@@ -35,12 +36,14 @@ function ChatsList({ user }: Props) {
   }, [events]);
 
   return (
-    <ul className="Chats-ul">
+    <ul className="ChatsList">
       <div className="py-3 ">
         <h1 className="font-sans font-medium dark:text-white">Chats</h1>
-        <p className="text-sm text-gray-500">{"[ Feature in progress... 👷 ]"}</p>
+        <p className="text-sm text-gray-500">
+          {"[ Feature in progress... 👷 ]"}
+        </p>
       </div>
-      {chats?.map((chat) => {
+      {(chats || prerenderedChats)?.map((chat) => {
         return (
           <SubscribedChatCard key={chat.chat_id} chat={chat} user={user} />
         );

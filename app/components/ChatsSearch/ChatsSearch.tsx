@@ -7,15 +7,15 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import useOutsideClick from "@/lib/hooks/useOutsideClick";
 import { Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
-import ChatsList from "../ChatsList/ChatsList";
 import DefaultChatCard from "../DefaultChatCard/DefaultChatCard";
 
 
 type Props = {
   user: User;
+  children: React.ReactNode
 };
 
-export default function ChatsSearch({ user }: Props) {
+export default function ChatsSearch({ user, children }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const { debouncedValue, isDebouncing } = useDebounce(query, 500);
@@ -82,7 +82,7 @@ export default function ChatsSearch({ user }: Props) {
             Nothing found.
           </div>
         )}
-        <ChatsList user={user} />
+        {children}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
 .Chat {
-  @apply flex flex-col items-center justify-end pb-20 dark:bg-black px-36;
+  @apply flex flex-col mt-auto items-center justify-end pb-20 dark:bg-black px-36;
 }
 
