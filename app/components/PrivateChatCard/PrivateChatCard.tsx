@@ -51,9 +51,12 @@ function PrivateChatCard({ chat, user }: Props) {
         className="w-full cursor-pointer"
         onClick={() => router.push(`/chat/${chat.chat_id}`)}
       >
-        <Glow className="p-5 text-left ChatCard rounded-xl" border="rounded-xl">
+        <Glow
+          className="p-5 text-left ChatCard rounded-xl "
+          border="rounded-xl "
+        >
           <AvatarsGroup avatars={members?.map((member: any) => member.image)} />
-          <div className="mt-3 text-left">
+          <div className="w-full mt-3 text-left">
             <h1 className="text-base leading-3">{chat.name}</h1>
             <span className="inline-flex items-center w-full">
               <Image

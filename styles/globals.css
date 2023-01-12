@@ -13,11 +13,6 @@
   .Avatar {
     @apply object-cover rounded-full cursor-pointer aspect-square;
   }
-
-  .Tooltip {
-    @apply absolute z-50 w-auto p-2 m-2 text-sm text-white transition-all duration-100 scale-0 bg-gray-900 rounded-lg min-w-max;
-  }
-
   .Badge {
     @apply flex items-center justify-center px-2 py-0.5 text-xs text-white bg-gray-800 rounded-full w-fit;
   }
@@ -37,7 +32,7 @@
   }
 
   .ChatCard {
-    @apply flex flex-col w-full text-white rounded-xl;
+    @apply flex flex-col items-start w-full text-white rounded-xl;
   }
 
   .glow:hover::before,

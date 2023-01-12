@@ -2,6 +2,7 @@
 import { PrivateChat, User } from "@/core/types";
 import IconButton from "@/core/ui/IconButton/IconButton";
 import { Icons } from "@/core/ui/Icons/Icons";
+import Tooltip from "@/core/ui/Tooltip/Tooltip";
 import Dropdown from "app/components/Dropdown/Dropdown";
 import { useRouter } from "next/navigation";
 import useSWRMutation from "swr/mutation";
@@ -32,12 +33,11 @@ function ChatHeader({ user, chat }: ChatHeaderProps) {
         <span className="Badge">{chat?.access}</span>
       </div>
 
-      <IconButton
-        className="ml-auto mr-6"
-        icon={<Icons.phone className="w-3 h-3" />}
-        tooltip="Feature in progress... 👷"
-        tooltipOrigin="top"
-      />
+      <Tooltip className="ml-auto mr-6">
+        <IconButton
+          icon={<Icons.phone className="w-3 h-3" />}
+        />
+      </Tooltip>
 
       <Dropdown
         button={<Icons.more className="w-3 h-3 text-white" />}
