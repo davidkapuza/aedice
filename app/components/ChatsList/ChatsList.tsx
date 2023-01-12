@@ -3,7 +3,7 @@ import type { PrivateChat, User } from "@/core/types";
 import usePusher from "@/lib/hooks/pusher/usePusher";
 import useChats from "@/lib/hooks/swr/useChats";
 import { useEffect } from "react";
-import SubscribedChatCard from "../SubscribedChatCard/SubscribedChatCard";
+import PrivateChatCard from "../PrivateChatCard/PrivateChatCard";
 import "./ChatsList.styles.css";
 
 type Props = {
@@ -44,9 +44,7 @@ function ChatsList({ user, chats: prerenderedChats }: Props) {
         </p>
       </div>
       {(chats || prerenderedChats)?.map((chat) => {
-        return (
-          <SubscribedChatCard key={chat.chat_id} chat={chat} user={user} />
-        );
+        return <PrivateChatCard key={chat.chat_id} chat={chat} user={user} />;
       })}
       {isLoading ?? <p className="text-sm text-white">Loading...</p>}
     </ul>

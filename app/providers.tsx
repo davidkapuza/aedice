@@ -2,6 +2,7 @@
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { PusherProvider } from "@/lib/contexts/PusherContext";
+import { useEffect } from "react";
 
 type Props = {
   session: Session | null;
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export function Providers({ session, children }: Props) {
+
+
   return (
     // <SessionProvider session={session}>
     <PusherProvider>{children}</PusherProvider>

@@ -15,7 +15,7 @@
   }
 
   .Tooltip {
-    @apply z-50 absolute w-auto p-2 m-2 text-sm text-white transition-all duration-100 scale-0 bg-gray-900 rounded-lg min-w-max;
+    @apply absolute z-50 w-auto p-2 m-2 text-sm text-white transition-all duration-100 scale-0 bg-gray-900 rounded-lg min-w-max;
   }
 
   .Badge {
@@ -27,13 +27,59 @@
   }
 
   .ChatLayout {
-    @apply flex flex-col flex-1 border-0.5 border-gray-500 overflow-y-scroll rounded-t-2xl border-b-0 bg-black z-10 -ml-12;
+    @apply z-10 flex flex-col flex-1 -ml-12 overflow-y-scroll bg-black border border-b-0 border-white rounded-t-2xl;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
   .ChatLayout::-webkit-scrollbar {
     display: none;
+  }
+
+  .ChatCard {
+    @apply flex flex-col w-full text-white rounded-xl;
+  }
+
+  .glow:hover::before,
+  .glow:hover::after {
+    opacity: 1;
+  }
+
+  .glow {
+    background-color: rgba(255, 255, 255, 0.2);
+    display: flex;
+    position: relative;
+    width: 100%;
+  }
+
+  .glow::after {
+    border-radius: inherit;
+    content: "";
+    height: 100%;
+    left: 0px;
+    opacity: 0;
+    position: absolute;
+    top: 0px;
+    transition: opacity 500ms;
+    width: 100%;
+  }
+
+  .glow::after {
+    background: radial-gradient(
+      600px circle at var(--mouse-x) var(--mouse-y),
+      rgba(255, 255, 255, 0.4),
+      transparent 40%
+    );
+    z-index: 1;
+  }
+
+  .glow > .glow-content {
+    background-color: rgb(0, 0, 0);
+    border-radius: inherit;
+    height: fit-content;
+    width: 100%;
+    margin: 1px;
+    z-index: 2;
   }
 }
 

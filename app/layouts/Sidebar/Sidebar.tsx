@@ -22,7 +22,7 @@ const getChats = async (user_id: UniqueId) => {
         name: chat.name,
         last_message: JSON.parse(chat.last_message),
         created_at: chat.created_at,
-        access: chat.access,
+        access: chat.access as "public" | "private",
         members: chat.members.map((member: string) => JSON.parse(member)),
         member_ids: chat.member_ids,
         chat_image: chat.chat_image,

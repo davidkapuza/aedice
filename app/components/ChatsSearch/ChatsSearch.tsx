@@ -7,12 +7,11 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import useOutsideClick from "@/lib/hooks/useOutsideClick";
 import { Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
-import DefaultChatCard from "../DefaultChatCard/DefaultChatCard";
-
+import PublicChatCard from "../PublicChatCard/PublicChatCard";
 
 type Props = {
   user: User;
-  children: React.ReactNode
+  children: React.ReactNode;
 };
 
 export default function ChatsSearch({ user, children }: Props) {
@@ -45,7 +44,7 @@ export default function ChatsSearch({ user, children }: Props) {
 
         <input
           autoComplete="off"
-          className="w-full h-10 py-2 pl-10 pr-10 text-sm leading-5 text-left text-white placeholder-gray-500 bg-black border-0.5 border-gray-500 rounded-lg focus:border-white focus:ring-0 focus:outline-none"
+          className="w-full h-10 py-2 pl-10 pr-10 text-sm leading-5 text-left text-white placeholder-gray-500 bg-black border border-white rounded-lg border-opacity-10 focus:border-white focus:ring-0 focus:outline-none"
           value={query}
           placeholder="Search..."
           onChange={(event) => setQuery(event.target.value)}
@@ -73,7 +72,7 @@ export default function ChatsSearch({ user, children }: Props) {
         >
           <ul className="w-full py-1 text-base bg-transparent cursor-default focus:outline-none">
             {chats?.map((chat) => (
-              <DefaultChatCard key={chat.chat_id} user={user} chat={chat} />
+              <PublicChatCard key={chat.chat_id} user={user} chat={chat} />
             ))}
           </ul>
         </Transition>

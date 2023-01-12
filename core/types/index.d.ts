@@ -2,7 +2,7 @@ import * as z from "zod";
 import {
   DatabaseChatSchema,
   PublicChatSchema,
-  ChatSchema,
+  PrivateChatSchema,
 } from "@/validations/chat";
 import { DatabaseUserSchema, UserSchema } from "@/validations/user";
 import { MessageSchema } from "@/validations/message";

@@ -1,5 +1,6 @@
 "use client";
 import Avatar from "@/core/ui/Avatar/Avatar";
+import Glow from "@/core/ui/Glow/Glow";
 import { Icons } from "@/core/ui/Icons/Icons";
 import Loader from "@/core/ui/Loader/Loader";
 import usePusher from "@/lib/hooks/pusher/usePusher";
@@ -7,7 +8,6 @@ import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWRMutation from "swr/mutation";
-import "./DefaultChatCard.styles.css";
 
 type Props = {
   user: User;
@@ -24,7 +24,7 @@ export async function joinChat(chat_id: string, user: User) {
   });
 }
 
-function DefaultChatCard({ user, chat }: Props) {
+function PublicChatCard({ user, chat }: Props) {
   const [events] = usePusher({ channel: `private-user-chats-${user.id}` });
   const [isMember, setIsMember] = useState<boolean>(
     chat.member_ids.includes(user.id)
@@ -45,14 +45,9 @@ function DefaultChatCard({ user, chat }: Props) {
   }, [events]);
 
   return (
-    <div
-      className="Default-Chat-Card"
-      onClick={() => router.push(`/chat/${chat.chat_id}`)}
-    >
-      <Avatar src={chat.chat_image} className="w-6 h-6" />
-
-      <div className="justify-start flex-1 w-full text-left">
-        <h1 className="pt-[.125rem] text-base">{chat.name}</h1>
+    <Glow className="p-5 ChatCard " border="rounded-xl">
+      <div className="flex justify-between">
+        <Avatar src={chat.chat_image} className="w-6 h-6" />
         <button
           className="flex min-h-[19px] items-center flex-row gap-2 px-2 py-0.5 text-[10px] text-white bg-black border border-white rounded-full leading-3 disabled:cursor-not-allowed"
           disabled={isMember}
@@ -70,8 +65,16 @@ function DefaultChatCard({ user, chat }: Props) {
           )}
         </button>
       </div>
-    </div>
+      <div className="mt-3 text-left">
+        <h1 className="text-base leading-3">{chat.name}</h1>
+        <small className="text-sm text-gray-500 leading-[6px]">{`${
+          chat.member_ids.length
+        } member${chat.member_ids.length > 1 ? "s" : ""} • ${
+          chat.access
+        }`}</small>
+      </div>
+    </Glow>
   );
 }
 
-export default DefaultChatCard;
+export default PublicChatCard;

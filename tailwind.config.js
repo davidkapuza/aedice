@@ -6,11 +6,11 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
+      borderColor: {
+        white: "rgba(255, 255, 255, 0.2)",
+      },
       fontFamily: {
         sans: ["var(--font-jakarta)"],
-      },
-      borderWidth: {
-        0.5: "0.5px",
       },
       fontSize: {
         xs: "8px",
