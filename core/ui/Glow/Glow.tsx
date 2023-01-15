@@ -1,11 +1,10 @@
 "use client";
-
 import { useEffect } from "react";
 
 function Glow({
   children,
-  className,
-  border,
+  className = "",
+  border = "",
 }: {
   children: React.ReactNode;
   className?: string;
@@ -21,7 +20,6 @@ function Glow({
     (target as HTMLElement).style.setProperty("--mouse-x", `${x}px`);
     (target as HTMLElement).style.setProperty("--mouse-y", `${y}px`);
   };
-
   useEffect(() => {
     for (const element of document.querySelectorAll(".glow")) {
       (element as HTMLElement).onmousemove = (e: MouseEvent) =>

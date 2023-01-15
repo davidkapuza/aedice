@@ -1,5 +1,5 @@
 .AuthForm {
-  @apply flex flex-row items-center justify-between w-[calc(100vw/3)] px-5 py-4 text-sm text-gray-500 ;
+  @apply flex flex-row items-center justify-between md:w-[calc(100vw/3)] w-[calc(100vw-7rem)] px-5 py-4 text-sm text-gray-500 ;
 }
 .ProviderButton {
   @apply inline-flex items-center gap-2 text-sm cursor-pointer hover:text-white;

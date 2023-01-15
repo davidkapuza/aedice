@@ -1,5 +1,5 @@
 .ChatForm {
-  @apply self-start sticky bottom-20 left-36 border-black border flex flex-row items-center gap-[0.6rem] py-0.5 pl-0.5 pr-3 text-sm text-white placeholder-gray-500 bg-emerald-300 rounded-full w-fit min-h-[26px];
+  @apply self-start sticky bottom-20 left-7 md:left-36 border-black border flex flex-row items-center gap-[0.6rem] py-0.5 pl-0.5 pr-3 text-sm text-white placeholder-gray-500 bg-emerald-300 rounded-full w-fit min-h-[26px];
 }
 
 .ChatInput > input {

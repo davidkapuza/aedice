@@ -27,16 +27,20 @@ function ChatHeader({ user, chat }: ChatHeaderProps) {
   };
 
   return (
-    <div className="sticky left-0 top-0 w-full bg-black z-30 py-6 pr-6 pl-7 h-[88px] flex flex-row items-center justify-between">
-      <div>
+    <div className="sticky left-0 top-0 w-full bg-gradient-to-b from-black to-transparent z-30 py-6 pr-6 pl-7 h-[88px] flex flex-row items-center justify-between">
+      <button
+        className="mr-6 md:hidden"
+        onClick={() => router.push(`/chat`)}
+      >
+        <Icons.arrowLeft className="w-4 h-4 text-white" />
+      </button>
+      <div className="flex-1">
         <h1 className="mb-1 text-base text-white">{chat?.name}</h1>
         <span className="Badge">{chat?.access}</span>
       </div>
 
-      <Tooltip className="ml-auto mr-6">
-        <IconButton
-          icon={<Icons.phone className="w-3 h-3" />}
-        />
+      <Tooltip className="mr-6">
+        <IconButton icon={<Icons.phone className="w-3 h-3" />} />
       </Tooltip>
 
       <Dropdown

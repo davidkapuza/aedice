@@ -1,5 +1,6 @@
 "use client";
 import type { User } from "@/core/types";
+import Glow from "@/core/ui/Glow/Glow";
 import { Icons } from "@/core/ui/Icons/Icons";
 import Loader from "@/core/ui/Loader/Loader";
 import useChatsSearch from "@/lib/hooks/swr/useChatsSearch";
@@ -20,7 +21,7 @@ export default function ChatsSearch({ user, children }: Props) {
   const { debouncedValue, isDebouncing } = useDebounce(query, 500);
   const { chats, isLoading } = useChatsSearch(debouncedValue);
   useEffect(() => {
-    setOpen(() => debouncedValue.length > 2 && !!chats?.length);
+    setOpen(() => debouncedValue.length > 2);
   }, [debouncedValue]);
 
   const ref = useOutsideClick<HTMLDivElement>(() => {
@@ -32,33 +33,34 @@ export default function ChatsSearch({ user, children }: Props) {
       <div className="sticky top-0 z-10 w-full mb-1">
         <span
           className={`absolute inset-y-0 left-0 flex items-center pl-4 text-white ${
-            open ? "text-white" : "text-gray-500"
+            open ? "text-white" : "text-gray-200"
           }`}
         >
           {(isLoading || isDebouncing) && query ? (
             <Loader className="h-3.5 w-3.5" />
           ) : (
-            <Icons.search size={16} />
+            <Icons.search size={16}/>
           )}
         </span>
-
-        <input
-          autoComplete="off"
-          className="w-full h-10 py-2 pl-10 pr-10 text-sm leading-5 text-left text-white placeholder-gray-500 bg-black border border-white rounded-lg border-opacity-10 focus:border-white focus:ring-0 focus:outline-none"
-          value={query}
-          placeholder="Search..."
-          onChange={(event) => setQuery(event.target.value)}
-          onFocus={() =>
-            debouncedValue.length > 2 && !!chats?.length && setOpen(true)
-          }
-        />
+        <Glow border="rounded-lg ">
+          <input
+            autoComplete="off"
+            className="w-full h-10 py-2 pl-10 pr-10 text-sm leading-5 text-left text-white placeholder-gray-500 bg-transparent focus:ring-0 focus:outline-none"
+            value={query}
+            placeholder="Search..."
+            onChange={(event) => setQuery(event.target.value)}
+            onFocus={() =>
+              query.length > 2 && !!chats?.length && setOpen(true)
+            }
+          />
+        </Glow>
         {query && (
           <button
             disabled={!query}
             onClick={() => setQuery("")}
             className="absolute inset-y-0 right-0 flex items-center pr-3 text-white"
           >
-            <Icons.xcircle size={13} />
+            <Icons.xcircle size={13} className="z-20"/>
           </button>
         )}
       </div>

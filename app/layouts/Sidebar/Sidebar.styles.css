@@ -1,5 +1,5 @@
 .Sidebar {
-  @apply h-auto pt-6 pl-4 pr-16 overflow-y-scroll bg-black border border-b-0 border-white w-80 rounded-t-2xl;
+  @apply w-full h-auto pt-6 pl-4 pr-4 overflow-y-scroll bg-black border border-b-0 border-white md:pr-16 md:w-80 rounded-t-2xl;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

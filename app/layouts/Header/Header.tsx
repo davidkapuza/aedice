@@ -17,7 +17,7 @@ export default async function Header() {
         </span>
       </div>
 
-      <h1 className="text-center">Aedice</h1>
+      <h1 className="hidden text-center sm:block">Aedice</h1>
 
       <div className="flex flex-row items-center justify-end gap-6">
         <Tooltip>
@@ -30,7 +30,7 @@ export default async function Header() {
         <a
           href="https://github.com/davidkapuza/aedice"
           target="_blank"
-          className="Link"
+          className="hidden Link md:inline"
         >
           <Icons.github size={12} />
         </a>

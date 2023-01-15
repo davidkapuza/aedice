@@ -10,7 +10,8 @@ import {
   Trash,
   Phone,
   LucideProps,
-  MoreVertical
+  MoreVertical,
+  ChevronLeft,
 } from "lucide-react";
 import type { Icon as LucideIcon } from "lucide-react";
 import { SVGProps } from "react";
@@ -113,4 +114,5 @@ export const Icons = {
   phone: Phone,
   status: Status,
   more: MoreVertical,
+  arrowLeft: ChevronLeft,
 };

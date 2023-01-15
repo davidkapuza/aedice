@@ -4,7 +4,7 @@ import Tooltip from "../Tooltip/Tooltip";
 
 function ContactInfo() {
   return (
-    <div className="w-[60px] flex flex-col justify-end text-xs text-gray-500 absolute right-0 bottom-9 items-center">
+    <div className="w-[60px] hidden md:flex flex-col justify-end text-xs text-gray-500 absolute right-0 bottom-9 items-center">
       <span className="rotate-90">Contact me</span>
       <a
         target="_blank"

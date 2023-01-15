@@ -22,7 +22,7 @@
   }
 
   .ChatLayout {
-    @apply z-10 flex flex-col flex-1 -ml-12 overflow-y-scroll bg-black border border-b-0 border-white rounded-t-2xl;
+    @apply z-10 flex flex-col flex-1 md:-ml-12 overflow-y-scroll bg-black border border-b-0 border-white rounded-t-2xl;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
