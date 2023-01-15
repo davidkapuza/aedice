@@ -15,7 +15,7 @@ type TooltipProps = {
 };
 
 function Tooltip({
-  tooltip = "Feature in progress... 👷",
+  tooltip = "Work in progress... 👷",
   origin = "top",
   children,
   className = "",

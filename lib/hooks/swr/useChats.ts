@@ -1,4 +1,4 @@
-import type { PrivateChat, PublicChat } from "@/core/types";
+import type { PrivateChat, PublicChat, UniqueId } from "@/core/types";
 import useSWR, { Fetcher } from "swr";
 
 export default function useChats() {

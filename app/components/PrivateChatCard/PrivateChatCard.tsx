@@ -5,7 +5,7 @@ import { getIdFromString } from "@/lib/utils/getIdFromString";
 import AvatarsGroup from "app/components/AvatarsGroup/AvatarsGroup";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import ReactTimeago from "react-timeago";
 
 type Props = {
@@ -17,7 +17,7 @@ function PrivateChatCard({ chat, user }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const chat_id = getIdFromString(pathname);
-  const [isSeleted, toggleIsSelected] = useState(chat_id === chat.chat_id);
+  const isSeleted = chat_id === chat.chat_id;
   const [members, setMembers] = useState<User[]>(chat.members);
   const [lastMessage, setLastMessage] = useState<Message>(chat.last_message);
 
@@ -52,8 +52,10 @@ function PrivateChatCard({ chat, user }: Props) {
         onClick={() => router.push(`/chat/${chat.chat_id}`)}
       >
         <Glow
-          className="p-5 text-left ChatCard rounded-xl "
-          border="rounded-xl "
+          className={`p-5 text-left ChatCard rounded-xl  ${
+            isSeleted ? "border border-[rgb(255,255,255,0.5)]" : ""
+          }`}
+          border="rounded-xl"
         >
           <AvatarsGroup avatars={members?.map((member: any) => member.image)} />
           <div className="w-full mt-3 text-left">
@@ -91,4 +93,4 @@ function PrivateChatCard({ chat, user }: Props) {
     </li>
   );
 }
-export default PrivateChatCard;
+export default memo(PrivateChatCard);

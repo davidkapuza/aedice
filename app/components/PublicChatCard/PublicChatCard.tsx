@@ -6,7 +6,7 @@ import Loader from "@/core/ui/Loader/Loader";
 import usePusher from "@/lib/hooks/pusher/usePusher";
 import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import useSWRMutation from "swr/mutation";
 
 type Props = {
@@ -14,13 +14,12 @@ type Props = {
   chat: PublicChat;
 };
 
-export async function joinChat(chat_id: string, user: User) {
+export async function joinChat(chat_id: string) {
   await fetch(`/api/chats/${chat_id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ user }),
   });
 }
 
@@ -29,14 +28,15 @@ function PublicChatCard({ user, chat }: Props) {
   const [isMember, setIsMember] = useState<boolean>(
     chat.member_ids.includes(user.id)
   );
-  const { trigger, isMutating } = useSWRMutation("/api/chats", () =>
-    joinChat(chat.chat_id, user)
+  const { trigger, error, isMutating } = useSWRMutation("/api/chats", () =>
+    joinChat(chat.chat_id)
   );
   const router = useRouter();
   const join = async () => {
-    setIsMember(true);
     trigger();
+    !error && setIsMember(true);
     router.push(`/chat/${chat.chat_id}`);
+    console.log(error)
   };
   useEffect(() => {
     if (events?.["chat-removed"]) {
@@ -46,7 +46,7 @@ function PublicChatCard({ user, chat }: Props) {
 
   return (
     <Glow className="p-5 ChatCard " border="rounded-xl">
-      <div className="flex justify-between">
+      <div className="flex justify-between w-full">
         <Avatar src={chat.chat_image} className="w-6 h-6" />
         <button
           className="flex min-h-[19px] items-center flex-row gap-2 px-2 py-0.5 text-[10px] text-white bg-black border border-white rounded-full leading-3 disabled:cursor-not-allowed"
@@ -77,4 +77,4 @@ function PublicChatCard({ user, chat }: Props) {
   );
 }
 
-export default PublicChatCard;
+export default memo(PublicChatCard);

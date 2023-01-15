@@ -2,7 +2,7 @@
 import type { PrivateChat, User } from "@/core/types";
 import usePusher from "@/lib/hooks/pusher/usePusher";
 import useChats from "@/lib/hooks/swr/useChats";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import PrivateChatCard from "../PrivateChatCard/PrivateChatCard";
 import "./ChatsList.styles.css";
 
@@ -51,4 +51,4 @@ function ChatsList({ user, chats: prerenderedChats }: Props) {
   );
 }
 
-export default ChatsList;
+export default memo(ChatsList);
