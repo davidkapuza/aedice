@@ -2,7 +2,7 @@ import { Client } from "redis-om";
 import { chatSchema } from "./schemas/chat";
 import { userSchema } from "./schemas/user";
 
-
+type Services = "__redisClient"
 const client = new Client();
 
 export async function connect() {
@@ -12,8 +12,8 @@ export async function connect() {
   return client;
 }
 
-const registerService = async (name: string, initFn: () => Promise<Client>) => {
-  if (process.env.NODE_ENV === "development" && name === "__redisClient") {
+const registerService = async (name: Services, initFn: () => Promise<Client>) => {
+  if (process.env.NODE_ENV === "development") {
     if (!(name in globalThis)) {
       globalThis[name] = await initFn();
     }
@@ -24,8 +24,6 @@ const registerService = async (name: string, initFn: () => Promise<Client>) => {
 
 const db = await registerService("__redisClient", connect);
 export const usersRepository = db.fetchRepository(userSchema);
-// const usesIdx = await usersRepository.createIndex()
 export const chatsRepository = db.fetchRepository(chatSchema);
-// const chatIdx = await chatsRepository.createIndex()
 
 export default db;

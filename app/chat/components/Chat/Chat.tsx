@@ -4,6 +4,7 @@ import Message from "@/core/ui/Message/Message";
 import usePusher from "@/lib/hooks/pusher/usePusher";
 import useMessages from "@/lib/hooks/swr/useMessages";
 import { useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 import ChatHeader from "../ChatHeader/ChatHeader";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
@@ -15,8 +16,8 @@ type Props = {
 };
 
 function Chat({ user, chat, messages: prerenderedMessages }: Props) {
-  const bottomRef = useRef<HTMLSpanElement>(null);
-  const { messages, mutate } = useMessages(chat.chat_id);
+  const bottomRef = useRef<HTMLLIElement>(null);
+  const { messages, mutate, error } = useMessages(chat.chat_id);
   const [events] = usePusher({
     channel: `presence-chat-room-messages-${chat.chat_id}`,
     events: ["new-message"],
@@ -36,6 +37,19 @@ function Chat({ user, chat, messages: prerenderedMessages }: Props) {
   }, [events]);
 
   useEffect(() => {
+    toast.error(error, {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }, [error]);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -49,8 +63,8 @@ function Chat({ user, chat, messages: prerenderedMessages }: Props) {
             <Message key={message.id} message={message} isOwner={isOwner} />
           );
         })}
+        <li ref={bottomRef}></li>
       </ul>
-      <span ref={bottomRef}></span>
       <ChatInput user={user} chat_id={chat.chat_id} />
     </>
   );

@@ -3,8 +3,9 @@ import type { Message, User } from "@/core/types";
 import Avatar from "@/core/ui/Avatar/Avatar";
 import { MessageTextSchema } from "@/core/validations";
 import useMessages from "@/lib/hooks/swr/useMessages";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AutosizeInput from "react-input-autosize";
+import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
 import "./ChatInput.styles.css";
 
@@ -31,7 +32,7 @@ async function sendMessage(
 
 function ChatInput({ user, chat_id }: Props) {
   const [input, setInput] = useState<string>("");
-  const { messages, mutate } = useMessages(chat_id);
+  const { messages, mutate, error } = useMessages(chat_id);
 
   const send = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,6 +57,20 @@ function ChatInput({ user, chat_id }: Props) {
       rollbackOnError: true,
     });
   };
+  useEffect(() => {
+    toast.error(error, {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }, [error]);
+
+
   return (
     <form className="ChatForm" onSubmit={(e) => send(e)}>
       <Avatar src={user?.image!} className="w-5 h-5" />

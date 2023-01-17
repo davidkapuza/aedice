@@ -1,4 +1,5 @@
 import "styles/globals.css";
+import 'react-toastify/dist/ReactToastify.css';
 import { Plus_Jakarta_Sans } from "@next/font/google";
 import { Providers } from "./providers";
 import { unstable_getServerSession } from "next-auth";

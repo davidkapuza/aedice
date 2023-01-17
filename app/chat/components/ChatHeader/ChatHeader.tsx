@@ -5,6 +5,7 @@ import { Icons } from "@/core/ui/Icons/Icons";
 import Tooltip from "@/core/ui/Tooltip/Tooltip";
 import Dropdown from "app/components/Dropdown/Dropdown";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import useSWRMutation from "swr/mutation";
 
 type ChatHeaderProps = {
@@ -13,14 +14,18 @@ type ChatHeaderProps = {
 };
 
 async function fetcher(url: string, { arg }: { arg: string }) {
-  await fetch(`${url}/${arg}`, { method: "DELETE" });
+  await toast.promise(fetch(`${url}/${arg}`, { method: "DELETE" }), {
+    pending: "Deleting your chat...",
+    success: "Chat deleted 👌",
+    error: "We had an error 🤯",
+  });
 }
 
 function ChatHeader({ user, chat }: ChatHeaderProps) {
   const router = useRouter();
   const isOwner = chat.chat_owner_id === user.id;
-  const { trigger, isMutating } = useSWRMutation("/api/chats", fetcher);
-  const deleteChat = async () => {
+  const { trigger } = useSWRMutation("/api/chats", fetcher);
+  const deleteChat = () => {
     if (!chat.chat_id) return;
     router.push(`/chat`);
     trigger(chat.chat_id);
@@ -28,10 +33,7 @@ function ChatHeader({ user, chat }: ChatHeaderProps) {
 
   return (
     <div className="sticky left-0 top-0 w-full bg-gradient-to-b from-black to-transparent z-30 py-6 pr-6 pl-7 h-[88px] flex flex-row items-center justify-between">
-      <button
-        className="mr-6 md:hidden"
-        onClick={() => router.push(`/chat`)}
-      >
+      <button className="mr-6 md:hidden" onClick={() => router.push(`/chat`)}>
         <Icons.arrowLeft className="w-4 h-4 text-white" />
       </button>
       <div className="flex-1">

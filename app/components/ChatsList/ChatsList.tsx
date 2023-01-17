@@ -22,6 +22,7 @@ function ChatsList({ user, chats: prerenderedChats }: Props) {
     if (chats) {
       if (events?.["chat-created"]) {
         const newChat = events["chat-created"] as PrivateChat;
+        if (chats.some(chat => chat.chat_id === newChat.chat_id)) return
         mutate({ chats: [...chats!, newChat] });
       } else if (events?.["chat-removed"]) {
         mutate({

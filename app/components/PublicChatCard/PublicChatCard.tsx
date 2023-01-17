@@ -7,6 +7,7 @@ import usePusher from "@/lib/hooks/pusher/usePusher";
 import type { PublicChat, User } from "@/types/index";
 import { useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import useSWRMutation from "swr/mutation";
 
 type Props = {
@@ -36,7 +37,16 @@ function PublicChatCard({ user, chat }: Props) {
     trigger();
     !error && setIsMember(true);
     router.push(`/chat/${chat.chat_id}`);
-    console.log(error)
+    toast.error(error, {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
   };
   useEffect(() => {
     if (events?.["chat-removed"]) {
