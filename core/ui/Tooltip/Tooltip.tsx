@@ -1,10 +1,10 @@
 import "./Tooltip.styles.css";
 
 const tooltipOrigins = {
-  right: "right-3/4 origin-right",
-  left: "left-3/4 origin-left",
-  top: "top-3/4 origin-top",
-  bottom: "bottom-3/4 origin-bottom",
+  right: "right-full origin-right",
+  left: "left-full origin-left",
+  top: "top-full origin-top",
+  bottom: "bottom-full origin-bottom",
 };
 
 type TooltipProps = {
@@ -22,7 +22,7 @@ function Tooltip({
 }: TooltipProps) {
   return (
     <div
-      className={`flex items-center justify-center group top-  ${className}`}
+      className={`flex items-center justify-center group relative ${className}`}
     >
       {children}
       <span

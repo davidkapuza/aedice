@@ -1,0 +1,7 @@
+.Header {
+  @apply fixed top-0 left-0 z-40 flex flex-row items-center justify-between w-full px-4 m-0 bg-black md:px-[60px] h-28 dark:text-white;
+}
+
+.Header > * {
+  @apply flex-1
+}

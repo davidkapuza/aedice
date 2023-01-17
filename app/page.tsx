@@ -1,3 +1,4 @@
+import ContactInfo from "@/core/ui/ContactInfo/ContactInfo";
 import Glow from "@/core/ui/Glow/Glow";
 import AuthForm from "./components/AuthForm/AuthForm";
 
@@ -8,7 +9,8 @@ async function AuthPage() {
         <p className="text-base text-white">Hi 👋, Welcome to Aedice</p>
         <p className="text-base text-white">{"[Description...]"}</p>
         <p className="mb-3 font-sans text-base text-white">
-          Project currently is under construction... 🏗️👷
+          Project currently is under construction 👷, <br/>
+          but feel free to enter and break some stuff 💩🔨
         </p>
         <div className="mt-14">
           <Glow border="rounded-full" className="px-3 py-1">
@@ -16,6 +18,7 @@ async function AuthPage() {
           </Glow>
         </div>
       </main>
+      <ContactInfo />
     </section>
   );
 }

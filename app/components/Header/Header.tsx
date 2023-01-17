@@ -27,13 +27,7 @@ export default async function Header() {
             badgeStyles="absolute left-1 top-0.5 px-1 aspect-square min-h-[18px]"
           />
         </Tooltip>
-        <a
-          href="https://github.com/davidkapuza/aedice"
-          target="_blank"
-          className="hidden Link md:inline"
-        >
-          <Icons.github size={12} />
-        </a>
+
       </div>
     </header>
   );

@@ -1,7 +1,8 @@
 import ContactInfo from "@/core/ui/ContactInfo/ContactInfo";
-import { Header, Sidebar } from "@/layouts/index";
 import ChatBreakpoiont from "app/components/Breakpoints/ChatBreakpoiont";
 import SidebarBreakpoint from "app/components/Breakpoints/SidebarBreakpoint";
+import Header from "app/components/Header/Header";
+import Sidebar from "app/components/Sidebar/Sidebar";
 export default async function ChatLayout({
   children,
 }: {
