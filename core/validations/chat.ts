@@ -1,11 +1,11 @@
 import * as z from "zod";
-import { ImageSchema, NameSchema, RolesSchema, UniqueIdSchema } from ".";
+import { ImageSchema, NameSchema, ChatRolesSchema, UniqueIdSchema } from ".";
 import { MessageSchema } from "./message";
 import { UserSchema } from "./user";
 
 export const ChatMemberSchema = UserSchema.extend({
   joined_at: z.number(),
-  role: RolesSchema,
+  chat_role: ChatRolesSchema,
 });
 
 export const PublicChatSchema = z

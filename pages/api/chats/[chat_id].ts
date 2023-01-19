@@ -25,7 +25,7 @@ router
         ChatMemberSchema.parse({
           ...req.user,
           joined_at: Date.now(),
-          role: "member",
+          chat_role: "member",
         })
       )
     );

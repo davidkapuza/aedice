@@ -7,6 +7,7 @@ import { MessageSchema } from "@/validations/message";
 import { chatsRepository, usersRepository } from "./redis";
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
+import { Roles } from "@/core/types";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -41,8 +42,9 @@ export const authOptions: NextAuthOptions = {
           name: userEntity.name,
           email: userEntity.email,
           image: userEntity.image,
+          role: "user",
           joined_at: Date.now(),
-          role: "owner",
+          chat_role: "owner",
         });
         const lastMessage = MessageSchema.parse({
           id: uuid(),
@@ -107,7 +109,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.image = token.image as string;
-        session.user.role = token.role as "user" | "admin";
+        session.user.role = token.role as Roles;
       }
       return session;
     },

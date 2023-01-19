@@ -10,5 +10,6 @@ export const ImageSchema = z.string();
 
 export const QuerySchema = z.string().min(2).max(30);
 
-export const RolesSchema = z.enum(['owner', 'admin', 'member']);
+export const ChatRolesSchema = z.enum(["owner", "member"]);
 
+export const RolesSchema = z.enum(["admin", "user"]);

@@ -3,10 +3,11 @@ import {
   DatabaseChatSchema,
   PublicChatSchema,
   PrivateChatSchema,
+  ChatMemberSchema,
 } from "@/validations/chat";
 import { DatabaseUserSchema, UserSchema } from "@/validations/user";
 import { MessageSchema } from "@/validations/message";
-import { UniqueIdSchema, ImageSchema } from "@/validations/index";
+import { UniqueIdSchema, ImageSchema, RolesSchema } from "@/validations/index";
 import { NextApiRequest } from "next";
 
 export type DatabaseChat = z.infer<typeof DatabaseChatSchema>;
@@ -24,3 +25,5 @@ export type Image = z.infer<typeof ImageSchema>;
 export type RequestWithUser = NextApiRequest & {
   user: User;
 };
+export type ChatMember = z.infer<typeof ChatMemberSchema>;
+export type Roles = z.infer<typeof RolesSchema>;

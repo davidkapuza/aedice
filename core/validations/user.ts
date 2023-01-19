@@ -1,11 +1,11 @@
 import * as z from "zod";
-import { ImageSchema, NameSchema, UniqueIdSchema } from ".";
+import { ImageSchema, NameSchema, RolesSchema, UniqueIdSchema } from ".";
 
 export const DatabaseUserSchema = z.object({
   name: NameSchema,
   image: ImageSchema,
   email: z.string().email(),
-  role: z.enum(["user", "admin"])
+  role: RolesSchema
 });
 
 export const UserSchema = z

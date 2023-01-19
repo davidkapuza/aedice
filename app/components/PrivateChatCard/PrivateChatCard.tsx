@@ -1,4 +1,4 @@
-import type { PrivateChat, Message, PublicChat, User } from "@/core/types";
+import type { PrivateChat, Message, PublicChat, User, ChatMember } from "@/core/types";
 import Glow from "@/core/ui/Glow/Glow";
 import usePusher from "@/lib/hooks/pusher/usePusher";
 import { getIdFromString } from "@/lib/utils/getIdFromString";
@@ -18,7 +18,7 @@ function PrivateChatCard({ chat, user }: Props) {
   const pathname = usePathname();
   const chat_id = getIdFromString(pathname);
   const isSeleted = chat_id === chat.chat_id;
-  const [members, setMembers] = useState<User[]>(chat.members);
+  const [members, setMembers] = useState<ChatMember[]>(chat.members);
   const [lastMessage, setLastMessage] = useState<Message>(chat.last_message);
 
   const [events] = usePusher({
@@ -28,7 +28,7 @@ function PrivateChatCard({ chat, user }: Props) {
 
   useEffect(() => {
     if (events?.["member-joined"]) {
-      const newMember = events["member-joined"] as User;
+      const newMember = events["member-joined"] as ChatMember;
       if (newMember.id === user.id) return;
       setMembers((prev) => [...prev, newMember]);
     }
@@ -36,7 +36,7 @@ function PrivateChatCard({ chat, user }: Props) {
       const oldMember = events["member-left"];
       if (oldMember.id === user.id) return;
       setMembers(
-        (prev) => prev.filter((member) => member.id !== oldMember.id) as User[]
+        (prev) => prev.filter((member) => member.id !== oldMember.id) as ChatMember[]
       );
     }
     if (events?.["new-message"]) {
