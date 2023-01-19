@@ -1,5 +1,5 @@
-import { authOptions } from "@/core/auth";
-import db, { chatsRepository } from "@/core/redis";
+import { authOptions } from "server/services/auth";
+import db, { chatsRepository } from "server/services/redis";
 import { DatabaseChat, Message, PrivateChat, UniqueId } from "@/core/types";
 import { getCurrentUser } from "@/lib/session";
 import Chat from "app/chat/components/Chat/Chat";

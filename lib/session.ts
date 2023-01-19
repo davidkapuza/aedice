@@ -1,5 +1,5 @@
 import { unstable_getServerSession } from "next-auth/next"
-import { authOptions } from "@/core/auth"
+import { authOptions } from "server/services/auth"
 import { User } from "@/core/types"
 
 export async function getSession() {

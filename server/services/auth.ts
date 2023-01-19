@@ -27,16 +27,15 @@ export const authOptions: NextAuthOptions = {
           return true;
         }
 
-        // * Create User
         const created_at = Date.now();
         const dbUser = DatabaseUserSchema.parse({
           name: user.name,
           email: user.email,
           image: user.image,
+          role: "user",
         });
         const userEntity = await usersRepository.createAndSave(dbUser);
 
-        // * Create chat for a new User
         const chatMember = ChatMemberSchema.parse({
           id: userEntity.entityId,
           name: userEntity.name,
@@ -67,8 +66,8 @@ export const authOptions: NextAuthOptions = {
         const chatEntity = chatsRepository.createEntity(dbChat);
         await chatsRepository.save(chatEntity);
 
-        // * Augment Session
         user.id = userEntity.entityId;
+        user.role = userEntity.role;
         return true;
       } catch (error) {
         if (error instanceof z.ZodError) {
@@ -90,6 +89,7 @@ export const authOptions: NextAuthOptions = {
 
       if (!dbUser) {
         token.id = user?.id;
+        token.role = user?.role;
         return token;
       }
 
@@ -98,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser?.name,
         email: dbUser?.email,
         image: dbUser?.image,
+        role: dbUser?.role,
       };
     },
     async session({ session, token, user }) {
@@ -106,6 +107,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.image = token.image as string;
+        session.user.role = token.role as "user" | "admin";
       }
       return session;
     },

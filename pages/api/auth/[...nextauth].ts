@@ -1,3 +1,3 @@
-import { authOptions } from "@/core/auth";
+import { authOptions } from "server/services/auth";
 import NextAuth from "next-auth";
 export default NextAuth(authOptions);

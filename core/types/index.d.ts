@@ -7,6 +7,7 @@ import {
 import { DatabaseUserSchema, UserSchema } from "@/validations/user";
 import { MessageSchema } from "@/validations/message";
 import { UniqueIdSchema, ImageSchema } from "@/validations/index";
+import { NextApiRequest } from "next";
 
 export type DatabaseChat = z.infer<typeof DatabaseChatSchema>;
 export type PublicChat = z.infer<typeof PublicChatSchema>;

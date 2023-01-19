@@ -1,11 +1,11 @@
-import { authOptions } from "@/core/auth";
-import { chatsRepository } from "@/core/redis";
+import { authOptions } from "server/services/auth";
 import { DatabaseChat, PrivateChat, UniqueId } from "@/core/types";
 import { getCurrentUser } from "@/lib/session";
 import ChatsList from "app/components/ChatsList/ChatsList";
 import ChatsSearch from "app/components/ChatsSearch/ChatsSearch";
 import { redirect } from "next/navigation";
 import "./Sidebar.styles.css";
+import { chatsRepository } from "server/services/redis";
 
 const getChats = async (user_id: UniqueId) => {
   try {

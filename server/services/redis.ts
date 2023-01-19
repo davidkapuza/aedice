@@ -1,6 +1,6 @@
 import { Client } from "redis-om";
-import { chatSchema } from "./schemas/chat";
-import { userSchema } from "./schemas/user";
+import { chatSchema } from "@/schemas/chat";
+import { userSchema } from "@/schemas/user";
 
 type Services = "__redisClient"
 const client = new Client();

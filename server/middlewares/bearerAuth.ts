@@ -1,7 +1,7 @@
 import type { NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
-import { authOptions } from "../auth";
-import type { RequestWithUser } from "../types";
+import { authOptions } from "../services/auth";
+import type { RequestWithUser } from "../../core/types";
 
 const bearerAuth = async (
   req: RequestWithUser,

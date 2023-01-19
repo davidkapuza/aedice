@@ -8,4 +8,5 @@ export const userSchema = new Schema(User, {
   name: { type: "text" },
   image: { type: "string" },
   email: { type: "string" },
+  role: { type: "string" },
 });

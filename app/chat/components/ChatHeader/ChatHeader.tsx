@@ -26,7 +26,18 @@ function ChatHeader({ user, chat }: ChatHeaderProps) {
   const isOwner = chat.chat_owner_id === user.id;
   const { trigger } = useSWRMutation("/api/chats", fetcher);
   const deleteChat = () => {
-    if (!chat.chat_id) return;
+    if (chat.chat_owner_id === user.id) {
+      return toast.info("You can't remove own chat", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
     router.push(`/chat`);
     trigger(chat.chat_id);
   };

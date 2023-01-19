@@ -13,7 +13,7 @@ module.exports = {
         sans: ["var(--font-jakarta)"],
       },
       fontSize: {
-        xs: "8px",
+        xs: "9px",
         sm: "11px",
         base: "14px",
       },

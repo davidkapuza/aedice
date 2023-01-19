@@ -4,7 +4,6 @@ import Message from "@/core/ui/Message/Message";
 import usePusher from "@/lib/hooks/pusher/usePusher";
 import useMessages from "@/lib/hooks/swr/useMessages";
 import { useEffect, useRef } from "react";
-import { toast } from "react-toastify";
 import ChatHeader from "../ChatHeader/ChatHeader";
 import ChatInput from "../ChatInput/ChatInput";
 import "./Chat.styles.css";
@@ -37,20 +36,11 @@ function Chat({ user, chat, messages: prerenderedMessages }: Props) {
   }, [events]);
 
   useEffect(() => {
-    toast.error(error, {
-      position: "bottom-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
     });
-  }, [error]);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
@@ -58,7 +48,7 @@ function Chat({ user, chat, messages: prerenderedMessages }: Props) {
       <ChatHeader user={user} chat={chat} />
       <ul className="Chat">
         {(messages || prerenderedMessages)?.map((message) => {
-          const isOwner = user?.id === message.sender_id;
+          const isOwner = user?.id === message?.sender_id;
           return (
             <Message key={message.id} message={message} isOwner={isOwner} />
           );

@@ -29,7 +29,7 @@
       "@/layouts/*": ["app/layouts/*"],
       // * core
       "@/core/*": ["core/*"],
-      "@/middlewares/*": ["core/middlewares/*"],
+      "@/middlewares/*": ["server/middlewares/*"],
       "@/validations/*": ["core/validations/*"],
       "@/schemas/*": ["core/schemas/*"],
       "@/types/*": ["core/types/*"],
